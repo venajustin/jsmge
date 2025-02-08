@@ -1,10 +1,9 @@
 FROM nginx:stable-alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY static/index.html /static/
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
 
-
-----> delete this i don't think we need nginx

@@ -1,7 +1,7 @@
 from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader
 import atexit
-from dockersetup import setup, clear_containers, refresh_container
+from dockersetup import setup, shutdown, refresh_container
 app = Flask(__name__)
 jenv = Environment(loader = FileSystemLoader('templates'))
 
@@ -41,6 +41,6 @@ if __name__ == '__main__':
 
 
 def server_shutdown():
-    clear_containers()
+    shutdown()
 
 atexit.register(server_shutdown)

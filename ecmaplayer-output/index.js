@@ -9,6 +9,11 @@ app.get("/", (req, res) => {
     res.send("hello from container, " + msg);
 });
 
+app.get("/test/:inputnum", (req, res) => {
+    let msg = testfn();
+    res.send("hello from container, " + msg + " <br> param: " + req.params.inputnum + " <br> query: " + req.query.inputnum);
+});
+
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
