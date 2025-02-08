@@ -58,7 +58,12 @@ def cleanup_deno(container):
         print("container removed")
 
 def refresh_container():
-    container = client.containers.get()
+    container = client.containers.get("ecmaplayer-output")
+    try:
+        container.restart()
+        return True
+    except:
+        return False
 
 def setup():
     clear_containers()

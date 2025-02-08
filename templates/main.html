@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+    <h1>
+        Demo Many Containers
+    </h1>
+    <form hx-post="/api/save-text" hx-swap="innerhtML" hx-target="#text-area-target">
+        <label>
+            Javascript text <br>
+            <textarea name="code-area" style="font-family: monospace, monospace;" cols="80" rows="10" id="text-area-target">{{ jsstart }}</textarea>
+            <br>
+        </label>
+        <button type="submit">
+                Save
+        </button>
+    </form>
+
+
+    <form hx-post="/api/reload-application" hx-swap="afterend">
+        <button type="submit">
+            Reload app
+        </button>
+    </form>
+
+</body>
+</html>
