@@ -6,6 +6,7 @@
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
 <body>
+
     <h1>
         Demo Many Containers
     </h1>
@@ -26,6 +27,17 @@
             Reload app
         </button>
     </form>
+    <h3>
+        Machines
+    </h3>
+    <form hx-target="#machine-list" hx-post="/api/container" hx-swap="beforeend">
+        <button>
+            ADD
+        </button>
+    </form>
+    <div style="border: 5px solid black; max-width:600px; padding: 10px;" hx-trigger="load" id="machine-list" hx-swap="innerHTML" hx-get="/api/container">
+
+    </div>
 
 </body>
 </html>

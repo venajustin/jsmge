@@ -1,0 +1,22 @@
+<div style="display:flex; flex-direction: row; align-content: center; justify-content: space-around" class="server-list-item">
+    <div>
+        {{ servername }}
+    </div>
+    <div>
+        {{ status }}
+    </div>
+    <div>
+        <a href="" id="link-for-{{ containerid }}" target="_blank">open</a>
+    </div>
+    <div>
+        <form>
+            <button style="{{ buttonstyle }}" hx-get="/api/container/{{ containerid }}/select" hx-target="closest .server-list-item">
+                Select
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('link-for-{{ containerid }}').href = window.location.protocol + "//" + window.location.hostname + ":80/{{ link }}";
+    </script>
+</div>
