@@ -7,7 +7,7 @@ client = docker.from_env()
 
 host_server_js = os.getcwd() + '/applications/test1'
 container_server_js = '/usrcode/'
-container_src_dir = os.getcwd() + '/ecmaplayer-output/'
+container_src_dir = os.getcwd() + '/server-output/'
 nginx_src_dir = os.getcwd() + '/nginx-config/'
 
 def clear_containers():
@@ -18,7 +18,7 @@ def clear_containers():
         cleanup_deno(curr_container)
 
     try:
-        curr_containers = client.containers.list(all=True, filters={'name': 'ecmaplayer-output'})
+        curr_containers = client.containers.list(all=True, filters={'name': 'server-output'})
 
         for curr_container in curr_containers:
             print(curr_container, "name:", curr_container.name, "still exists, deleting...")
@@ -41,7 +41,7 @@ def start_node(number = 1):
         host_server_js: {'bind':container_server_js, 'mode': 'ro'}
     }
 
-    name = 'ecmaplayer-output-' + str(number)
+    name = 'server-output' + str(number)
 
     # ports = {
     #     '3000/tcp': 8080
@@ -53,7 +53,7 @@ def start_node(number = 1):
         volumes=volumes,
         # ports=ports,
         name = name,
-        # name='ecmaplayer-output',
+        # name='server-output',
         network='user-apps'
     )
     print(f"Container '{container.name}' started with volume mount.")
@@ -88,7 +88,7 @@ def cleanup_deno(container):
         print("container removed")
 
 def refresh_container():
-    container = client.containers.get("ecmaplayer-output")
+    container = client.containers.get("server-output")
     try:
         container.restart()
         return True
