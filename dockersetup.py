@@ -27,7 +27,7 @@ def clear_containers():
         print("no container exists, none to delete")
 
 def create_image():
-    image = client.images.build(path=container_src_dir, tag="ecmaplayer-img", rm=True)
+    image = client.images.build(path=container_src_dir, tag="server-img", rm=True)
     return image
 
 def create_nginx_image():
@@ -41,14 +41,14 @@ def start_node(number = 1):
         host_server_js: {'bind':container_server_js, 'mode': 'ro'}
     }
 
-    name = 'server-output' + str(number)
+    name = 'server-output-' + str(number)
 
     # ports = {
     #     '3000/tcp': 8080
     # }
 
     container = client.containers.run(
-        image='ecmaplayer-img:latest',
+        image='server-img:latest',
         detach=True,
         volumes=volumes,
         # ports=ports,

@@ -12,7 +12,6 @@ setup()
 @app.route('/')
 def hello_world():  # put application's code here
     f = open("./applications/test1/test.js")
-    script = ""
     if f.readable():
         script = f.read()
     else:
@@ -38,7 +37,8 @@ def reload_app():
 
 @app.route('/api/container/<containerid>/select', methods=['GET'])
 def select_container(containerid):
-   # select(containerid) # todo: user auth and select for user
+    pass
+        # select(containerid) # todo: user auth and select for user
 
 @app.route('/api/container', methods=['POST', 'GET'])
 def container_interactions():
