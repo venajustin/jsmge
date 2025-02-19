@@ -25,7 +25,7 @@ Windows
 
 Mac / Linux
 - `python3 -m venv .venv` 
-- `.venv/bin/activate` <-- Required each time you use a new terminal session
+- `source .venv/bin/activate` <-- Required each time you use a new terminal session
 
 ### Install libraries
 
