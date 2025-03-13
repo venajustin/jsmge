@@ -6,7 +6,11 @@ import docker.errors
 import engine.docker.nodeimages
 from engine.docker.nodeimages import new_app, cleanup_node
 
-client = docker.from_env()
+try:
+    client = docker.from_env()
+except:
+    print("ERROR getting docker environtment. Ensure docker is installed and running.")
+    exit()
 
 container_src_dir = os.getcwd() + '/server-output/'
 nginx_src_dir = os.getcwd() + '/nginx-config/'
@@ -39,14 +43,6 @@ def start_nginx():
     print(f"Container '{container.name}' started.")
     return container
 
-
-def refresh_container():
-    container = client.containers.get("server-output")
-    try:
-        container.restart()
-        return True
-    except:
-        return False
 
 def start_network():
     return client.networks.create(name="user-apps", driver="bridge")
