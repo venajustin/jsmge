@@ -14,6 +14,10 @@ app.get("/test/:inputnum", (req, res) => {
     res.send("hello from container, " + msg + " <br> param: " + req.params.inputnum + " <br> query: " + req.query.inputnum);
 });
 
+app.get("/status", (req, res) => {
+    res.send("running");
+});
+
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })

@@ -1,3 +1,5 @@
 export function testfn() {
-    return "hi from justin";
+    return "<form action='/status'>" +
+        "<button type='submit' >ClickMe</button>" +
+        "</form>";
 }
