@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #1C0221;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -33,6 +33,7 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  font: Jersey 10;
 }
 
 button {
@@ -54,15 +55,38 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+
+
+.projTitle{
+  font-family: "Jersey 10", sans-serif;
+  font-size: 100px;
+}
+
+.colorBlue{
+  color: #7CB4B8;
+}
+.colorRed{
+  color: #db504a;
+}
+.colorYellow{
+  color: #e3b505;
+}
+.titleWhite{
+  font-family: "Jersey 10", sans-serif;
+  color: white;
+  font-size: 65px;
+
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #1C0221;
   }
   a:hover {
     color: #747bff;
   }
-  button {
+  a:button {
     background-color: #f9f9f9;
   }
 }

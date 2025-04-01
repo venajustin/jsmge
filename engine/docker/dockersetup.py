@@ -10,6 +10,7 @@ client = docker.from_env()
 
 container_src_dir = os.getcwd() + '/server-output/'
 nginx_src_dir = os.getcwd() + '/nginx-config/'
+editor_src_dir = os.getcwd() + '/editor'
 
 
 def create_node_image():
@@ -20,7 +21,9 @@ def create_nginx_image():
     image = client.images.build(path=nginx_src_dir, tag="nginx-router-img", rm=True)
     return image
 
-
+def create_editor_image():
+    image = client.images.build(path=editor_src_dir, tag="editor-img", rm=True)
+    return image
 
 def start_nginx():
 
@@ -37,6 +40,20 @@ def start_nginx():
         name='routing-server',
     )
     print(f"Container '{container.name}' started.")
+    return container
+
+def start_editor():
+    ports = {
+        '5173/tcp' : 5173
+    }
+
+    container = client.containers.run(
+        image='editor-img',
+        detach=True,
+        ports=ports,
+        name='editor-container'
+    )
+    print(f"Editor container '{container.name}' started.")
     return container
 
 
@@ -68,6 +85,11 @@ def clear_containers():
         for curr_container in curr_containers:
             print(curr_container, "name:", curr_container.name, "still exists, deleting...")
             cleanup_node(curr_container)
+        curr_containers = client.containers.list(all=True, filters={'name': 'editor-container'})
+
+        for curr_container in curr_containers:
+            print(curr_container, "name:", curr_container.name, " exists, deleting...")
+            cleanup_node(curr_container)
     except docker.errors.NotFound :
         print("no container exists, none to delete")
 
@@ -78,8 +100,10 @@ def setup():
     stop_network()
     network = start_network()
     create_nginx_image()
+    create_editor_image()
     img = create_node_image()
     nx = start_nginx()
+    ed = start_editor()
 
 
 
