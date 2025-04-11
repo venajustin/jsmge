@@ -24,8 +24,8 @@
     </div>
     <div>
         <form>
-            <button style="{{ buttonstyle }}" hx-get="/api/container/{{ containerid }}/select"  hx-target="#machine-list" >
-                Select
+            <button style="" hx-post="/api/container/{{ containerid }}/clean" hx-swap="none" >
+                reset
             </button>
         </form>
     </div>

@@ -139,3 +139,21 @@ def start_node(app_id):
     )
     print(f"Container '{container.name}' started with volume mounted.")
     return container
+
+
+def reset_container(id):
+    shutil.rmtree(host_server_js + str(id))
+
+    shutil.copytree(base_app_start, host_server_js + str(id))
+
+    # for file in os.listdir(base_app_start):
+    #     shutil.copyfile(base_app_start + "/" + file, host_server_js + str(app_id) + "/" + file)
+
+    with open(host_server_js + str(id) + "/" + "info.json", 'w') as info_file:
+        starting_info = {
+            "name": "App-" + str(id),
+            "creation_date": datetime.datetime.now().strftime("%m-%d-%Y")
+        }
+        info_file.write(json.dumps(starting_info))
+
+    return refresh_container(id)

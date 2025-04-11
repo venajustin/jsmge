@@ -2,14 +2,17 @@ from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader
 import atexit
 from engine.docker.dockersetup import setup, shutdown
-from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_container, refresh_container
+from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_container, refresh_container, reset_container
 
 app = Flask(__name__)
 jenv = Environment(loader = FileSystemLoader('templates'))
 
 example_script = jenv.get_template("example.js").render()
 
-setup()
+try:
+    setup()
+except:
+    print("start docker")
 
 selected_machine = 0
 # TODO: replace this with session logic, each client has a diff machine selected at start
@@ -28,6 +31,8 @@ def save_script():
     f.write(newtext)
     f.close()
     return newtext
+
+
 
 @app.route('/api/reload-application', methods= ['POST'])
 def reload_app():
@@ -70,7 +75,13 @@ def remove_app(containerid):
 
 @app.route('/api/container/<containerid>/select', methods=['GET'])
 def select_container(containerid):
+    # TODO: either delete this fn or add the ability to select a container within the manager
     return format_container_list()
+
+@app.route('/api/container/<containerid>/clean', methods=['POST'])
+def clean_container(containerid):
+    reset_container(containerid)
+    return "success"
 
 @app.route('/api/container', methods=['POST', 'GET'])
 def container_interactions():
