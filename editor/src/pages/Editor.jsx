@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import CodeMirror from "codemirror";
+import '../css/editor.css';
+import CodeEditor from "../components/codeEditor";
 
-// Import CodeMirror 5 styles
+
 import "codemirror/lib/codemirror.css";
-
-// Import JavaScript mode and useful addons
 import "codemirror/mode/javascript/javascript";
 import "codemirror/addon/edit/closebrackets";
 import "codemirror/addon/selection/active-line";
@@ -27,7 +27,7 @@ const Editor = () => {
   return (
     <div>
       <h2>CodeMirror Web IDE</h2>
-      <textarea ref={editorRef} defaultValue={`console.log('Hello, CodeMirror!');`} />
+      <CodeEditor/>
     </div>
   );
 };
