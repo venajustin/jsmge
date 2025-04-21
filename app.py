@@ -1,22 +1,26 @@
 from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader
 import atexit
-from engine.docker.dockersetup import setup, shutdown, refresh_container
+from engine.docker.dockersetup import setup, shutdown
+from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_container, refresh_container, reset_container
+
 app = Flask(__name__)
 jenv = Environment(loader = FileSystemLoader('templates'))
 
 example_script = jenv.get_template("example.js").render()
 
-setup()
+try:
+    setup()
+except:
+    print("start docker")
+
+selected_machine = 0
+# TODO: replace this with session logic, each client has a diff machine selected at start
 
 @app.route('/')
-def hello_world():  # put application's code here
-    f = open("./applications/test1/test.js")
-    if f.readable():
-        script = f.read()
-    else:
-        script = example_script
-    return jenv.get_template('main.html').render(jsstart = script)
+def main_page():  # put application's code here
+
+    return jenv.get_template('main.html').render(jsstart = "work in progress")
 
 
 @app.route('/api/save-text', methods= ['POST'])
@@ -28,64 +32,73 @@ def save_script():
     f.close()
     return newtext
 
+
+
 @app.route('/api/reload-application', methods= ['POST'])
 def reload_app():
-    if refresh_container():
+    if refresh_container(selected_machine):
         return ""
     else:
         return jenv.get_template('error.html').render(errmsg = "ERROR OCCURED ON BACKEND")
 
+
+def format_container_list():
+    machines = get_apps()
+
+    output = ""
+    for machine in machines:
+        output += jenv.get_template("server-list-item.html").render(
+            servername=machine['name'],
+            status=machine['status'],
+            link="/app/" + str(machine['id']),
+            buttonstyle="",
+            containerid=machine['id']
+        )
+    return output
+
+@app.route('/api/container/<containerid>/', methods=['POST', 'DELETE'])
+def start_stop_container(containerid):
+    if request.method == 'POST':
+        refresh_container(containerid)
+    if request.method == 'DELETE':
+        stop_container(containerid)
+
+    return format_container_list()
+
+@app.route('/api/container/<containerid>/delete-app', methods=['DELETE'])
+def remove_app(containerid):
+
+    if request.method == 'DELETE':
+        delete_app(containerid)
+
+    return format_container_list()
+
 @app.route('/api/container/<containerid>/select', methods=['GET'])
 def select_container(containerid):
-    pass
-        # select(containerid) # todo: user auth and select for user
+    # TODO: either delete this fn or add the ability to select a container within the manager
+    return format_container_list()
+
+@app.route('/api/container/<containerid>/clean', methods=['POST'])
+def clean_container(containerid):
+    reset_container(containerid)
+    return "success"
 
 @app.route('/api/container', methods=['POST', 'GET'])
 def container_interactions():
     if request.method == 'POST':
-        # TODO: create a new machine
+        machine = new_app()
+
         return jenv.get_template("server-list-item.html").render(
-            servername="example-server-1",
-            status="online",
-            link="/app/1",
+            servername=machine['name'],
+            status=machine['status'],
+            link="/app/" + str(machine['id']),
             buttonstyle="background-color:green;",
-            containerid="999888999"
+            containerid=machine['id']
         )
     elif request.method =='GET':
-        # TODO: fetch from list of running machines
-        # TODO: obviously secure this to only be owned machines by that user
+        # for now with no user auth any user can access all machines
 
-        example_machines = [
-            {
-                'name': "example-server-2",
-                'status': "offline",
-                'id': "88877776666",
-                'index': "2"
-            },
-            {
-                'name': "example-server-3",
-                'status': "offline",
-                'id': "1686516156",
-                'index': "3"
-            },
-            {
-                'name': "example-server-4",
-                'status': "offline",
-                'id': "46464646",
-                'index': "4"
-            }
-        ]
-
-        output = ""
-        for example_machine in example_machines:
-            output += jenv.get_template("server-list-item.html").render(
-            servername=example_machine['name'],
-            status=example_machine['status'],
-            link="/app/" + example_machine['index'],
-            buttonstyle="",
-            containerid=example_machine['id']
-        )
-        return output
+        return format_container_list()
 
     else:
         return "err"

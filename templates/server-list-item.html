@@ -6,12 +6,26 @@
         {{ status }}
     </div>
     <div>
+        <form>
+            <button style="{{ buttonstyle }}" hx-post="/api/container/{{ containerid }}"  hx-target="#machine-list" >
+                Start/Restart
+            </button>
+        </form>
+    </div>
+    <div>
+        <form>
+            <button style="{{ buttonstyle }}" hx-delete="/api/container/{{ containerid }}/delete-app"  hx-target="#machine-list" >
+                Delete
+            </button>
+        </form>
+    </div>
+    <div>
         <a href="" id="link-for-{{ containerid }}" target="_blank">open</a>
     </div>
     <div>
         <form>
-            <button style="{{ buttonstyle }}" hx-get="/api/container/{{ containerid }}/select" hx-target="closest .server-list-item">
-                Select
+            <button style="" hx-post="/api/container/{{ containerid }}/clean" hx-swap="none" >
+                reset
             </button>
         </form>
     </div>
