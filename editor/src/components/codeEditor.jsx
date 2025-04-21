@@ -1,21 +1,23 @@
 import { Editor } from "@monaco-editor/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const codeEditor = () => {
   const editorRef = useRef();
-  const [value, setValue] = useState("");
-  const [files, setFiles] = useState({
-    "index.js": `function greet(name) {
-      console.log("Hello, " + name + "!");
-    }
-    
-    greet("John");`,
-    "utils.js": `export function add(a, b) {
-      return a + b;
-    }`,
-  });
+  const [activeFile, setActiveFile] = useState("");
+  const [files, setFiles] = useState({});
 
-  const [activeFile, setActiveFile] = useState("index.js");
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/api/files")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Response JSON:". data);
+        setFiles(data);
+        const firstFile = Object.keys(data)[0];
+        setActiveFile(firstFile);
+      })
+      .catch((error) => console.error("Error fetching files:", error));
+  }, []);
+
 
   const onMount = (editor) => {
     editorRef.current = editor;

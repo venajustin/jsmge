@@ -1,10 +1,14 @@
 from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader
 import atexit
+import os
+from flask import jsonify
+from flask_cors import CORS
 from engine.docker.dockersetup import setup, shutdown
 from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_container, refresh_container, reset_container
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 jenv = Environment(loader = FileSystemLoader('templates'))
 
 example_script = jenv.get_template("example.js").render()
@@ -102,6 +106,22 @@ def container_interactions():
 
     else:
         return "err"
+    
+@app.route('/api/files', methods=['GET'])
+def get_files():
+        folder_path = './applications/1'
+        files = {}
+        try:
+            for file_name in os.listdir(folder_path):
+                file_path = os.path.join(folder_path, file_name)
+                if os.path.isfile(file_path):
+                    with open(file_path, 'r') as file:
+                        files[file_name] = file.read()
+        except Exception as e:
+            return jsonify({"error": str(e)}),500
+        return jsonify(files)
+
+
 
 if __name__ == '__main__':
     app.run()
