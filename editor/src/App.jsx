@@ -23,8 +23,8 @@ function App() {
         <Link to="/">Home</Link> | <Link to="/editor">Editor</Link>
       </nav> */}
       <Routes>
-        <Route path="/engine/" element={<Home />} />
-        <Route path="/engine/editor" element={<Editor />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/editor" element={<Editor />} />
       </Routes>
     </Router>
   )
