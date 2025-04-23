@@ -55,6 +55,7 @@ def start_editor():
         image='editor-img',
         detach=True,
         ports=ports,
+        network='user-apps',
         name='editor-container'
     )
     print(f"Editor container '{container.name}' started.")
@@ -95,11 +96,13 @@ def setup():
     clear_containers()
     stop_network()
     network = start_network()
-    create_nginx_image()
     create_editor_image()
+    create_nginx_image()
     img = create_node_image()
-    nx = start_nginx()
     ed = start_editor()
+
+    nx = start_nginx()
+
 
 
 

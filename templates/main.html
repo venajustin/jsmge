@@ -10,7 +10,7 @@
     <h1>
         Demo Many Containers
     </h1>
-    <form hx-post="/api/save-text" hx-swap="innerhtML" hx-target="#text-area-target">
+    <form hx-post="/save-text" hx-swap="innerhtML" hx-target="#text-area-target">
         <label>
             Javascript text <br>
             <textarea name="code-area" style="font-family: monospace, monospace;" cols="80" rows="10" id="text-area-target">{{ jsstart }}</textarea>
@@ -22,7 +22,7 @@
     </form>
 
 
-    <form hx-post="/api/reload-application" hx-swap="afterend">
+    <form hx-post="/reload-application" hx-swap="afterend">
         <button type="submit">
             Reload app
         </button>
@@ -30,12 +30,12 @@
     <h3>
         Machines
     </h3>
-    <form hx-target="#machine-list" hx-post="/api/container" hx-swap="beforeend">
+    <form hx-target="#machine-list" hx-post="/container" hx-swap="beforeend">
         <button>
             ADD
         </button>
     </form>
-    <div style="border: 5px solid black; max-width:600px; padding: 10px;" hx-trigger="load" id="machine-list" hx-swap="innerHTML" hx-get="/api/container">
+    <div style="border: 5px solid black; max-width:600px; padding: 10px;" hx-trigger="load" id="machine-list" hx-swap="innerHTML" hx-get="/container">
 
     </div>
 

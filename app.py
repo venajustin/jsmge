@@ -3,12 +3,12 @@ from jinja2 import Environment, FileSystemLoader
 import atexit
 import os
 from flask import jsonify
-from flask_cors import CORS
+# from flask_cors import CORS
 from engine.docker.dockersetup import setup, shutdown
 from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_container, refresh_container, reset_container
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+# CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 jenv = Environment(loader = FileSystemLoader('templates'))
 
 example_script = jenv.get_template("example.js").render()
@@ -27,7 +27,7 @@ def main_page():  # put application's code here
     return jenv.get_template('main.html').render(jsstart = "work in progress")
 
 
-@app.route('/api/save-text', methods= ['POST'])
+@app.route('/save-text', methods= ['POST'])
 def save_script():
     newtext = request.form['code-area']
     app.logger.info("pls bro")
@@ -36,9 +36,7 @@ def save_script():
     f.close()
     return newtext
 
-
-
-@app.route('/api/reload-application', methods= ['POST'])
+@app.route('/reload-application', methods= ['POST'])
 def reload_app():
     if refresh_container(selected_machine):
         return ""
@@ -60,7 +58,7 @@ def format_container_list():
         )
     return output
 
-@app.route('/api/container/<containerid>/', methods=['POST', 'DELETE'])
+@app.route('/container/<containerid>/', methods=['POST', 'DELETE'])
 def start_stop_container(containerid):
     if request.method == 'POST':
         refresh_container(containerid)
@@ -69,7 +67,7 @@ def start_stop_container(containerid):
 
     return format_container_list()
 
-@app.route('/api/container/<containerid>/delete-app', methods=['DELETE'])
+@app.route('/container/<containerid>/delete-app', methods=['DELETE'])
 def remove_app(containerid):
 
     if request.method == 'DELETE':
@@ -77,17 +75,17 @@ def remove_app(containerid):
 
     return format_container_list()
 
-@app.route('/api/container/<containerid>/select', methods=['GET'])
+@app.route('/container/<containerid>/select', methods=['GET'])
 def select_container(containerid):
     # TODO: either delete this fn or add the ability to select a container within the manager
     return format_container_list()
 
-@app.route('/api/container/<containerid>/clean', methods=['POST'])
+@app.route('/container/<containerid>/clean', methods=['POST'])
 def clean_container(containerid):
     reset_container(containerid)
     return "success"
 
-@app.route('/api/container', methods=['POST', 'GET'])
+@app.route('/container', methods=['POST', 'GET'])
 def container_interactions():
     if request.method == 'POST':
         machine = new_app()
