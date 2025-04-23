@@ -9,10 +9,9 @@ jenv = Environment(loader = FileSystemLoader('templates'))
 
 example_script = jenv.get_template("example.js").render()
 
-try:
-    setup()
-except:
-    print("start docker")
+
+setup()
+
 
 selected_machine = 0
 # TODO: replace this with session logic, each client has a diff machine selected at start
