@@ -7,10 +7,10 @@ const codeEditor = () => {
   const [files, setFiles] = useState({});
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/files")
+    fetch("/files")
       .then((response) => response.json())
       .then((data) => {
-        console.log("Response JSON:". data);
+        console.log("Response JSON:", data);
         setFiles(data);
         const firstFile = Object.keys(data)[0];
         setActiveFile(firstFile);

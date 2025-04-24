@@ -105,19 +105,19 @@ def container_interactions():
     else:
         return "err"
     
-@app.route('/api/files', methods=['GET'])
-def get_files():
-        folder_path = './applications/1'
-        files = {}
-        try:
-            for file_name in os.listdir(folder_path):
-                file_path = os.path.join(folder_path, file_name)
-                if os.path.isfile(file_path):
-                    with open(file_path, 'r') as file:
-                        files[file_name] = file.read()
-        except Exception as e:
-            return jsonify({"error": str(e)}),500
-        return jsonify(files)
+# @app.route('/api/files', methods=['GET'])
+# def get_files():
+#         folder_path = './applications/1'
+#         files = {}
+#         try:
+#             for file_name in os.listdir(folder_path):
+#                 file_path = os.path.join(folder_path, file_name)
+#                 if os.path.isfile(file_path):
+#                     with open(file_path, 'r') as file:
+#                         files[file_name] = file.read()
+#         except Exception as e:
+#             return jsonify({"error": str(e)}),500
+#         return jsonify(files)
 
 
 

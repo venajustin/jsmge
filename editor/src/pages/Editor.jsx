@@ -9,7 +9,11 @@ const Editor = () => {
 
   return (
     <div>
+<<<<<<< Updated upstream
 
+=======
+      <h2>Editor</h2>
+>>>>>>> Stashed changes
       <CodeEditor/>
     </div>
   );
