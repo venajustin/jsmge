@@ -13,7 +13,7 @@ client = docker.from_env()
 
 # define host computer and container locations for the user's js code, will be linked with read-only privilege
 host_server_js = os.getcwd() + '/applications/'
-base_app_start = os.getcwd() + '/app-start/'
+base_app_start = os.getcwd() + '/usrcode/'
 container_server_js = '/usrcode/'
 
 def new_app():
