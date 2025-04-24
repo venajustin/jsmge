@@ -9,7 +9,7 @@ const Editor = () => {
 
   return (
     <div>
-      <h2>CodeMirror Web IDE</h2>
+
       <CodeEditor/>
     </div>
   );

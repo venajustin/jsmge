@@ -3,25 +3,28 @@ import '../index.css';
 
 const Home = () => {
   return (
-    <>
-    <head>
+      <>
+      <head>
       <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet"></link>
     </head>
-      <h2 class='titleWhite'>Welcome to</h2>
-      <h1 class='projTitle'>
-        <span class='colorBlue'>J</span>
-        <span class='colorBlue'>S</span>
-        <span class='colorRed'>M</span>
-        <span class='colorYellow'>G</span>
-        <span class='colorYellow'>E</span>
+
+    <div className="home-container">
+
+      <h2 className='titleWhite'>Welcome to</h2>
+      <h1 className='projTitle'>
+        <span className='colorBlue'>J</span>
+        <span className='colorBlue'>S</span>
+        <span className='colorRed'>M</span>
+        <span className='colorYellow'>G</span>
+        <span className='colorYellow'>E</span>
 
       </h1>
-      <div className="card">
-        <button class='custom-button'>
+      <div className="card home-container">
+        <button className='custom-button'>
           Login
         </button>
         <br></br>
-        <button class='custom-button'>
+        <button className='custom-button'>
           Register
         </button>
       </div>
@@ -32,7 +35,8 @@ const Home = () => {
       <div style={{ border: '5px solid black', maxWidth: '600px', padding: '10px' }} id="machine-list">
           <div dangerouslySetInnerHTML={{ __html: containers }} />
       </div> */}
-    </>
+    </div>
+            </>
   );
 };
 
