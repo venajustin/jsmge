@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors"
+import path from "path";
 const app = express();
 const port = process.env.PORT || 3000;
 import * as fs from 'node:fs';
@@ -6,6 +8,7 @@ import * as fs from 'node:fs';
 import { testfn } from '../usrcode/test.js';
 import { getStatus } from '../usrcode/test.js';
 
+//app.use(cors({ origin: "http://localhost:5173" }));
 app.get("/", (req, res) => {
     let testhtml = "";
     try {
@@ -33,6 +36,27 @@ app.get("/test/:inputnum", (req, res) => {
 
 app.get("/status", (req, res) => {
     res.send("running");
+});
+
+app.get("/files", (req, res) => {
+  const folderPath = "./applications/1";
+  console.log(`Accessing folder: ${folderPath}`);
+  const files = {};
+  try {
+    const fileNames = fs.readdirSync(folderPath);
+    fileNames.forEach((fileName) => {
+      const filePath = path.join(folderPath, fileName);
+      console.log(`Found file: ${filePath}`);
+      if (fs.statSync(filePath).isFile()) {
+        const fileContent = fs.readFileSync(filePath, "utf8");
+        files[fileName] = fileContent;
+      }
+    });
+    res.json(files);
+  } catch (error) {
+    console.error("Error reading files:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.listen(port, () => {
