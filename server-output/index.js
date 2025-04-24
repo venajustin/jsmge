@@ -7,6 +7,7 @@ import * as fs from 'node:fs';
 
 import { testfn } from '../usrcode/test.js';
 import { getStatus } from '../usrcode/test.js';
+import { setupCanvas } from './general/canvas.js';
 
 //app.use(cors({ origin: "http://localhost:5173" }));
 app.get("/", (req, res) => {
@@ -22,9 +23,10 @@ app.get("/", (req, res) => {
 
     const userjs = getStatus.toString();
     let msg = testfn();
+    let script = setupCanvas.toString() + "\nsetupCanvas();";
 
     testhtml = testhtml.replace("{{ msg }}", testfn());
-    testhtml = testhtml.replace("{{ script }}", userjs);
+    testhtml = testhtml.replace("{{ script }}", script);
 
     res.send(testhtml);
 });
