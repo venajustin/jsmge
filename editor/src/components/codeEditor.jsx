@@ -25,8 +25,8 @@ const codeEditor = () => {
     editor.getAction("editor.action.formatDocument").run();
   };
   return (
-    <div>
-        <div style={{ display: "flex", gap: "8px", padding: "8px", backgroundColor: "#1e1e1e" }}>
+    <>
+        <div style={{ width: "100%", display: "flex", gap: "8px", padding: "8px", backgroundColor: "#1e1e1e" }}>
             {Object.keys(files).map((file) => (
                 <button 
                     key={file}
@@ -62,26 +62,29 @@ const codeEditor = () => {
                 </button>
 
         </div>
-      <Editor
-        height="75vh"
-        width="60vw"
-        theme="vs-dark"
-        defaultLanguage="javascript"
-        // defaultValue={`function greet(name) {
-        //         console.log("Hello, " + name + "!");
-        //     }
-            
-        //     greet("John");`}
-        onMount={onMount}
-        value={files[activeFile]}
-        onChange={(newValue) => {
-            setFiles((prev) => ({
-                ...prev,
-                [activeFile]: newValue
-            }));
-        }}
-      />
-    </div>
+        <div style={{flex: "1"}}>
+            <Editor
+                width="100%"
+                height="100%"
+                theme="vs-dark"
+                defaultLanguage="javascript"
+                // defaultValue={`function greet(name) {
+                //         console.log("Hello, " + name + "!");
+                //     }
+
+                //     greet("John");`}
+                onMount={onMount}
+                value={files[activeFile]}
+                onChange={(newValue) => {
+                    setFiles((prev) => ({
+                        ...prev,
+                        [activeFile]: newValue
+                    }));
+                }}
+              />
+        </div>
+
+    </>
   );
 };
 
