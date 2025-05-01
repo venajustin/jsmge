@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="gamewindow.css">
+</head>
+<body>
+    <canvas id="testCanvas" width="1600" height="1200">
+
+    </canvas>
+</body>
+
+
+<script>
+    const canvas = document.getElementById('testCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Resize canvas to fit the screen
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Function to draw a grid pattern
+    function drawGrid() {
+      ctx.strokeStyle = '#ddd';
+      ctx.lineWidth = 0.5;
+      for (let x = 0; x < canvas.width; x += 50) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+      }
+
+      for (let y = 0; y < canvas.height; y += 50) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+      }
+
+      ctx.stroke();
+    }
+
+    // Function to draw rectangles, circles, and lines
+    function drawShapes() {
+      // Rectangle
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+      ctx.fillRect(50, 50, 200, 100); // x, y, width, height
+
+      // Circle
+      ctx.beginPath();
+      ctx.arc(400, 150, 50, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+      ctx.fill();
+
+      // Line
+      ctx.beginPath();
+      ctx.moveTo(50, 200);
+      ctx.lineTo(300, 400);
+      ctx.strokeStyle = 'blue';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    // Function to draw testing text
+    function drawText() {
+      ctx.font = '30px Arial';
+      ctx.fillStyle = 'black';
+      ctx.fillText('Testing Canvas Drawing!', 50, 500);
+    }
+
+    // Call drawing functions
+    drawGrid();
+    drawShapes();
+    drawText();
+  </script>
+
+</html>

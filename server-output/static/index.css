@@ -1,0 +1,24 @@
+* {
+    box-sizing:border-box;
+    margin:0;
+}
+
+.centered-container {
+    display:flex;
+    place-content: center center;
+    place-items: center center;
+    height:100vh;
+}
+
+#game-container {
+    aspect-ratio: 4/3;
+
+}
+
+iframe {
+     aspect-ratio: 4/3;
+    max-width:1024px;
+    max-height:768px;
+    /*border:none;*/
+    display: block;
+}

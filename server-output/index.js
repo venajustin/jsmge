@@ -1,20 +1,20 @@
 import express from "express";
-import cors from "cors"
 import path from "path";
-const app = express();
-const port = process.env.PORT || 3000;
 import * as fs from 'node:fs';
 
-import { testfn } from '../usrcode/test.js';
-import { getStatus } from '../usrcode/test.js';
-import { setupCanvas } from './general/canvas.js';
+import {getStatus, testfn} from '../usrcode/test.js';
+import {setupCanvas} from './server/canvas.js';
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.static('static'));
 
 //app.use(cors({ origin: "http://localhost:5173" }));
-app.get("/", (req, res) => {
+app.get("/old-root", (req, res) => {
     let testhtml = "";
     try {
-      const data = fs.readFileSync('./test.html', 'utf8');
-      testhtml = data; // Text content of the file
+      testhtml = fs.readFileSync('./test.html', 'utf8'); // Text content of the file
     } catch (err) {
       console.error("An error occurred:", err);
       res.send("error");
@@ -59,6 +59,10 @@ app.get("/files", (req, res) => {
     console.error("Error reading files:", error);
     res.status(500).json({ error: error.message });
   }
+});
+
+app.get('/favicon.ico', (req, res) => {
+    res.sendFile( process.cwd() + "/favicon.ico");
 });
 
 app.listen(port, () => {
