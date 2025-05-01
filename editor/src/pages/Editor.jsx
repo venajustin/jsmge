@@ -9,12 +9,9 @@ import FileExplorer from "../components/FileExplorer.jsx";
 const Editor = () => {
 
   return (
-    <div>
-      <h2>Editor</h2>
-      <CodeEditor/>
-      <h2>File Selector</h2>
-      <FileExplorer/>
-      {/* Insert FileExplorer component here */}
+    <div style={{display: 'flex'}}>
+      <CodeEditor style={{display: 'inline-block'}}/>
+      <FileExplorer style={{display: 'inline-block'}}/>
     </div>
   );
 };

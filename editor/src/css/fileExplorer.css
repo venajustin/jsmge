@@ -1,18 +1,3 @@
-.fileExplorer-container {
-    height: 100vh;
-    margin: 0;
-  }
-
-  explorerarea {
-    width: 100%;
-    height: 100%;
-    resize: none;
-    border: none;
-    outline: none;
-    font-family: monospace;
-    font-size: 1rem;
-  }
-
   .ide {
   background: #242322;
   font-family: monospace;
