@@ -14,7 +14,9 @@
     "codemirror": "^5.65.19",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.4.1"
+    "react-router-dom": "^7.4.1",
+    "react-icons": "^4.11.0",
+    "react-accessible-treeview": "^2.3.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
