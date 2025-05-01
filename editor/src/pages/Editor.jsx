@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import '../css/editor.css';
 import CodeEditor from "../components/codeEditor";
+import FileExplorer from "../components/FileExplorer.jsx";
 
 
 
@@ -8,9 +9,9 @@ import CodeEditor from "../components/codeEditor";
 const Editor = () => {
 
   return (
-    <div>
-      <h2>Editor</h2>
-      <CodeEditor/>
+    <div style={{display: 'flex'}}>
+      <CodeEditor style={{display: 'inline-block'}}/>
+      <FileExplorer style={{display: 'inline-block'}}/>
     </div>
   );
 };
