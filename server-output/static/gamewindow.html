@@ -21,55 +21,33 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Function to draw a grid pattern
-    function drawGrid() {
-      ctx.strokeStyle = '#ddd';
-      ctx.lineWidth = 0.5;
-      for (let x = 0; x < canvas.width; x += 50) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-      }
+    let x = Math.random() * (canvas.width - 50);
+    let y = Math.random() * (canvas.height - 50);
+    let dx = 2;
+    let dy = 2;
+    const size = 50;
 
-      for (let y = 0; y < canvas.height; y += 50) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-      }
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.stroke();
+        ctx.fillStyle = "#ff0000"; // Red color
+        ctx.fillRect(x, y, size, size);
+
+        x += dx;
+        y += dy;
+
+        if (x + size > canvas.width || x < 0) {
+            dx = -dx;
+        }
+        if (y + size > canvas.height || y < 0) {
+            dy = -dy;
+        }
+
+        requestAnimationFrame(update);
     }
 
-    // Function to draw rectangles, circles, and lines
-    function drawShapes() {
-      // Rectangle
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-      ctx.fillRect(50, 50, 200, 100); // x, y, width, height
+    update();
 
-      // Circle
-      ctx.beginPath();
-      ctx.arc(400, 150, 50, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
-      ctx.fill();
-
-      // Line
-      ctx.beginPath();
-      ctx.moveTo(50, 200);
-      ctx.lineTo(300, 400);
-      ctx.strokeStyle = 'blue';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-    }
-
-    // Function to draw testing text
-    function drawText() {
-      ctx.font = '30px Arial';
-      ctx.fillStyle = 'black';
-      ctx.fillText('Testing Canvas Drawing!', 50, 500);
-    }
-
-    // Call drawing functions
-    drawGrid();
-    drawShapes();
-    drawText();
   </script>
 
 </html>
