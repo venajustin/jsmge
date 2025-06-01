@@ -9,7 +9,11 @@ from importlib.metadata import pass_none
 import docker.errors
 import random as r
 
-client = docker.from_env()
+try:
+    client = docker.from_env()
+except:
+    print("ERROR getting docker environtment. Ensure docker is installed and running.")
+    exit()
 
 # define host computer and container locations for the user's js code, will be linked with read-only privilege
 host_server_js = os.getcwd() + '/applications/'
