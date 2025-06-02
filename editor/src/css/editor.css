@@ -1,3 +1,7 @@
+html {
+  overflow:hidden;
+}
+
 .editor-container {
     height: 100vh;
     margin: 0;
@@ -17,12 +21,42 @@
   width:100vw;
   height:100vh;
   display:flex;
-  justify-content: space-between;
+  /*justify-content: space-between;*/
+}
+
+.vertical-auto-container {
+  width:100%;
+  height: 100%;
+  display:flex;
+  flex-direction: column;
+
 }
 
 .pane-container {
-  width: 100%;
+  flex: 1;
   height:100%;
+}
+
+.pane-first {
+  width: 400px;
+}
+
+#vert-size-bar {
+  width:10px;
+  height:100vh;
+  background-color: #1c0221;
+  align-items:center;
+  justify-content:center;
+  display:flex;
+  cursor: ew-resize;
+}
+
+
+#vert-size-handle {
+  background-color: grey;
+  width:6px;
+  height: 30px;
+  border-radius: 5px;
 }
 
 .editor-container {
@@ -36,6 +70,8 @@
   display:flex;
   flex-direction:row;
   align-content: space-between;
+  width:100%;
+  flex:1;
 }
 
 .file-browser-container {
@@ -45,4 +81,35 @@
 .properties-container {
   width: 30%;
 
+}
+.game-controls-and-preview {
+  width: 100%;
+}
+.controls {
+  height: 20px;
+  background-color: #7CB4B8;
+  align-content: center;
+  padding: 4px;
+}
+
+.control-button {
+  margin-right:10px;
+  cursor: pointer;
+}
+
+.preview-container {
+  width: 100%;
+  aspect-ratio: 1.3333;
+
+}
+
+#drag-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  cursor: ew-resize;
+  background: transparent;
 }

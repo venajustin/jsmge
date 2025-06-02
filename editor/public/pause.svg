@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 8.467 8.4669997"
+   version="1.1"
+   x="0px"
+   y="0px"
+   id="svg197"
+   width="8.467"
+   height="8.467"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs201" />
+  <g
+     transform="translate(-110.41692,-114.44801)"
+     id="g191"
+    >
+    <path
+       style="fill:#e3b505"
+       d="m 115.97265,115.51358 c -0.43517,0 -0.79271,0.35807 -0.79271,0.79323 v 4.76353 c 0,0.43516 0.35754,0.79272 0.79271,0.79272 h 0.52917 c 0.43517,0 0.79529,-0.35756 0.7953,-0.79272 v -4.76353 c 0,-0.43516 -0.36013,-0.79323 -0.7953,-0.79323 z"
+       stroke-width="0.529167"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       id="path187" />
+    <path
+       style="color:#e3b505"
+       d="m 112.79869,115.51358 c -0.43516,0 -0.79479,0.35807 -0.79479,0.79323 v 4.76353 c 0,0.43516 0.35963,0.79272 0.79479,0.79272 h 0.52968 c 0.43516,0 0.79272,-0.35756 0.79272,-0.79272 v -4.76353 c 0,-0.43516 -0.35756,-0.79323 -0.79272,-0.79323 z"
+       fill="#e3b505"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       id="path189" />
+  </g>
+  <text
+     x="0"
+     y="23.46666"
+     fill="#e3b505"
+     font-size="5px"
+     font-weight="bold"
+     font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif"
+     id="text193">Created by Meko</text>
+  <text
+     x="0"
+     y="28.46666"
+     fill="#e3b505"
+     font-size="5px"
+     font-weight="bold"
+     font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif"
+     id="text195">from the Noun Project</text>
+</svg>
