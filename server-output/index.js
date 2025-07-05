@@ -2,11 +2,16 @@ import express from "express";
 import path from "path";
 import * as fs from 'node:fs';
 
-import {getStatus, testfn} from '../usrcode/test.js';
-import {setupCanvas} from './server/canvas.js';
+import { createServer } from "node:http";
+import  { Server } from "socket.io";
 
+import {getStatus, testfn} from '../usrcode/test.js';
 const app = express();
 const port = process.env.PORT || 3000;
+
+const server = createServer(app);
+const io = new Server(server);
+
 
 app.use(express.static('static'));
 
@@ -65,6 +70,13 @@ app.get('/favicon.ico', (req, res) => {
     res.sendFile( process.cwd() + "/favicon.ico");
 });
 
-app.listen(port, () => {
+io.on('connection', (socket) => {
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+        console.log(msg);
+    });
+});
+
+server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
