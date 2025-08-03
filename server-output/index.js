@@ -2,16 +2,34 @@ import express from "express";
 import path from "path";
 import * as fs from 'node:fs';
 
-import {getStatus, testfn} from '../usrcode/test.js';
-import {setupCanvas} from './server/canvas.js';
-import {exec} from "child_process"
+import { createServer } from "node:http";
+import  { Server } from "socket.io";
 
+import crypto from "crypto";
+import session from "express-session";
+
+import {getStatus, testfn} from '../usrcode/test.js';
 const app = express();
 const port = process.env.PORT || 3000;
 
 const code = "testUsr" // temp will need to change this to /usrcode
 
+
+const server = createServer(app);
+const io = new Server(server);
+
+
 app.use(express.static('static'));
+
+const sessionMiddleware = session({
+    secret: crypto.randomBytes(64).toString('hex'),
+    resave: true,
+    saveUninitialized: true
+});
+
+app.use(sessionMiddleware);
+
+io.engine.use(sessionMiddleware);
 
 //app.use(cors({ origin: "http://localhost:5173" }));
 app.get("/old-root", (req, res) => {
@@ -65,6 +83,16 @@ app.get('/favicon.ico', (req, res) => {
     res.sendFile( process.cwd() + "/favicon.ico");
 });
 
-app.listen(port, () => {
+io.on('connection', (socket) => {
+    const sessionId = socket.request.session.id;
+    socket.join(sessionId);
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+        io.to(sessionId).emit('chat message', "you just sent this ^ ");
+        console.log(msg);
+    });
+});
+
+server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })

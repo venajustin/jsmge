@@ -15,10 +15,10 @@ const codeEditor = () => {
           <div className="preview-container">
               <iframe
                   id={"game-iframe"}
-                  //src="/app/1/gamewindow.html"
+                  // src="/app/1/gamewindow.html"
 
                   // for dev without flask running: comment out above and uncomment below
-                   src = "http://127.0.0.1:3000/gamewindow.html"
+                  src = "http://127.0.0.1:3000/gamewindow.html"
 
                   allow="fullscreen"
                   width="100%"
