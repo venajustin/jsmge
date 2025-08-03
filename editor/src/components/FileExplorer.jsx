@@ -5,7 +5,7 @@ import { DiCss3, DiJavascript, DiNpm } from "react-icons/di";
 import { FaList, FaRegFolder, FaRegFolderOpen } from "react-icons/fa";
 import TreeView, { flattenTree } from "react-accessible-treeview";
 import "../css/fileExplorer.css";
-
+const testFolder = "http://127.0.0.1:3000/files"
 const folder = {
   name: "",
   children: [
@@ -34,6 +34,8 @@ const folder = {
     },
   ],
 };
+
+console.log(testFolder)
 
 const data = flattenTree(folder);
 function MultiSelectDirectoryTreeView() {

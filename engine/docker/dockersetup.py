@@ -15,6 +15,7 @@ except:
 container_src_dir = os.getcwd() + '/server-output/'
 nginx_src_dir = os.getcwd() + '/nginx-config/'
 editor_src_dir = os.getcwd() + '/editor'
+db_src_dir = os.getcwd() + '/postgres-config'
 
 
 def create_node_image():
@@ -27,6 +28,10 @@ def create_nginx_image():
 
 def create_editor_image():
     image = client.images.build(path=editor_src_dir, tag="editor-img", rm=True)
+    return image
+
+def create_db_image():
+    image = client.images.build(path=db_src_dir, tag="db-img", rm=True)
     return image
 
 def start_nginx():
@@ -61,6 +66,32 @@ def start_editor():
     print(f"Editor container '{container.name}' started.")
     return container
 
+def start_db():
+    ports = {
+        '5432/tcp' : 5431
+    }
+    #This is the area that would need to be changed on your guy's end to get it running
+    volumes = {
+        r'C:\\Users\\kunal\\Documents\\SJSU\\SeniorDesignProjectCode\\DB_playground': {
+            'bind': '/var/lib/postgresql/data',
+            'mode': 'rw'
+        }
+    }
+    environment = {
+        'POSTGRES_PASSWORD': 'mysecretpassword'
+    }
+
+    container = client.containers.run(
+        image='db-img',
+        name='postgres-container',
+        detach=True,
+        network='user-apps',
+        ports=ports,
+        environment=environment,
+        volumes=volumes
+    )
+    print(f"PostgreSQL container '{container.name}' started" )
+    return container
 
 def start_network():
     return client.networks.create(name="user-apps", driver="bridge")
@@ -87,6 +118,12 @@ def clear_containers():
         for curr_container in curr_containers:
             print(curr_container, "name:", curr_container.name, " exists, deleting...")
             cleanup_node(curr_container)
+
+        curr_containers = client.containers.list(all=True, filters={'name': 'postgres-container'})
+
+        for curr_container in curr_containers:
+            print(curr_container, "name:", curr_container.name, " exists, deleting...")
+            cleanup_node(curr_container)
     except docker.errors.NotFound :
         print("no container exists, none to delete")
 
@@ -98,10 +135,11 @@ def setup():
     network = start_network()
     create_editor_image()
     create_nginx_image()
+    create_db_image()
     img = create_node_image()
     ed = start_editor()
-
     nx = start_nginx()
+    db = start_db()
 
 
 

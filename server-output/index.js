@@ -4,9 +4,12 @@ import * as fs from 'node:fs';
 
 import {getStatus, testfn} from '../usrcode/test.js';
 import {setupCanvas} from './server/canvas.js';
+import {exec} from "child_process"
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+const code = "testUsr" // temp will need to change this to /usrcode
 
 app.use(express.static('static'));
 
@@ -41,20 +44,17 @@ app.get("/status", (req, res) => {
 });
 
 app.get("/files", (req, res) => {
-  const folderPath = "./applications/1";
+  const folderPath = code; // temp will change this to code variable later
   console.log(`Accessing folder: ${folderPath}`);
-  const files = {};
   try {
-    const fileNames = fs.readdirSync(folderPath);
-    fileNames.forEach((fileName) => {
-      const filePath = path.join(folderPath, fileName);
-      console.log(`Found file: ${filePath}`);
-      if (fs.statSync(filePath).isFile()) {
-        const fileContent = fs.readFileSync(filePath, "utf8");
-        files[fileName] = fileContent;
-      }
+    res.send(folderPath)
+    const items = fs.readdirSync(folderPath);
+    //res.json(`Found ${items.length} items in the root folder:`);
+    items.forEach((item) => {
+      const itemPath = path.join(folderPath, item);
+      const isFile = fs.statSync(itemPath).isFile();
+      console.log(`- ${item} (${isFile ? "File" : "Directory"})`);
     });
-    res.json(files);
   } catch (error) {
     console.error("Error reading files:", error);
     res.status(500).json({ error: error.message });

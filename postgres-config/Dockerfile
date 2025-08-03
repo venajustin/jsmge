@@ -1,9 +1,6 @@
-FROM nginx:stable-alpine
+FROM postgres:latest
+ENV POSTGRES_PASSWORD=mysecretpassword
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY static/index.html /static/
 
-EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
-
+#docker run --name some-postgres -p 5432:5431 -e POSTGRES_PASSWORD=mysecretpassword -d postgres
