@@ -24,18 +24,22 @@
 }
 
 .game-preview-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: min(1024px, 100vw);
+  width: 100%;
   height: min(768px, 100vh);
   aspect-ratio: 1024 / 768;
-  z-index: 1000;
+  flex-shrink: 0;
 }
 
 .left-pane {
   width: calc(100vw - min(1024px, 100vw));
   height: 100vh;
+}
+
+.right-pane {
+  width: min(1024px, 100vw);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .pane-container {
@@ -44,13 +48,14 @@
 }
 
 .lower-right-container {
-  display:flex;
-  flex-direction:row;
+  display: flex;
+  flex-direction: row;
   align-content: space-between;
+  flex-grow: 1;
+  height: calc(100vh - min(768px, 100vh));
 }
 
 .file-browser-container {
-
   flex-grow:1;
 }
 .properties-container {
