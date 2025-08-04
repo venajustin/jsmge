@@ -33,7 +33,7 @@ const codeEditor = () => {
                     onClick={() => setActiveFile(file)}
                     style={{
                         padding: "6px 12px",
-                        backgrounColor: activeFile === file ? "#333" : "#555",
+                        backgroundColor: activeFile === file ? "#333" : "#555",
                         color: "white",
                         border: "none",
                         cursor: "pointer",
@@ -52,7 +52,7 @@ const codeEditor = () => {
                 }}
                 style={{
                     padding: "6px 12px",
-                    backgrounColor: "#007acc",
+                    backgroundColor: "#007acc",
                     color:"white",
                     border:"none",
                     cursor: "pointer"

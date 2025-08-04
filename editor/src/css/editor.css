@@ -1,7 +1,10 @@
 .editor-container {
-    height: 100vh;
-    margin: 0;
-  }
+  width:100%;
+  height:100%;
+  margin: 0;
+  display:flex;
+  flex-direction: column;
+}
   
   textarea {
     width: 100%;
@@ -20,16 +23,24 @@
   justify-content: space-between;
 }
 
+.game-preview-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(1024px, 100vw);
+  height: min(768px, 100vh);
+  aspect-ratio: 1024 / 768;
+  z-index: 1000;
+}
+
+.left-pane {
+  width: calc(100vw - min(1024px, 100vw));
+  height: 100vh;
+}
+
 .pane-container {
   width: 100%;
   height:100%;
-}
-
-.editor-container {
-  width:100%;
-  height:100%;
-  display:flex;
-  flex-direction: column;
 }
 
 .lower-right-container {
