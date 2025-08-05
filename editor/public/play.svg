@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   data-name="Layer 1"
+   viewBox="0 0 100 100"
+   x="0px"
+   y="0px"
+   version="1.1"
+   id="svg630"
+   width="100"
+   height="100"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <metadata
+     id="metadata622" />
+  <defs
+     id="defs626">
+    <style
+       id="style624">
+      .cls-1 {
+        stroke-width: 0px;
+    fill:#db504a
+      }
+    </style>
+  </defs>
+  <path
+     class="cls-1"
+     d="M 85.922268,42.764724 22.43231,6.1087791 C 16.862591,2.8931006 9.9004433,6.9126987 9.9004433,13.344056 v 73.311888 c 0,6.431357 6.9621477,10.450955 12.5318667,7.235277 L 85.922268,57.235276 c 5.569718,-3.215678 5.569718,-11.254874 0,-14.470552 z"
+     id="path628" />
+</svg>
