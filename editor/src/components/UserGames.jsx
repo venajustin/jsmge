@@ -16,7 +16,7 @@ const UserGames = () => {
   {
     title: "Cyberpunk 2077",
     description: "A futuristic open-world action RPG set in the dystopian Night City with cybernetic enhancements and corporate intrigue.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2lbd.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co7497.webp"
   },
   {
     title: "Elden Ring",
@@ -31,7 +31,7 @@ const UserGames = () => {
   {
     title: "Hades",
     description: "A rogue-like dungeon crawler where you play as Zagreus, son of Hades, attempting to escape the underworld.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2i57.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co39vc.webp"
   },
   {
     title: "Red Dead Redemption 2",
@@ -41,97 +41,42 @@ const UserGames = () => {
   {
     title: "The Last of Us Part II",
     description: "A post-apocalyptic survival game following Ellie's journey of revenge in a world overrun by infected.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2s3v.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5ziw.webp"
   },
   {
     title: "Horizon Zero Dawn",
     description: "Explore a beautiful post-apocalyptic world where robotic creatures roam and humanity lives in tribal societies.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2d0z.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2una.webp"
   },
   {
     title: "Spider-Man: Miles Morales",
     description: "Swing through New York City as Miles Morales discovers his unique spider powers in this action-adventure game.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2lcy.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2dwe.webp"
   },
   {
     title: "Assassin's Creed Valhalla",
     description: "Lead raids as Eivor, a Viking warrior, and build your settlement in 9th century England.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2a7r.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2ed3.webp"
   },
   {
     title: "Ghost of Tsushima",
     description: "Honor dies at the edge of a katana in this samurai adventure set during the Mongol invasion of Japan.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2132.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2crj.webp"
   },
   {
     title: "Doom Eternal",
     description: "Rip and tear through demons in this fast-paced first-person shooter sequel to the 2016 Doom reboot.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1tg4.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co3p5n.webp"
   },
   {
     title: "Animal Crossing: New Horizons",
     description: "Create your perfect island paradise in this relaxing life simulation game featuring adorable animal villagers.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1njr.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co3wls.webp"
   },
   {
     title: "Minecraft",
     description: "Build, explore, and survive in this iconic sandbox game with infinite possibilities and creative freedom.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co49wj.webp"
-  },
-  {
-    title: "Among Us",
-    description: "Work together to complete tasks on a spaceship while trying to identify the imposters among your crew.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1r0n.webp"
-  },
-  {
-    title: "Fall Guys",
-    description: "Compete with dozens of other players in wacky obstacle courses and party games to be the last one standing.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co20dh.webp"
-  },
-  {
-    title: "Valorant",
-    description: "A tactical first-person shooter where precise gunplay meets unique agent abilities in competitive 5v5 matches.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2mvt.webp"
-  },
-  {
-    title: "Call of Duty: Warzone",
-    description: "Drop into a massive battle royale with up to 150 players in this free-to-play Call of Duty experience.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co20qi.webp"
-  },
-  {
-    title: "Genshin Impact",
-    description: "Explore the fantasy world of Teyvat in this free-to-play action RPG with gacha mechanics and elemental combat.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2as5.webp"
-  },
-  {
-    title: "Stardew Valley",
-    description: "Leave city life behind and rebuild your grandfather's farm in this charming farming simulation and RPG hybrid.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co49c5.webp"
-  },
-  {
-    title: "Hollow Knight",
-    description: "Explore a vast underground kingdom filled with challenging combat and beautiful hand-drawn art in this metroidvania.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rgi.webp"
-  },
-  {
-    title: "Super Mario Odyssey",
-    description: "Join Mario and his new ally Cappy on a globe-trotting adventure to rescue Princess Peach from Bowser's wedding plans.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1suk.webp"
-  },
-  {
-    title: "The Legend of Zelda: Breath of the Wild",
-    description: "Explore Hyrule like never before in this open-world adventure that redefines the Zelda formula.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1nme.webp"
-  },
-  {
-    title: "Celeste",
-    description: "Help Madeline overcome her inner demons while climbing the treacherous Celeste Mountain in this challenging platformer.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1tef.webp"
-  },
-  {
-    title: "Ori and the Will of the Wisps",
-    description: "Embark on a new journey as Ori in this emotionally-driven metroidvania with stunning visuals and music.",
-    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rak.webp"
+    image: "https://images.igdb.com/igdb/image/upload/t_cover_big/co8fu7.webp"
   }
 ];
 
