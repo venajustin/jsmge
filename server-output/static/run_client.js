@@ -1,0 +1,3 @@
+setupCanvas();
+
+update();
