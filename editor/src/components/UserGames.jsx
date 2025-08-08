@@ -97,16 +97,13 @@ const UserGames = () => {
 
   // Return the rendered JSX
   return (
-    // Wrapper div with padding and dark background
     <div className="mainBody">
       <h1>User Games</h1>
       {
         // Conditional rendering: if still loading
         loading ? (
-            // Show loading message
             <p>Loading...</p>
           ) :
-          // If not loading and no games found
           games.length === 0 ? (
             <p>No games found.</p>
           ) : (
@@ -144,5 +141,4 @@ const UserGames = () => {
   );
 };
 
-// Export the UserGames component for use elsewhere
 export default UserGames;
