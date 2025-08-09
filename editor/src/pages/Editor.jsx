@@ -4,6 +4,7 @@ import CodeEditor from "../components/codeEditor";
 import FileExplorer from "../components/FileExplorer.jsx";
 import GamePreview from "../components/GamePreview.jsx";
 
+
 const Editor = () => {
 
     let code_width = useState(400)
@@ -35,13 +36,20 @@ const Editor = () => {
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
     };
+    const [activeFile, setActiveFile] = useState("");
+const [editorContent, setEditorContent] = useState("");
 
   return (
     <div className="horiz-resize-container">
         <div id={"drag-overlay"} style={{display: 'none'}}></div>
         <div className="pane-first" id={"resize-pane"}>
             <div className="editor-container">
-                <CodeEditor/>
+                <CodeEditor
+                    activeFile={activeFile}
+                    setActiveFile={setActiveFile}
+                    editorContent={editorContent}
+                    setEditorContent={setEditorContent}
+                />
             </div>
         </div>
         <div id={"vert-size-bar"} onMouseDown={handleMouseDown}>
@@ -58,7 +66,10 @@ const Editor = () => {
 
                 <div className="lower-right-container">
                       <div className="file-browser-container">
-                          <FileExplorer/>
+                          <FileExplorer
+                             setActiveFile={setActiveFile}
+                             setEditorContent={setEditorContent}
+                          />
                       </div>
 
                       <div className="properties-container">

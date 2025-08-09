@@ -9,6 +9,8 @@ import crypto from "crypto";
 import session from "express-session";
 
 import {getStatus, testfn} from '../usrcode/test.js';
+import cors from "cors"
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -20,6 +22,7 @@ const io = new Server(server);
 
 
 app.use(express.static('static'));
+app.use(express.json()) // This allows to parse json requests
 
 const sessionMiddleware = session({
     secret: crypto.randomBytes(64).toString('hex'),
@@ -31,7 +34,10 @@ app.use(sessionMiddleware);
 
 io.engine.use(sessionMiddleware);
 
-//app.use(cors({ origin: "http://localhost:5173" }));
+//this is temporary fix for testing development
+app.use(cors({ origin: "http://localhost:5173" }));
+
+
 app.get("/old-root", (req, res) => {
     let testhtml = "";
     try {
@@ -61,21 +67,119 @@ app.get("/status", (req, res) => {
     res.send("running");
 });
 
+// app.get("/files", (req, res) => {
+//   const folderPath = code; // temp will change this to code variable later
+//   console.log(`Accessing folder: ${folderPath}`);
+//   try {
+//     res.send(folderPath)
+//     const items = fs.readdirSync(folderPath);
+//     //res.json(`Found ${items.length} items in the root folder:`);
+//     items.forEach((item) => {
+//       const itemPath = path.join(folderPath, item);
+//       const isFile = fs.statSync(itemPath).isFile();
+//       console.log(`- ${item} (${isFile ? "File" : "Directory"})`);
+//     });
+//   } catch (error) {
+//     console.error("Error reading files:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
 app.get("/files", (req, res) => {
-  const folderPath = code; // temp will change this to code variable later
-  console.log(`Accessing folder: ${folderPath}`);
-  try {
-    res.send(folderPath)
-    const items = fs.readdirSync(folderPath);
-    //res.json(`Found ${items.length} items in the root folder:`);
+  const getFilesFlat = (dirPath) => {
+    const items = fs.readdirSync(dirPath, { withFileTypes: true });
+    let files = [];
     items.forEach((item) => {
-      const itemPath = path.join(folderPath, item);
-      const isFile = fs.statSync(itemPath).isFile();
-      console.log(`- ${item} (${isFile ? "File" : "Directory"})`);
+      const itemPath = path.join(dirPath, item.name);
+      if (item.isDirectory()) {
+        files = files.concat(getFilesFlat(itemPath)); // Recursively add files
+      } else {
+        files.push(itemPath); // Add file path
+      }
     });
+    return files;
+  };
+
+  try {
+    const files = getFilesFlat(code); // Get all files as a flat list
+    res.json(files); // Return the flat list of file paths
   } catch (error) {
-    console.error("Error reading files:", error);
-    res.status(500).json({ error: error.message });
+    console.error("Error reading folder:", error);
+    res.status(500).send("Error reading folder.");
+  }
+});
+
+
+
+app.post("/files", (req, res) => {
+  console.log(req.headers);
+  console.log(req.body);
+  const {filename, content } = req.body;
+  if(!filename){
+    return res.status(400).send("Filename is required.");
+  }
+  const filePath = path.join(code, filename);
+  try {
+    fs.writeFileSync(filePath, content || "");
+    res.send(`File ${filename} created`);
+  }
+  catch (error){
+    console.error("Error creating file", error);
+  }
+});
+
+//This delete is currently done by a query which could be still used in the future alongside a proj id and user account
+app.delete("/files", (req, res) => {
+  const { filename } = req.query;
+  if (!filename) {
+    return res.status(400).send("Filename is required.");
+  }
+  const filePath = path.join(code, filename);
+  try{
+    if(fs.existsSync(filePath)){
+      fs.unlinkSync(filePath);
+      console.log(`${filename} deleted successfully`)
+    }
+    else{
+      console.log(`${filename} not found`)
+    }
+  }
+  catch(error){
+    console.error("Error deleting file:", error);
+  }
+});
+
+app.get("/file", (req, res) => {
+  console.log("Checking for file")
+  const { filename } = req.query;
+  if (!filename) {
+    return res.status(400).send("Filename is required.");
+  }
+  const filePath = path.join(code, filename);
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).send("File not found.");
+    }
+    const content = fs.readFileSync(filePath, "utf8");
+    res.json({ filename, content });
+  } catch (error) {
+    console.error("Error reading file:", error);
+    res.status(500).send("Error reading file.");
+  }
+});
+
+app.post("/save", (req, res) => {
+  const { filename, content } = req.body;
+  if (!filename) {
+    return res.status(400).send("Filename is required.");
+  }
+  const filePath = path.join(code, filename);
+  try {
+    fs.writeFileSync(filePath, content || "");
+    res.send(`File ${filename} saved`);
+  } catch (error) {
+    console.error("Error saving file", error);
+    res.status(500).send("Error saving file.");
   }
 });
 
