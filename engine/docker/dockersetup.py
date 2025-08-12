@@ -15,19 +15,32 @@ except:
 
 
 def create_node_image():
-    image = client.images.build(path=container_src_dir, tag=img_tags['node'], rm=True)
+    image = client.images.build(
+            path=container_src_dir,
+            tag=img_tags['node'],
+            rm=True)
     return image
 
 def create_nginx_image():
-    image = client.images.build(path=nginx_src_dir, tag=img_tags['nginx'], rm=True)
+    image = client.images.build(
+            path=nginx_src_dir,
+            tag=img_tags['nginx'],
+            rm=True)
     return image
 
 def create_editor_image():
-    image = client.images.build(path=editor_src_dir, tag=img_tags['editor'], rm=True)
+    image = client.images.build(
+            path=editor_src_dir,
+            tag=img_tags['editor'],
+            rm=True)
     return image
 
 def create_database_image():
-    image = client.images.build(path=database_source_dir, tag=img_tags['database'], rm=True)
+    image = client.images.build(
+            path=database_source_dir,
+            tag=img_tags['database'],
+            rm=True
+        )
     return image
 
 def start_nginx():
@@ -59,7 +72,7 @@ def start_postgres():
         volumes = {
             volume_names['database']: {'bind': '/var/lib/postgresql/data', 'mode': 'rw'}
             },
-        environment = ["POSTGRES_PASSWORD=test123"],
+        environment = postgres_env_vars,
         network=docker_network_name,
         name=container_names['database']
     )
