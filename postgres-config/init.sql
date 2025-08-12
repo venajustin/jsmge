@@ -1,0 +1,1 @@
+CREATE TABLE it_worked_yay (uid INTEGER PRIMARY KEY);
