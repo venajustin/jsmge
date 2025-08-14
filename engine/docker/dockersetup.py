@@ -62,8 +62,6 @@ def start_nginx():
 
 def start_postgres():
 
-    # PORTS USED ONLY FOR DEBUGGING PURPOSES
-    # CONNECT THROUGH NGINX OR INTERNAL NETWORK
     ports = {
         '5432/tcp' : 54646
     }
