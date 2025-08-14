@@ -8,6 +8,7 @@ from flask import jsonify
 from engine.docker.dockersetup import setup, shutdown
 from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_container, refresh_container, reset_container
 from engine.database.connect import get_connection
+from engine.util import check_and_create_env
 import time
 app = Flask(__name__)
 # CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
@@ -15,16 +16,7 @@ jenv = Environment(loader = FileSystemLoader('templates'))
 
 example_script = jenv.get_template("example.js").render()
 
-env_fpath = os.getcwd() + '/.env'
-if not os.path.exists(env_fpath):
-    shutil.copyfile(os.getcwd() + "/.example-env",
-                    env_fpath)
-    print("EXAMPLE .env FILE WAS WRITTEN TO .env")
-    print("YOU MUST CHANGE THE VALUES IN .env BEFORE DEPLOYING IN REAL ENVIRONMENT")
-    exit(1)
-
-
-
+check_and_create_env()
 
 setup()
 

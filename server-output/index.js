@@ -5,9 +5,13 @@ import * as fs from 'node:fs';
 import {getStatus, testfn} from '../usrcode/test.js';
 import {setupCanvas} from './server/canvas.js';
 import {get_client} from "./server/database/connect-db.js";
+import {debug_set_env} from "./server/util.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+debug_set_env();
+
 
 app.use(express.static('static'));
 

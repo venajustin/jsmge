@@ -1,5 +1,7 @@
 FROM node:23-alpine
 
+ENV IS_DOCKER_CONTAINER=true
+
 WORKDIR /app
 
 COPY ./package*.json ./
@@ -9,7 +11,6 @@ COPY . .
 
 
 EXPOSE 3000
-
 
 
 
