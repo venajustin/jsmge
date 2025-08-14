@@ -61,8 +61,11 @@ def start_nginx():
     return container
 
 def start_postgres():
+
+    # PORTS USED ONLY FOR DEBUGGING PURPOSES
+    # CONNECT THROUGH NGINX OR INTERNAL NETWORK
     ports = {
-        '5432/tcp' : 5432
+        '5432/tcp' : 54646
     }
 
     container = client.containers.run(
