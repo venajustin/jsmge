@@ -1,1 +1,11 @@
-POSTGRES_SU_PASS=<secret here>
+POSTGRES_SU_PASS=<strongpassword>
+
+POSTGRES_USER=myuser
+POSTGRES_PASSWORD=mypassword
+
+ADMIN_USER_NAME=jsmgeadm
+ADMIN_USER_PASSWORD=jsmgeadmpass
+
+CONNECTION_USER_NAME=jsmgeusr
+CONNECTION_USER_PASSWORD=jsmgeusrpass
+

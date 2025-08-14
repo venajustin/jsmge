@@ -1,1 +1,8 @@
-CREATE TABLE it_worked_yay (uid INTEGER PRIMARY KEY);
+
+
+\c jsmge;
+SET ROLE jsmgeadm;
+
+CREATE TABLE test_tab (uid INTEGER PRIMARY KEY);
+
+

@@ -29,7 +29,12 @@ volume_names = {
 docker_network_name = 'jsmge-user-apps'
 
 postgres_env_vars = [
-    'POSTGRES_PASSWORD'
+    'POSTGRES_USER',
+    'POSTGRES_PASSWORD',
+    'ADMIN_USER_NAME',
+    'ADMIN_USER_PASSWORD',
+    'CONNECTION_USER_NAME',
+    'CONNECTION_USER_PASSWORD'
     ]
 # Just list the env variables you want to be passed into the 
 # container above and they will be copied from the .env file config
