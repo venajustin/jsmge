@@ -5,6 +5,8 @@ import json
 import time
 # from importlib.metadata import pass_none
 
+import engine.docker.config as cfg
+
 from engine.docker.config import *
 # import docker
 import docker.errors
@@ -139,6 +141,7 @@ def start_node(app_id):
         volumes=volumes,
         # ports=ports, <-- no ports anymore because nginx manages connections to node containers
         name = name,
+        environment=cfg.postgres_env_vars,
         network=docker_network_name
     )
     print(f"Container '{container.name}' started with volume mounted.")

@@ -1,10 +1,10 @@
 import { Client } from "pg";
 
 const client = new Client({
-    user: 'jsmgeadm',
+    user: process.env.ADMIN_USER_NAME,
     host: 'jsmge-postgres-db',
     database: 'jsmge',
-    password: 'jsmgeadmpass',
+    password: process.env.ADMIN_USER_PASSWORD,
     port: 5432
 });
 
