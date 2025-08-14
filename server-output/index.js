@@ -4,6 +4,7 @@ import * as fs from 'node:fs';
 
 import {getStatus, testfn} from '../usrcode/test.js';
 import {setupCanvas} from './server/canvas.js';
+import {get_client} from "./server/database/connect-db.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -63,6 +64,24 @@ app.get("/files", (req, res) => {
 
 app.get('/favicon.ico', (req, res) => {
     res.sendFile( process.cwd() + "/favicon.ico");
+});
+
+async function test_db(res) {
+    let client = get_client();
+    await client.connect();
+
+    const result = await client.query('SELECT * FROM test_tab');
+    let output_str = "Result: ";
+    result.rows.forEach(row => {
+        output_str = output_str + row.uid + " ";
+    })
+    res.send(output_str);
+
+    await client.end();
+}
+
+app.get('/test-db', (req, res) => {
+   test_db(res);
 });
 
 app.listen(port, () => {
