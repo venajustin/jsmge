@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/fileExplorer.css";
 
-const ContextMenu = ({ x, y, visible, file, isFolder, onDelete, onNewFile }) => {
+const ContextMenu = ({ x, y, visible, file, isFolder, onDelete, onNewFile, onNewFolder }) => {
   if (!visible) return null;
 
   return (
@@ -21,7 +21,7 @@ const ContextMenu = ({ x, y, visible, file, isFolder, onDelete, onNewFile }) => 
     >
       <p style={{ margin: 0, padding: "5px 10px", fontWeight: "bold" }}>{file}</p>
       {isFolder && (
-        <button
+        <><button
           onClick={onNewFile}
           style={{
             background: "none",
@@ -34,6 +34,20 @@ const ContextMenu = ({ x, y, visible, file, isFolder, onDelete, onNewFile }) => 
         >
           New File
         </button>
+        <button
+          onClick={onNewFolder}
+          style={{
+            background: "none",
+            border: "none",
+            padding: "5px 10px",
+            cursor: "pointer",
+            width: "100%",
+            textAlign: "left",
+          }}
+        >
+            New Folder
+          </button>
+          </>
       )}
       <button
         onClick={onDelete}

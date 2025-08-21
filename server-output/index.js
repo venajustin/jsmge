@@ -112,7 +112,7 @@ app.get("/files", (req, res) => {
 
 
 app.post("/files", (req, res) => {
-  console.log(req.headers);
+  //console.log(req.headers);
   console.log(req.body);
   const {filename, content } = req.body;
   if(!filename){
@@ -183,6 +183,46 @@ app.post("/save", (req, res) => {
   }
 });
 
+app.post("/folder", (req, res) => {
+  console.log("Recieved folder message")
+  const {foldername } = req.body;
+  if (!foldername) {
+    return res.status(400).send("Folder name is required.");
+  }
+  const folderPath = path.join(code, foldername);
+  try {
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+      const helloFilePath = path.join(folderPath, "hello.txt");
+      fs.writeFileSync(helloFilePath, "hello world!");
+      res.send(`Folder ${foldername} created`);
+    } else {
+      res.status(400).send("Folder already exists.");
+    }
+  } catch (error) {
+    console.error("Error creating folder", error);
+    res.status(500).send("Error creating folder.");
+  }
+});
+
+app.delete("/folder", (req, res) => {
+  const { foldername } = req.body;
+  if (!foldername) {
+    return res.status(400).send("Folder name is required.");
+  }
+  const folderPath = path.join(code, foldername);
+  try {
+    if (fs.existsSync(folderPath)) {
+      fs.rmSync(folderPath, { recursive: true, force: true });
+      res.send(`Folder ${foldername} and all its contents deleted`);
+    } else {
+      res.status(404).send("Folder not found.");
+    }
+  } catch (error) {
+    console.error("Error deleting folder:", error);
+    res.status(500).send("Error deleting folder.");
+  }
+});
 app.get('/favicon.ico', (req, res) => {
     res.sendFile( process.cwd() + "/favicon.ico");
 });

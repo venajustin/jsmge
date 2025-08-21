@@ -120,6 +120,12 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
   const handleDelete = () => {
     if (!contextMenu.file) return;
 
+    if (contextMenu.isFolder) {
+    handleDeleteFolder();
+    return;
+  }
+    
+
     fetch(`http://127.0.0.1:3000/files?filename=${encodeURIComponent(contextMenu.file)}`, {
       method: "DELETE",
     })
@@ -134,6 +140,26 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
       .catch((error) => console.error("Error deleting file:", error))
       .finally(() => setContextMenu({ visible: false, x: 0, y: 0, file: null }));
   };
+
+  const handleDeleteFolder = () => {
+  if (!contextMenu.file) return;
+
+  fetch("http://127.0.0.1:3000/folder", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ foldername: contextMenu.file }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log(`Folder ${contextMenu.file} deleted successfully`);
+        fetchFiles();
+      } else {
+        console.error(`Failed to delete folder ${contextMenu.file}`);
+      }
+    })
+    .catch((error) => console.error("Error deleting folder:", error))
+    .finally(() => setContextMenu({ visible: false, x: 0, y: 0, file: null }));
+};
 
   const handleNewFile = () => {
     if (contextMenu.file === undefined || contextMenu.file === null) return;
@@ -162,6 +188,34 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
         setContextMenu({ visible: false, x: 0, y: 0, file: null })
       );
   };
+
+  const handleNewFolder = () => {
+  if (contextMenu.file === undefined || contextMenu.file === null) return;
+  const foldername = window.prompt("Enter new folder name:");
+  if (!foldername) return;
+
+  // If contextMenu.file is empty string, create at root
+  const fullPath =
+    contextMenu.file === "" ? foldername : contextMenu.file + "/" + foldername;
+
+  fetch("http://127.0.0.1:3000/folder", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ foldername: fullPath }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log(`Created folder: ${fullPath}`);
+        fetchFiles();
+      } else {
+        console.error("Failed to create folder");
+      }
+    })
+    .catch((error) => console.error("Error creating folder:", error))
+    .finally(() =>
+      setContextMenu({ visible: false, x: 0, y: 0, file: null })
+    );
+};
 
   const handleFileClick = (filename) => {
     fetch(`http://127.0.0.1:3000/file?filename=${encodeURIComponent(filename)}`)
@@ -226,6 +280,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
         isFolder={contextMenu.isFolder}
         onDelete={handleDelete}
         onNewFile={handleNewFile}
+        onNewFolder={handleNewFolder}
       />
     </div>
   );
