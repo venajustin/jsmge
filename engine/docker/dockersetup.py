@@ -14,6 +14,12 @@ except:
     exit()
 
 
+container_src_dir = os.getcwd() + '/server-output/'
+nginx_src_dir = os.getcwd() + '/nginx-config/'
+editor_src_dir = os.getcwd() + '/editor'
+db_src_dir = os.getcwd() + '/postgres-config'
+
+
 def create_node_image():
     image = client.images.build(
             path=container_src_dir,
@@ -41,6 +47,10 @@ def create_database_image():
             tag=img_tags['database'],
             rm=True
         )
+    return image
+
+def create_db_image():
+    image = client.images.build(path=db_src_dir, tag="db-img", rm=True)
     return image
 
 def start_nginx():
@@ -95,11 +105,13 @@ def start_editor():
     print(f"Editor container '{container.name}' started.")
     return container
 
+
 def check_or_create_volume():
     volume = client.api.create_volume(
             name = volume_names['database']
         )
     return volume
+
 
 def start_network():
     return client.networks.create(name=docker_network_name, driver="bridge")
@@ -137,6 +149,7 @@ def clear_containers():
             print(curr_container, "name:", curr_container.name, " exists, deleting...")
             cleanup_node(curr_container)
 
+
     except docker.errors.NotFound :
         print("no container exists, none to delete")
 
@@ -151,13 +164,14 @@ def setup():
     create_editor_image()
     create_nginx_image()
 
+
     check_or_create_volume()
 
     pg = start_postgres()
     img = create_node_image()
     ed = start_editor()
-
     nx = start_nginx()
+    db = start_db()
 
 
 

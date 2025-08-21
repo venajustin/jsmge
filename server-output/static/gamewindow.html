@@ -5,49 +5,46 @@
     <title>Game</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="gamewindow.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/canvas.js"></script>
+
 </head>
 <body>
-    <canvas id="testCanvas" width="1600" height="1200">
+    <canvas id="display-canvas" width="1600" height="1200" style="background-color:#ffffff">
 
     </canvas>
+
+    <form id="form" action="">
+        <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
 </body>
 
 
 <script>
-    const canvas = document.getElementById('testCanvas');
-    const ctx = canvas.getContext('2d');
+    setupCanvas();
 
-    // Resize canvas to fit the screen
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const socket = io();
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    let messages = [];
 
-    let x = Math.random() * (canvas.width - 50);
-    let y = Math.random() * (canvas.height - 50);
-    let dx = 2;
-    let dy = 2;
-    const size = 50;
-
-    function update() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#ff0000"; // Red color
-        ctx.fillRect(x, y, size, size);
-
-        x += dx;
-        y += dy;
-
-        if (x + size > canvas.width || x < 0) {
-            dx = -dx;
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (input.value) {
+            socket.emit('chat message', input.value);
+            input.value = '';
         }
-        if (y + size > canvas.height || y < 0) {
-            dy = -dy;
-        }
+    });
 
-        requestAnimationFrame(update);
-    }
+    socket.on('chat message', (msg) => {
+        const item = document.createElement('li');
+        item.textContent = msg;
+        messages.push(msg);
+    });
+
 
     update();
-
-  </script>
+</script>
 
 </html>
