@@ -2,19 +2,38 @@ from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader
 import atexit
 import os
+import shutil
 from flask import jsonify
 # from flask_cors import CORS
 from engine.docker.dockersetup import setup, shutdown
 from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_container, refresh_container, reset_container
-
+from engine.database.connect import get_connection
+from engine.util import check_and_create_env
+import time
 app = Flask(__name__)
 # CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 jenv = Environment(loader = FileSystemLoader('templates'))
 
 example_script = jenv.get_template("example.js").render()
 
+check_and_create_env()
 
 setup()
+
+# test connection to database
+def test_connection():
+    print("giving time to wait for db to start")
+    time.sleep(3)
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT * FROM test_tab    
+    """)
+    print("TESTING DATABASE CONNECTION, contents of test_tab")
+    for row in cur:
+        print(f"ID: {row[0]}")
+
+test_connection()
 
 
 selected_machine = 0

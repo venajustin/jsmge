@@ -1,6 +1,8 @@
 .idea/
 .venv/
+.env
 __pycache__/
 applications/*
 node_modules
 venv
+

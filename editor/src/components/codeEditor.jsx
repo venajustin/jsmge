@@ -123,6 +123,7 @@ const handleSave = async () => {
         Save
       </button>
 
+
             {/* <button
                 onClick={() => {
                     const newFileName = `file${Object.keys(files).length + 1}.js`;
@@ -131,7 +132,7 @@ const handleSave = async () => {
                 }}
                 style={{
                     padding: "6px 12px",
-                    backgrounColor: "#007acc",
+                    backgroundColor: "#007acc",
                     color:"white",
                     border:"none",
                     cursor: "pointer"

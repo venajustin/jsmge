@@ -3,8 +3,11 @@ import os
 import shutil
 import json
 import time
-from importlib.metadata import pass_none
+# from importlib.metadata import pass_none
 
+import engine.docker.config as cfg
+
+from engine.docker.config import *
 # import docker
 import docker.errors
 import random as r
@@ -38,7 +41,7 @@ def get_apps():
 
         # Check if container is running
         try:
-            container = client.containers.get("server-output-" + file.title())
+            container = client.containers.get(container_names['node'] + "-" + file.title())
             status = container.status
         except docker.errors.NotFound:
             status = "no_container"
@@ -68,7 +71,7 @@ def delete_app(app_id):
         if app_id == app['id']:
             if app['status'] != 'no_container':
                 # we need to delete the container first
-                container = client.containers.get("server-output-" + str(app_id))
+                container = client.containers.get(container_names['node'] + "-" + str(app_id))
                 cleanup_node(container)
     shutil.rmtree(host_server_js + str(app_id))
     #os.rmdir(host_server_js + str(app_id))
@@ -76,7 +79,7 @@ def delete_app(app_id):
 
 def refresh_container(app_id):
     try:
-        container = client.containers.get("server-output-" + str(app_id))
+        container = client.containers.get(container_names['node'] + "-" + str(app_id))
         try:
             container.restart()
             return True
@@ -86,7 +89,7 @@ def refresh_container(app_id):
         start_node(app_id)
 
 def stop_container(app_id):
-    container = client.containers.get("server-output-" + str(app_id))
+    container = client.containers.get(container_names['node'] + "-" + str(app_id))
     cleanup_node(container)
 
 def cleanup_node(container):
@@ -130,16 +133,16 @@ def start_node(app_id):
         host_server_js + str(app_id): {'bind':container_server_js, 'mode': 'ro'}
     }
 
-    name = 'server-output-' + str(app_id)
+    name = container_names['node'] + '-' + str(app_id)
 
     container = client.containers.run(
-        image='server-img:latest',
+        image=img_tags['node'] + ':latest',
         detach=True,
         volumes=volumes,
         # ports=ports, <-- no ports anymore because nginx manages connections to node containers
         name = name,
-        # name='server-output',
-        network='user-apps'
+        environment=cfg.postgres_env_vars,
+        network=docker_network_name
     )
     print(f"Container '{container.name}' started with volume mounted.")
     return container

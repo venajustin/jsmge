@@ -9,7 +9,13 @@ import crypto from "crypto";
 import session from "express-session";
 
 import {getStatus, testfn} from '../usrcode/test.js';
+
 import cors from "cors"
+
+import {setupCanvas} from './server/canvas.js';
+import {get_client} from "./server/database/connect-db.js";
+import {debug_set_env} from "./server/util.js";
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +25,7 @@ const code = "testUsr" // temp will need to change this to /usrcode
 
 const server = createServer(app);
 const io = new Server(server);
+debug_set_env();
 
 
 app.use(express.static('static'));
@@ -227,6 +234,7 @@ app.get('/favicon.ico', (req, res) => {
     res.sendFile( process.cwd() + "/favicon.ico");
 });
 
+
 io.on('connection', (socket) => {
     const sessionId = socket.request.session.id;
     socket.join(sessionId);
@@ -238,5 +246,25 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
+
+async function test_db(res) {
+    let client = get_client();
+    await client.connect();
+
+    const result = await client.query('SELECT * FROM test_tab');
+    let output_str = "Result: ";
+    result.rows.forEach(row => {
+        output_str = output_str + row.uid + " ";
+    })
+    res.send(output_str);
+
+    await client.end();
+}
+
+app.get('/test-db', (req, res) => {
+   test_db(res);
+});
+
+app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
