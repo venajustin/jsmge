@@ -12,7 +12,7 @@ import {getStatus, testfn} from '../usrcode/test.js';
 
 import cors from "cors"
 
-import {setupCanvas} from './server/canvas.js';
+//import {setupCanvas} from './server/canvas.js';
 import {get_client} from "./server/database/connect-db.js";
 import {debug_set_env} from "./server/util.js";
 
@@ -245,7 +245,7 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(port, () => {
+
 
 async function test_db(res) {
     let client = get_client();
