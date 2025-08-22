@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Home from './pages/Home'
 import Editor from './pages/Editor'
 import UserGamesTest from './pages/UserGamesTest'
-
+import Login from './pages/Login'
+import Register from './pages/Register'
 function App() {
   const [count, setCount] = useState(0)
   const [containers, setContainers] = useState([])
@@ -27,6 +28,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/editor" element={<Editor />} />
         <Route path="/UserGamesTest" element={<UserGamesTest />} />
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/register" element={<Register/>} />
       </Routes>
     </Router>
   )

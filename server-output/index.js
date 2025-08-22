@@ -268,3 +268,11 @@ app.get('/test-db', (req, res) => {
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
+
+async function register() {
+  let client = get_client();
+  await client.connect();
+
+  const result = await client.query('');
+  
+}
