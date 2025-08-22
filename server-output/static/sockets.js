@@ -8,9 +8,9 @@ socket.on('chat message', (msg) => {
 socket.on('game_status', (msg) => {
     if (msg === 'edit') {
         console.log("game is in edit mode")
-        document.getElementById('edit-message').style.display = 'block';
+        // document.getElementById('edit-message').style.display = 'block';
     } else {
-        document.getElementById('edit-message').style.display = 'none';
+        // document.getElementById('edit-message').style.display = 'none';
     }
 });
 
