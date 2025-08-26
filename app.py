@@ -10,6 +10,7 @@ from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_contain
 from engine.database.connect import get_connection
 from engine.util import check_and_create_env
 import time
+import bcrypt
 app = Flask(__name__)
 # CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 jenv = Environment(loader = FileSystemLoader('templates'))
@@ -20,7 +21,7 @@ check_and_create_env()
 
 
 setup()
-breakpoint()
+# breakpoint()
 
 
 # test connection to database
@@ -160,19 +161,31 @@ def login():
     password = request.form.get("password")
 
     if not user or not password:
-        return jsonify({"message": "Username and password are required"}), 400
+        return jsonify({"message": "Email and password are required"}), 400
     
 
     try:
         conn = get_connection()
         cur = conn.cursor()
 
+        cur.execute("""
+        SELECT password_hash FROM users where username = %s  
+    """,(user,))
+        
+        row = cur.fetchone()
+
+        if row is None:
+            return jsonify({"message" : "User was not found with associated username"})
+        else:
+            hashpw = row[0]
+
+            if bcrypt.checkpw(password.encode('utf-8'), hashpw.encode('utf-8')):
+                return jsonify({"message": "Login successful"})
+            else:
+                return jsonify({"message": "Incorrect password"})
     except Exception as e:
         return jsonify({"message" : str(e)})
 
-
-
-    return f"Login was submitted for {user}"
     
 # @app.route('/api/files', methods=['GET'])
 # def get_files():
