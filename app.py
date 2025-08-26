@@ -18,7 +18,10 @@ example_script = jenv.get_template("example.js").render()
 
 check_and_create_env()
 
+
 setup()
+breakpoint()
+
 
 # test connection to database
 def test_connection():
@@ -34,6 +37,30 @@ def test_connection():
         print(f"ID: {row[0]}")
 
 test_connection()
+
+def test_register():
+    print("Testing a user registering an account")
+    time.sleep(10)
+    conn = get_connection()
+    cur = conn.cursor()
+    user = "testUser"
+    passWord = "password"
+    email = "test@email.com"
+
+    cur.execute("""
+        insert into users (username, email, password_hash) values (%s, %s, crypt(%s, gen_salt('bf')))  
+    """, (user, email, passWord))
+
+    conn.commit()
+
+    cur.execute("""
+        SELECT * FROM users    
+    """)
+    for row in cur:
+        print(f"{row}")
+
+#test_register()
+
 
 
 selected_machine = 0
@@ -123,6 +150,30 @@ def container_interactions():
     else:
         return "err"
     
+@app.route('/login')
+def login_page():
+    return jenv.get_template('login.html').render(jsstart = "work in progress")
+
+@app.route('/login', methods=['POST'])
+def login():
+    user = request.form.get("username")
+    password = request.form.get("password")
+
+    if not user or not password:
+        return jsonify({"message": "Username and password are required"}), 400
+    
+
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+
+    except Exception as e:
+        return jsonify({"message" : str(e)})
+
+
+
+    return f"Login was submitted for {user}"
+    
 # @app.route('/api/files', methods=['GET'])
 # def get_files():
 #         folder_path = './applications/1'
@@ -146,4 +197,4 @@ if __name__ == '__main__':
 def server_shutdown():
     shutdown()
 
-atexit.register(server_shutdown)
+#atexit.register(server_shutdown)

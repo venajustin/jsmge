@@ -269,10 +269,29 @@ app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
 
-async function register() {
-  let client = get_client();
-  await client.connect();
+// async function register(res) {
+//   let client = get_client();
+//   try {
+//     await client.connect();
 
-  const result = await client.query('');
-  
-}
+//     let pass = "password";
+//     let user = "testUser";
+//     let email = "test@email.com";
+
+//     const result = await client.query(
+//       `insert into users (username, email, password) values ($1, $2, crypt($3, gen_salt('bf')))`,
+//       [user, email, pass]
+//     );
+
+//     res.send("User is created");
+//   } catch (error) {
+//     console.error("Error in register:", error);
+//     res.status(500).send("Error registering user.");
+//   } finally {
+//     await client.end();
+//   }
+// }
+
+// app.get('/test-register', (req,res) => {
+//   register(res);
+// })
