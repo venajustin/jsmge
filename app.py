@@ -39,30 +39,6 @@ def test_connection():
 
 test_connection()
 
-def test_register():
-    print("Testing a user registering an account")
-    time.sleep(10)
-    conn = get_connection()
-    cur = conn.cursor()
-    user = "testUser"
-    passWord = "password"
-    email = "test@email.com"
-
-    cur.execute("""
-        insert into users (username, email, password_hash) values (%s, %s, crypt(%s, gen_salt('bf')))  
-    """, (user, email, passWord))
-
-    conn.commit()
-
-    cur.execute("""
-        SELECT * FROM users    
-    """)
-    for row in cur:
-        print(f"{row}")
-
-#test_register()
-
-
 
 selected_machine = 0
 # TODO: replace this with session logic, each client has a diff machine selected at start
@@ -150,7 +126,38 @@ def container_interactions():
 
     else:
         return "err"
-    
+
+@app.route('/register')
+def register_page():
+    return jenv.get_template('register.html').render(jsstart = "work in progress")
+
+
+@app.route('/register', methods=['POST'])
+def test_register():
+    print("Testing a user registering an account")
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        user = request.form.get("username")
+        passWord = request.form.get("password")
+        email = request.form.get("email")
+
+        cur.execute("""
+            insert into users (username, email, password_hash) values (%s, %s, crypt(%s, gen_salt('bf')))  
+        """, (user, email, passWord))
+
+        conn.commit()
+
+        cur.execute("""
+            SELECT * FROM users    
+        """)
+        for row in cur:
+            print(f"{row}")
+        return jsonify({"message": "User was created"})
+    except Exception as e:
+        return jsonify({"message": str(e)})
+
+
 @app.route('/login')
 def login_page():
     return jenv.get_template('login.html').render(jsstart = "work in progress")
@@ -180,7 +187,9 @@ def login():
             hashpw = row[0]
 
             if bcrypt.checkpw(password.encode('utf-8'), hashpw.encode('utf-8')):
+                #need to include either flask session here or JWT Acess token 
                 return jsonify({"message": "Login successful"})
+
             else:
                 return jsonify({"message": "Incorrect password"})
     except Exception as e:

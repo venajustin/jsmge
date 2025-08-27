@@ -9,7 +9,7 @@
     <div style="display: flex; justify-content: center">
       <form
         method="POST"
-        action="/login"
+        action="/register"
         style="
           display: flex;
           flex-direction: column;
@@ -17,7 +17,8 @@
           min-width: 250px;
         "
       >
-        <h2 style="display: flex; justify-content: center;">Login</h2>
+        <h2 style="display: flex; justify-content: center;">Register</h2>
+        <input type="text" name="email" placeholder="john@email.com" required/>
         <input type="text" name="username" placeholder="Username" required />
         <input
           type="password"
@@ -25,7 +26,7 @@
           placeholder="Password"
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
     </div>
   </body>

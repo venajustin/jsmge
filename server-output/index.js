@@ -116,6 +116,10 @@ app.get("/files", (req, res) => {
   }
 });
 
+app.get("/testConnection", (req,res) => {
+  console.log("Someone is trying to connect to this")
+  res.send("You are connected")
+})
 
 
 app.post("/files", (req, res) => {
