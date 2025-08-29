@@ -11,12 +11,17 @@ let events = []
 function setup() {
     createCanvas(1600, 1200, P2D, document.getElementById('display-canvas'));
 
-    obj1 = new Frame();
+    editState = {};
+
+    mode = 'edit';
+    scene = new Scene();
+    const obj1 = new Frame();
     obj1.position = {x:500,y:500,z:0};
     obj1.childrenObj.push(new Frame());
     obj1.childrenObj.push(new Frame());
     obj1.childrenObj[0].position = {x:30,y:30,z:0};
     obj1.childrenObj[1].position = {x:-30,y:30,z:0};
+    scene.addObject(obj1);
 }
 
 function keyPressed() {
@@ -35,10 +40,31 @@ function keyPressed() {
 
 function draw() {
     textSize(30);
-    obj1._draw();
+    scene._draw();
+    if (mode === 'edit') {
+        scene._draw_editor();
+    }
+    if (mode === 'edit') {
+        process_edit_input(editState);
+    }
 
 }
 
+function mousePressed() {
+    if (mode === 'edit') {
+        edit_mouse_press(editState);
+    }
+}
 
+function mouseDragged() {
+    if (mode === 'edit') {
+        edit_mouse_drag(editState);
+    }
+}
+function mouseReleased() {
+    if (mode === 'edit') {
+        edit_mouse_click(editState);
+    }
+}
 
 
