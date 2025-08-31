@@ -4,16 +4,26 @@ import atexit
 import os
 import shutil
 from flask import jsonify
+
 # from flask_cors import CORS
 from engine.docker.dockersetup import setup, shutdown
-from engine.docker.nodeimages import new_app, delete_app, get_apps, stop_container, refresh_container, reset_container
+from engine.docker.nodeimages import (
+    new_app,
+    delete_app,
+    get_apps,
+    stop_container,
+    refresh_container,
+    reset_container,
+)
 from engine.database.connect import get_connection
 from engine.util import check_and_create_env
 import time
 import bcrypt
+import datetime
+
 app = Flask(__name__)
 # CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
-jenv = Environment(loader = FileSystemLoader('templates'))
+jenv = Environment(loader=FileSystemLoader("templates"))
 
 example_script = jenv.get_template("example.js").render()
 
@@ -30,12 +40,15 @@ def test_connection():
     time.sleep(3)
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("""
+    cur.execute(
+        """
         SELECT * FROM test_tab    
-    """)
+    """
+    )
     print("TESTING DATABASE CONNECTION, contents of test_tab")
     for row in cur:
         print(f"ID: {row[0]}")
+
 
 test_connection()
 
@@ -43,27 +56,29 @@ test_connection()
 selected_machine = 0
 # TODO: replace this with session logic, each client has a diff machine selected at start
 
-@app.route('/')
+
+@app.route("/")
 def main_page():  # put application's code here
 
-    return jenv.get_template('main.html').render(jsstart = "work in progress")
+    return jenv.get_template("main.html").render(jsstart="work in progress")
 
 
-@app.route('/save-text', methods= ['POST'])
+@app.route("/save-text", methods=["POST"])
 def save_script():
-    newtext = request.form['code-area']
+    newtext = request.form["code-area"]
     app.logger.info("pls bro")
     f = open("./applications/test1/test.js", "w")
     f.write(newtext)
     f.close()
     return newtext
 
-@app.route('/reload-application', methods= ['POST'])
+
+@app.route("/reload-application", methods=["POST"])
 def reload_app():
     if refresh_container(selected_machine):
         return ""
     else:
-        return jenv.get_template('error.html').render(errmsg = "ERROR OCCURED ON BACKEND")
+        return jenv.get_template("error.html").render(errmsg="ERROR OCCURED ON BACKEND")
 
 
 def format_container_list():
@@ -72,54 +87,59 @@ def format_container_list():
     output = ""
     for machine in machines:
         output += jenv.get_template("server-list-item.html").render(
-            servername=machine['name'],
-            status=machine['status'],
-            link="/app/" + str(machine['id']),
+            servername=machine["name"],
+            status=machine["status"],
+            link="/app/" + str(machine["id"]),
             buttonstyle="",
-            containerid=machine['id']
+            containerid=machine["id"],
         )
     return output
 
-@app.route('/container/<containerid>/', methods=['POST', 'DELETE'])
+
+@app.route("/container/<containerid>/", methods=["POST", "DELETE"])
 def start_stop_container(containerid):
-    if request.method == 'POST':
+    if request.method == "POST":
         refresh_container(containerid)
-    if request.method == 'DELETE':
+    if request.method == "DELETE":
         stop_container(containerid)
 
     return format_container_list()
 
-@app.route('/container/<containerid>/delete-app', methods=['DELETE'])
+
+@app.route("/container/<containerid>/delete-app", methods=["DELETE"])
 def remove_app(containerid):
 
-    if request.method == 'DELETE':
+    if request.method == "DELETE":
         delete_app(containerid)
 
     return format_container_list()
 
-@app.route('/container/<containerid>/select', methods=['GET'])
+
+@app.route("/container/<containerid>/select", methods=["GET"])
 def select_container(containerid):
     # TODO: either delete this fn or add the ability to select a container within the manager
     return format_container_list()
 
-@app.route('/container/<containerid>/clean', methods=['POST'])
+
+@app.route("/container/<containerid>/clean", methods=["POST"])
 def clean_container(containerid):
     reset_container(containerid)
     return "success"
 
-@app.route('/container', methods=['POST', 'GET'])
+
+@app.route("/container", methods=["POST", "GET"])
 def container_interactions():
-    if request.method == 'POST':
+    if request.method == "POST":
         machine = new_app()
 
         return jenv.get_template("server-list-item.html").render(
-            servername=machine['name'],
-            status=machine['status'],
-            link="/app/" + str(machine['id']),
+            servername=machine["name"],
+            status=machine["status"],
+            link="/app/" + str(machine["id"]),
             buttonstyle="background-color:green;",
-            containerid=machine['id']
+            containerid=machine["id"],
         )
-    elif request.method =='GET':
+    elif request.method == "GET":
         # for now with no user auth any user can access all machines
 
         return format_container_list()
@@ -127,12 +147,14 @@ def container_interactions():
     else:
         return "err"
 
-@app.route('/register')
+
+# take this out put in editor/react app
+@app.route("/register")
 def register_page():
-    return jenv.get_template('register.html').render(jsstart = "work in progress")
+    return jenv.get_template("register.html").render(jsstart="work in progress")
 
 
-@app.route('/register', methods=['POST'])
+@app.route("/register", methods=["POST"])
 def test_register():
     print("Testing a user registering an account")
     try:
@@ -142,15 +164,20 @@ def test_register():
         passWord = request.form.get("password")
         email = request.form.get("email")
 
-        cur.execute("""
+        cur.execute(
+            """
             insert into users (username, email, password_hash) values (%s, %s, crypt(%s, gen_salt('bf')))  
-        """, (user, email, passWord))
+        """,
+            (user, email, passWord),
+        )
 
         conn.commit()
 
-        cur.execute("""
+        cur.execute(
+            """
             SELECT * FROM users    
-        """)
+        """
+        )
         for row in cur:
             print(f"{row}")
         return jsonify({"message": "User was created"})
@@ -158,44 +185,66 @@ def test_register():
         return jsonify({"message": str(e)})
 
 
-@app.route('/login')
+# take this out put in editor/react app
+@app.route("/login")
 def login_page():
-    return jenv.get_template('login.html').render(jsstart = "work in progress")
+    return jenv.get_template("login.html").render(jsstart="work in progress")
 
-@app.route('/login', methods=['POST'])
+
+@app.route("/login", methods=["POST"])
 def login():
     user = request.form.get("username")
     password = request.form.get("password")
 
     if not user or not password:
         return jsonify({"message": "Email and password are required"}), 400
-    
 
     try:
         conn = get_connection()
         cur = conn.cursor()
 
-        cur.execute("""
+        cur.execute(
+            """
         SELECT password_hash FROM users where username = %s  
-    """,(user,))
-        
+    """,
+            (user,),
+        )
+
         row = cur.fetchone()
 
         if row is None:
-            return jsonify({"message" : "User was not found with associated username"})
+            return jsonify({"message": "User was not found with associated username"})
         else:
             hashpw = row[0]
 
-            if bcrypt.checkpw(password.encode('utf-8'), hashpw.encode('utf-8')):
-                #need to include either flask session here or JWT Acess token 
-                return jsonify({"message": "Login successful"})
+            if bcrypt.checkpw(password.encode("utf-8"), hashpw.encode("utf-8")):
+                # need to include either flask session here or JWT Acess token
+                expire = int(
+                    (
+                        datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                    ).timestamp()
+                )
+                cur.execute(
+                    """
+        SELECT sign(
+            json_build_object(
+                'username', %s,
+                'exp', %s
+            ),
+            %s
+        )
+    """,
+                    (user, expire, "your_secret_key_here"),
+                )
+                token = cur.fetchone()[0]
+                return jsonify({"message": "Login successful", "token": token})
 
             else:
                 return jsonify({"message": "Incorrect password"})
     except Exception as e:
-        return jsonify({"message" : str(e)})
+        return jsonify({"message": str(e)})
 
-    
+
 # @app.route('/api/files', methods=['GET'])
 # def get_files():
 #         folder_path = './applications/1'
@@ -211,12 +260,12 @@ def login():
 #         return jsonify(files)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
 
 
 def server_shutdown():
     shutdown()
 
-#atexit.register(server_shutdown)
+
+# atexit.register(server_shutdown)

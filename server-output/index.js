@@ -27,6 +27,8 @@ const server = createServer(app);
 const io = new Server(server);
 debug_set_env();
 
+const flask = "http://127.0.0.1/app/2/"
+
 
 app.use(express.static('static'));
 app.use(express.json()) // This allows to parse json requests
@@ -119,6 +121,7 @@ app.get("/files", (req, res) => {
 app.get("/testConnection", (req,res) => {
   console.log("Someone is trying to connect to this")
   res.send("You are connected")
+  return "You are connected";
 })
 
 

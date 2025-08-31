@@ -11,6 +11,7 @@ import ContextMenu from "./ContextMenu";
 import { io } from "socket.io-client"
 
 
+
 const testFolder = "http://127.0.0.1:3000/files"
 const folder = {
   name: "",
@@ -75,12 +76,12 @@ const buildTree = (paths) => {
 
 
 
-function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
+function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_URL}) {
   const [folder, setFolder] = useState({ name: "testUsr", children: [] })
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, file: null });
-
+  //console.log("SERVER_URL:", SERVER_URL);
   const fetchFiles = () => {
-    fetch("http://127.0.0.1:3000/files")
+    fetch(SERVER_URL + "/files")
       .then((response) => response.json())
       .then((data) => {
         const transformedFolder = buildTree(data);
@@ -126,7 +127,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
   }
     
 
-    fetch(`http://127.0.0.1:3000/files?filename=${encodeURIComponent(contextMenu.file)}`, {
+    fetch(SERVER_URL + `/files?filename=${encodeURIComponent(contextMenu.file)}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -144,7 +145,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
   const handleDeleteFolder = () => {
   if (!contextMenu.file) return;
 
-  fetch("http://127.0.0.1:3000/folder", {
+  fetch(SERVER_URL + "/folder", {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ foldername: contextMenu.file }),
@@ -170,7 +171,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
     const fullPath =
       contextMenu.file === "" ? filename : contextMenu.file + "/" + filename;
 
-    fetch("http://127.0.0.1:3000/files", {
+    fetch(SERVER_URL + "/files", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ filename: fullPath, content: "" }),
@@ -198,7 +199,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
   const fullPath =
     contextMenu.file === "" ? foldername : contextMenu.file + "/" + foldername;
 
-  fetch("http://127.0.0.1:3000/folder", {
+  fetch(SERVER_URL + "/folder", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ foldername: fullPath }),
@@ -218,7 +219,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent}) {
 };
 
   const handleFileClick = (filename) => {
-    fetch(`http://127.0.0.1:3000/file?filename=${encodeURIComponent(filename)}`)
+    fetch(SERVER_URL + `/file?filename=${encodeURIComponent(filename)}`)
       .then((response) => response.json())
       .then((data) =>{
         console.log(data)

@@ -5,6 +5,7 @@ import Editor from './pages/Editor'
 import UserGamesTest from './pages/UserGamesTest'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import { useParams } from 'react-router-dom';
 function App() {
   const [count, setCount] = useState(0)
   const [containers, setContainers] = useState([])
@@ -18,7 +19,10 @@ function App() {
   //   .catch(error => console.error('Error fetching containers', error))
 
   // }, [])
-
+const EditorWrapper = () => {
+  const { appId } = useParams();
+  return <Editor appid={appId} />;
+};
   return (
     <Router>
       {/* <nav>
@@ -26,7 +30,8 @@ function App() {
       </nav> */}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/editor" element={<Editor />} />
+        {/* This editor is currently done in a very unsecure way as in anybody can access anyone's editor currently */}
+        <Route path="/editor/:appId/*" element={<EditorWrapper />} />
         <Route path="/UserGamesTest" element={<UserGamesTest />} />
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>} />

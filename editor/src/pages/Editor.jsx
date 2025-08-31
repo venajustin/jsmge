@@ -5,7 +5,11 @@ import FileExplorer from "../components/FileExplorer.jsx";
 import GamePreview from "../components/GamePreview.jsx";
 
 
-const Editor = () => {
+const Editor = ({appid}) => {
+
+    
+
+    const SERVER = `http://127.0.0.1/app/${appid}`.trim()
 
     let code_width = useState(400)
 
@@ -49,6 +53,7 @@ const [editorContent, setEditorContent] = useState("");
                     setActiveFile={setActiveFile}
                     editorContent={editorContent}
                     setEditorContent={setEditorContent}
+                    SERVER_URL={SERVER}
                 />
             </div>
         </div>
@@ -62,13 +67,16 @@ const [editorContent, setEditorContent] = useState("");
             <div className={"vertical-auto-container"}>
 
 
-                <GamePreview/>
+                <GamePreview
+                SERVER_URL={SERVER}
+                />
 
                 <div className="lower-right-container">
                       <div className="file-browser-container">
                           <FileExplorer
                              setActiveFile={setActiveFile}
                              setEditorContent={setEditorContent}
+                             SERVER_URL={SERVER}
                           />
                       </div>
 
