@@ -43,7 +43,8 @@ function setup() {
 }
 
 function keyPressed() {
-    if (key === 'a') {
+    if (key === 'r') {
+        location.reload();
         // console.log("a pressed");
         // let newnum = 0;
         // events.forEach((num) => {
@@ -57,6 +58,8 @@ function keyPressed() {
 }
 
 function draw() {
+
+
 
     if (keyIsDown(65)) {
         console.log(animSprite._pos.x);
@@ -84,6 +87,15 @@ function draw() {
     }
     if (mode === 'edit') {
         process_edit_input(editState);
+    }
+
+    // message telling user to focus page
+    if (!focused) {
+        fill(0,0,0,100);
+        rect(0,0,1600,1200);
+        fill(0,0,0,255);
+        textAlign(CENTER, CENTER);
+        text("Click To Focus", 500, 400);
     }
 
 }
