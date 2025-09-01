@@ -38,6 +38,10 @@ class AnimatedSprite extends Frame {
             o._load();
         });
     }
+    _update(inputs) {
+        this._animate();
+        super._update(inputs);
+    }
 
     _animate() {
         if (this._playing) {
@@ -65,6 +69,10 @@ class AnimatedSprite extends Frame {
 
 
     play_animation(anim_index = this._selected_animation) {
+        if (this._selected_animation === anim_index) {
+            this._playing = true;
+            return;
+        }
         this._selected_animation = anim_index;
         this._index = 0;
         this._playing = true;
