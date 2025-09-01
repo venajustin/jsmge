@@ -24,8 +24,12 @@ function edit_mouse_drag(editState) {
         // That way when objects overlap you can seperate them
 
         const last = editState.selected.length - 1;
-        editState.selected[last]._pos.x += dx;
-        editState.selected[last]._pos.y += dy;
+        if (!editState.lockX) {
+            editState.selected[last]._pos.x += dx;
+        }
+        if (!editState.lockY) {
+            editState.selected[last]._pos.y += dy;
+        }
     }
     // editState.selected.forEach((o) => {
     //    if (!editState.lockX) {
