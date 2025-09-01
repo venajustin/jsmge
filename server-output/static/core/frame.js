@@ -3,29 +3,37 @@
 
 class Frame {
 
-    position = { x:0,y:0,z:0 };
-    rotation = { x:0,y:0,z:0 };
-    scale = { x:1,y:1,z:1 };
-    parentObj = undefined;
-    childrenObj = [];
+
+
+    _pos = { x:0,y:0,z:0 };
+    _rot = { x:0,y:0,z:0 };
+    _sca = { x:1,y:1,z:1 };
+    _parent = undefined;
+    _children = [];
 
     _draw() {
         push();
-        translate(this.position.x,this.position.y,this.position.z);
-        rotate(this.rotation.x,this.rotation.y,this.rotation.z);
-        scale(this.scale.x,this.scale.y,this.scale.z);
-        fill(0,0,0,0);
-        circle(0,0,50);
+        translate(this._pos.x,this._pos.y,this._pos.z);
+        rotate(this._rot.x,this._rot.y,this._rot.z);
+        scale(this._sca.x,this._sca.y,this._sca.z);
+        // fill(0,0,0,0);
+        // circle(0,0,50);
         // scale, rotate, translate
-        this.childrenObj.forEach((child) => {
+        this._children.forEach((child) => {
             child._draw();
         });
         pop();
     }
 
+    _load() {
+        this._children.forEach((o) => {
+            o._load();
+        });
+    }
+
     _draw_editor() {
         push();
-        translate(this.position.x,this.position.y,this.position.z);
+        translate(this._pos.x,this._pos.y,this._pos.z);
 
         fill(255,0,0,255);
         noStroke();
@@ -41,20 +49,25 @@ class Frame {
         noStroke();
         triangle(35,1,30,-3,30,5);
 
+        fill(0,0,0,25);
+        stroke(0,0,0,100);
+        rect(1,1,10,-10);
+
+
 
         fill(0,0,0,255);
         rect(-1,-1,4,4);
 
-        this.childrenObj.forEach((child) => {
+        this._children.forEach((child) => {
             child._draw_editor();
         });
 
         pop();
     }
 
-    _intersect_point(p) {
+    _edit_drag_intersect(p, editState) {
         push();
-        translate(this.position.x,this.position.y,this.position.z);
+        translate(this._pos.x,this._pos.y,this._pos.z);
 
 
         console.log()
@@ -69,18 +82,43 @@ class Frame {
         const b =  p.y - globalCoord.y;
 
 
-        // perform the actual intersection in local space (replace with collision code for each object)
-        if (Math.pow(a,2) + Math.pow(b,2) < Math.pow(25,2)) {
+       // perform the actual intersection in local space (replace with collision code for each object)
+
+        // intersect with drag square
+        if (a > 0 && a < 10 && b < 0 && b > -10) {
             output.push(this);
 
             // if a parent overlaps its children they should not be translated
-            pop();
-            return output;
+            // pop();
+            // return output;
+        } else if (a > -5 && a < 5 && b < 0 && b > -30) { // intersect with vertical bar
+            output.push(this);
+            editState.lockX = true;
+            // if a parent overlaps its children they should not be translated
+            // pop();
+            // return output;
+        } else if (b > -5 && b < 5 && a > 0 && a < 30) { // intersect with horiz bar
+            output.push(this);
+            editState.lockY = true;
+
+            // if a parent overlaps its children they should not be translated
+            // pop();
+            // return output;
         }
 
 
-        this.childrenObj.forEach((o) => {
-            output.push(...o._intersect_point(p));
+       // / interaction with circle
+       //  if (Math.pow(a,2) + Math.pow(b,2) < Math.pow(25,2)) {
+       //      output.push(this);
+       //
+       //      // if a parent overlaps its children they should not be translated
+       //      pop();
+       //      return output;
+       //  }
+
+
+        this._children.forEach((o) => {
+            output.push(...o._edit_drag_intersect(p, editState));
         });
         pop();
         return output;

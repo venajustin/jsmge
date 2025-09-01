@@ -8,20 +8,35 @@
 
 let events = []
 
+function preload() {
+    scene = new Scene();
+    const obj1 = new Frame();
+    obj1._pos = {x:500,y:500,z:0};
+    obj1._children.push(new Frame());
+    obj1._children.push(new Frame());
+    obj1._children[0]._pos = {x:30,y:30,z:0};
+    obj1._children[1]._pos = {x:-30,y:30,z:0};
+    animSprite = new AnimatedSprite();
+    animSprite._pos = {x:-30,y:30,z:0};
+
+    horse_img = loadImage('/static/horse.png');
+    obj1._children.push(animSprite);
+
+    scene._addObject(obj1);
+
+    scene._load();
+
+}
+
 function setup() {
     createCanvas(1600, 1200, P2D, document.getElementById('display-canvas'));
 
     editState = {};
 
     mode = 'edit';
-    scene = new Scene();
-    const obj1 = new Frame();
-    obj1.position = {x:500,y:500,z:0};
-    obj1.childrenObj.push(new Frame());
-    obj1.childrenObj.push(new Frame());
-    obj1.childrenObj[0].position = {x:30,y:30,z:0};
-    obj1.childrenObj[1].position = {x:-30,y:30,z:0};
-    scene.addObject(obj1);
+    animSprite._add_images(horse_img, 192, 144, 7);
+
+
 }
 
 function keyPressed() {

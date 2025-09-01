@@ -1,7 +1,7 @@
 
 
 class Scene {
-    objects = [];
+    _objects = [];
 
 
     constructor(srcObj) {
@@ -10,26 +10,32 @@ class Scene {
 
     _draw() {
         clear()
-        this.objects.forEach((o) => {
+        this._objects.forEach((o) => {
             o._draw();
         });
     }
     _draw_editor() {
-        this.objects.forEach((o) => {
+        this._objects.forEach((o) => {
             o._draw_editor();
         });
     }
 
-    addObject(obj) {
-        this.objects.push(obj);
+    _addObject(obj) {
+        this._objects.push(obj);
     }
 
-    _intersect_point(point) {
+    _edit_drag_intersect(point, editState) {
         let output = [];
-        this.objects.forEach((o) => {
-           output.push(...o._intersect_point(point));
+        this._objects.forEach((o) => {
+           output.push(...o._edit_drag_intersect(point, editState));
         });
         return output;
+    }
+
+    _load() {
+        this._objects.forEach((o) => {
+           o._load();
+        });
     }
 
 }
