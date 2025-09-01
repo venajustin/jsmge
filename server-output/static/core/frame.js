@@ -24,6 +24,11 @@ class Frame {
         });
         pop();
     }
+    _update(inputs) {
+        this._children.forEach((o) => {
+            o._update(inputs);
+        });
+    }
 
     _load() {
         this._children.forEach((o) => {
@@ -68,9 +73,6 @@ class Frame {
     _edit_drag_intersect(p, editState) {
         push();
         translate(this._pos.x,this._pos.y,this._pos.z);
-
-
-        console.log()
 
         let output = [];
 

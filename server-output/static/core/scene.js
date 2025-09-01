@@ -38,5 +38,11 @@ class Scene {
         });
     }
 
+    _update(inputs) {
+        this._objects.forEach((o) => {
+            o._update(inputs);
+        });
+    }
+
 }
 

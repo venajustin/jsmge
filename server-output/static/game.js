@@ -35,25 +35,48 @@ function setup() {
 
     mode = 'edit';
     animSprite._add_images(horse_img, 192, 144, 7);
+    animSprite.add_animation([0, 1, 2, 3, 4, 5, 6]);
+    animSprite.add_animation([0]);
+    animSprite.play_animation(1);
 
 
 }
 
 function keyPressed() {
     if (key === 'a') {
-        console.log("a pressed");
-        let newnum = 0;
-        events.forEach((num) => {
-            if (num >= newnum) {
-                newnum = parseint(num) + 1;
-            }
-        });
-        console.log("newnum: " + newnum);
-        events.push(newnum.toString());
+        // console.log("a pressed");
+        // let newnum = 0;
+        // events.forEach((num) => {
+        //     if (num >= newnum) {
+        //         newnum = parseint(num) + 1;
+        //     }
+        // });
+        // console.log("newnum: " + newnum);
+        // events.push(newnum.toString());
     }
 }
 
 function draw() {
+
+    if (keyIsDown(65)) {
+        console.log(animSprite._pos.x);
+        animSprite._pos.x += -10;
+
+    }
+
+    if (keyIsDown(68)) {
+        animSprite._pos.x += 10;
+    }
+
+    if (keyIsDown(65) || keyIsDown(68)) {
+        animSprite.play_animation(0);
+    } else {
+        animSprite.play_animation(1);
+    }
+
+
+    scene._update(null);
+
     textSize(30);
     scene._draw();
     if (mode === 'edit') {
