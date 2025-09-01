@@ -4,6 +4,7 @@ import atexit
 import os
 import shutil
 from flask import jsonify
+import jwt
 
 # from flask_cors import CORS
 from engine.docker.dockersetup import setup, shutdown
@@ -191,6 +192,8 @@ def login_page():
     return jenv.get_template("login.html").render(jsstart="work in progress")
 
 
+
+SECRET_KEY = "secret_key"
 @app.route("/login", methods=["POST"])
 def login():
     user = request.form.get("username")
@@ -219,24 +222,13 @@ def login():
 
             if bcrypt.checkpw(password.encode("utf-8"), hashpw.encode("utf-8")):
                 # need to include either flask session here or JWT Acess token
-                expire = int(
-                    (
-                        datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-                    ).timestamp()
-                )
-                cur.execute(
-                    """
-        SELECT sign(
-            json_build_object(
-                'username', %s,
-                'exp', %s
-            ),
-            %s
-        )
-    """,
-                    (user, expire, "your_secret_key_here"),
-                )
-                token = cur.fetchone()[0]
+                expire = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                payload = {
+                    "username":user,
+                    "exp": expire
+                }
+                token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+                
                 return jsonify({"message": "Login successful", "token": token})
 
             else:
