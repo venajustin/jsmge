@@ -45,8 +45,9 @@ def token_required(f):
         try:
             token = token.split(" ")[1] if " " in token else token
             payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            request.user = payload["username"]  # Attach user info to the request
         except jwt.ExpiredSignatureError:
-            return jsonify({"message": "Token has expired"})
+            return jsonify({"message": "Token has expired"}), 401
         except jwt.InvalidTokenError:
             return jsonify({"message": "Invalid token"}), 401
         return f(*args, **kwargs)
@@ -207,7 +208,9 @@ def test_register():
 def login_page():
     return jenv.get_template("login.html").render(jsstart="work in progress")
 
-
+@app.route("/protector")
+def prot():
+    return jenv.get_template("protected.html").render(jssstart='work in progress')
 
 
 @app.route("/login", methods=["POST"])
