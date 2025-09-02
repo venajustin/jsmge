@@ -7,25 +7,27 @@ return (
       <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet"></link>
     </head>
     <div className="home-container">
-      <h2 className='titleWhite'>Welcome to</h2>
-      <h1 className='projTitle'>
-        <span className='colorBlue'>J</span>
-        <span className='colorBlue'>S</span>
-        <span className='colorRed'>M</span>
-        <span className='colorYellow'>G</span>
-        <span className='colorYellow'>E</span>
-      </h1>
+      <div className="title-group">
+        <h2 className='titleWhite'>Welcome to</h2>
+        <h1 className='projTitle'>
+          <span className='colorBlue'>J</span>
+          <span className='colorBlue'>S</span>
+          <span className='colorRed'>M</span>
+          <span className='colorYellow'>G</span>
+          <span className='colorYellow'>E</span>
+        </h1>
+      </div>
       <div className="card home-container">
         <form
           className="login-form"
           onSubmit={e => {
             e.preventDefault();
             //logic
-            
+
             alert("Login submitted!");
           }}
         >
-          <div style={{ marginBottom: "10px" }}>
+          <div style={{marginBottom: "10px"}}>
             <input
               type="text"
               placeholder="Username"
@@ -45,11 +47,13 @@ return (
               style={{ width: "100%", padding: "8px" }}
             />
           </div>
-          <button className='custom-button' type="submit">
-            Login
-          </button>
+          <div style={{display: 'flex', justifyContent: 'center'}}>
+            <button className='custom-button' type="submit">
+              Login
+            </button>
+          </div>
         </form>
-        <br />
+        <br/>
         <button className='custom-button'>
           Register
         </button>
