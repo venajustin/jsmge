@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useParallax } from '../hooks/useParallax';
 import '../index.css';
 
 const Register = () => {
+  useParallax()
+
   const [emailError, setEmailError] = useState('');
 
   const validateEmail = (email) => {

@@ -30,6 +30,40 @@ body {
   min-height: 100vh;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  center: 0;
+  width: 105%;
+  height: 105%;
+  background-image: url('./assets/clouds.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.12;
+  z-index: -1;
+  pointer-events: none;
+  transform: var(--cloud-transform, translate(0, 0));
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  center: 0;
+  width: 110%;
+  height: 250px;
+  background-image: url('./assets/Mountains.png');
+  background-size: auto 100%; /* This maintains aspect ratio and fills the height */
+  background-position: bottom;
+  background-repeat: repeat-x; /* Only repeat horizontally */
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.48;
+  transform: var(--mountain-transform, translateY(57px));
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;

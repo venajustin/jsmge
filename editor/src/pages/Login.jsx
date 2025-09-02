@@ -1,6 +1,8 @@
-
+import { useParallax } from '../hooks/useParallax';
 import '../index.css';
 const Login = () => {
+  useParallax()
+
 return (
   <>
     <head>

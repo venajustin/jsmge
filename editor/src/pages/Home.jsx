@@ -1,12 +1,15 @@
 import React from 'react';
 import '../index.css';
+import { useParallax } from '../hooks/useParallax';
 
 const Home = () => {
+  useParallax();
+
   return (
-      <>
+    <>
       <head>
       <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet"></link>
-    </head>
+      </head>
 
         <div className="home-container">
 
