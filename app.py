@@ -5,7 +5,7 @@ import os
 import shutil
 from flask import jsonify
 import jwt
-
+from functools import wraps
 # from flask_cors import CORS
 from engine.docker.dockersetup import setup, shutdown
 from engine.docker.nodeimages import (
@@ -33,8 +33,25 @@ check_and_create_env()
 
 setup()
 # breakpoint()
+SECRET_KEY = "secret_key"
 
-
+#verification of token
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization")
+        if not token:
+            return jsonify({"message": "Token is missing"}), 401
+        try:
+            token = token.split(" ")[1] if " " in token else token
+            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            request.user = payload["username"]  # Attach user info to the request
+        except jwt.ExpiredSignatureError:
+            return jsonify({"message": "Token has expired"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"message": "Invalid token"}), 401
+        return f(*args, **kwargs)
+    return decorated
 # test connection to database
 def test_connection():
     print("giving time to wait for db to start")
@@ -191,16 +208,18 @@ def test_register():
 def login_page():
     return jenv.get_template("login.html").render(jsstart="work in progress")
 
+@app.route("/protector")
+def prot():
+    return jenv.get_template("protected.html").render(jssstart='work in progress')
 
 
-SECRET_KEY = "secret_key"
 @app.route("/login", methods=["POST"])
 def login():
     user = request.form.get("username")
     password = request.form.get("password")
 
     if not user or not password:
-        return jsonify({"message": "Email and password are required"}), 400
+        return jsonify({"message": "username and password are required"}), 400
 
     try:
         conn = get_connection()
@@ -236,7 +255,10 @@ def login():
     except Exception as e:
         return jsonify({"message": str(e)})
 
-
+@app.route('/protected', methods=['GET'])
+@token_required
+def protected():
+    return jsonify({"message": f"Hello , {request.user}! This is a protected route."})
 # @app.route('/api/files', methods=['GET'])
 # def get_files():
 #         folder_path = './applications/1'
