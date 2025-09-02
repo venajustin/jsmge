@@ -11,14 +11,17 @@ class Frame {
     _parent = undefined;
     _children = [];
 
-    _draw() {
-        push();
+
+    _apply_transforms() {
         translate(this._pos.x,this._pos.y,this._pos.z);
         rotate(this._rot.x,this._rot.y,this._rot.z);
         scale(this._sca.x,this._sca.y,this._sca.z);
-        // fill(0,0,0,0);
-        // circle(0,0,50);
-        // scale, rotate, translate
+    }
+
+    _draw() {
+        push();
+        this._apply_transforms();
+
         this._children.forEach((child) => {
             child._draw();
         });
