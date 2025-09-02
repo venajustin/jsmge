@@ -11,18 +11,22 @@ let events = []
 function preload() {
     scene = new Scene();
     const obj1 = new Frame();
-    obj1._pos = {x:500,y:500,z:0};
-    obj1._children.push(new Frame());
-    obj1._children.push(new Frame());
-    obj1._children[0]._pos = {x:30,y:30,z:0};
-    obj1._children[1]._pos = {x:-30,y:30,z:0};
+    obj1._pos = {x:560,y:520,z:0};
+
+    horse = new Frame();
+    horse._pos = {x:500,y:500,z:0};
     animSprite = new AnimatedSprite();
-    animSprite._pos = {x:-30,y:30,z:0};
+    animSprite._pos = {x:-100,y:-80,z:0};
 
     horse_img = loadImage('/static/horse.png');
-    obj1._children.push(animSprite);
+    horse._children.push(animSprite);
+
+    let coll = new Collider();
+    coll._shape = new CollisionRect({width: 200, height: 200});
+    horse._children.push(coll);
 
     scene._addObject(obj1);
+    scene._addObject(horse);
 
     scene._load();
 
@@ -63,12 +67,12 @@ function draw() {
 
     if (keyIsDown(65)) {
         console.log(animSprite._pos.x);
-        animSprite._pos.x += -10;
+        horse._pos.x += -10;
 
     }
 
     if (keyIsDown(68)) {
-        animSprite._pos.x += 10;
+        horse._pos.x += 10;
     }
 
     if (keyIsDown(65) || keyIsDown(68)) {
