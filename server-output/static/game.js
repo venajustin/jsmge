@@ -22,7 +22,8 @@ function preload() {
     horse._children.push(animSprite);
 
     let coll = new Collider();
-    coll._shape = new CollisionRect({width: 200, height: 200});
+    // coll._shape = new CollisionRect({width: 200, height: 200});
+    coll._shape = new CollisionSphere({radius: 50});
     horse._children.push(coll);
 
     scene._addObject(obj1);

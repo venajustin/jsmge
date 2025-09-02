@@ -1,4 +1,11 @@
 class CollisionSphere {
+
+    // copy constructor, allows objects to be easily cast to this type
+    constructor(obj) {
+        obj && Object.assign(this, obj);
+    }
+
+
     // For now all shapes should have no position, and are always center aligned.
     // The user can realign the collider to move the shape
     radius = 15;
@@ -16,6 +23,8 @@ class CollisionSphere {
     }
 
     _draw() {
+        fill(0,0,0,0);
+        stroke(0,0,50,100);
         ellipse(0,0,this.radius * 2, this.radius * 2);
     }
 
