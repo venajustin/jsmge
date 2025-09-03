@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Protected</title>
+  </head>
+  <body>
+    <div style="display: flex; justify-content: center">
+      <button id="protected-button">Access Protected</button>
+    </div>
+    <script>
+      document.getElementById("protected-button").addEventListener("click", async () => {
+        const token = localStorage.getItem("token"); // Retrieve the token from localStorage
+
+        if (!token) {
+          alert("You are not logged in. Please log in first.");
+          return;
+        }
+
+        try {
+          const response = await fetch("/protected", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert(data.message); // Display the success message
+          } else {
+            alert(data.message || "Failed to access the protected route.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while accessing the protected route.");
+        }
+      });
+    </script>
+  </body>
+</html>
