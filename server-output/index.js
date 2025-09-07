@@ -24,6 +24,10 @@ import {createGame, GameState} from './server-core/game.js';
 
 // import {} from '../usrcode/test.js';
 
+import {createGame, GameState} from './server-core/game.js';
+
+// import {} from '../usrcode/test.js';
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -34,6 +38,7 @@ const server = createServer(app);
 const io = new Server(server);
 debug_set_env();
 
+const game = createGame();
 const flask = "http://127.0.0.1/app/2/"
 
 const game = createGame();
@@ -86,6 +91,7 @@ app.get("/test/:inputnum", (req, res) => {
 app.get("/status", (req, res) => {
     res.send(game.state);
 });
+
 
 app.get("/files", (req, res) => {
   const getFilesFlat = (dirPath) => {
@@ -263,6 +269,12 @@ io.on('connection', (socket) => {
     //     io.to(sessionId).emit('chat message', "you just sent this ^ ");
     //     console.log(msg);
     // });
+    // chat room test:
+    // socket.on('chat message', (msg) => {
+    //     io.emit('chat message', msg);
+    //     io.to(sessionId).emit('chat message', "you just sent this ^ ");
+    //     console.log(msg);
+    // });
 });
 
 
@@ -284,6 +296,7 @@ async function test_db(res) {
 app.get('/test-db', (req, res) => {
    test_db(res);
 });
+
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
