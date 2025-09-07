@@ -54,6 +54,7 @@
   border-radius: 3px;
   position: absolute;
   z-index: 1000;
+  color: black;
 }
 
 .context-menu button {
@@ -63,8 +64,10 @@
   cursor: pointer;
   width: 100%;
   text-align: left;
+  color: black;
 }
 
 .context-menu button:hover {
   background: #f0f0f0;
+  color: black;
 }
