@@ -8,7 +8,7 @@ import "../css/fileExplorer.css";
 import { useEffect } from "react";
 import { useState } from "react";
 import ContextMenu from "./ContextMenu";
-import { io } from "socket.io-client"
+// import { io } from "socket.io-client"
 
 
 
@@ -95,6 +95,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     // Call fetchFiles immediately
     fetchFiles();
 
+    // TODO: remove this, and call it on socket responce
     // Set up an interval to call fetchFiles every second
     const intervalId = setInterval(fetchFiles, 250);
 
@@ -127,7 +128,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
   }
     
 
-    fetch(SERVER_URL + `/files?filename=${encodeURIComponent(contextMenu.file)}`, {
+    fetch(new URL(SERVER_URL, "/files/", contextMenu.file), {
       method: "DELETE",
     })
       .then((response) => {
@@ -171,10 +172,10 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     const fullPath =
       contextMenu.file === "" ? filename : contextMenu.file + "/" + filename;
 
-    fetch(SERVER_URL + "/files", {
+    fetch(SERVER_URL + "/files/" + fullPath, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ filename: fullPath, content: "" }),
+      body: JSON.stringify({ content: "" }),
     })
       .then((response) => {
         if (response.ok) {
@@ -219,7 +220,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
 };
 
   const handleFileClick = (filename) => {
-    fetch(SERVER_URL + `/file?filename=${encodeURIComponent(filename)}`)
+    fetch(SERVER_URL +  `/files/${filename}`)
       .then((response) => response.json())
       .then((data) =>{
         console.log(data)

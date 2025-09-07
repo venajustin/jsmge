@@ -125,10 +125,13 @@ app.get("/testConnection", (req,res) => {
 })
 
 
-app.post("/files", (req, res) => {
+app.post("/files/*", (req, res) => {
   //console.log(req.headers);
   console.log(req.body);
-  const {filename, content } = req.body;
+
+  const filename = req.params[0];
+  const { content } = req.body;
+
   if(!filename){
     return res.status(400).send("Filename is required.");
   }
@@ -143,9 +146,11 @@ app.post("/files", (req, res) => {
 });
 
 //This delete is currently done by a query which could be still used in the future alongside a proj id and user account
-app.delete("/files", (req, res) => {
-  const { filename } = req.query;
-  if (!filename) {
+app.delete("/files/*", (req, res) => {
+
+    const filename = req.params[0];
+
+    if (!filename) {
     return res.status(400).send("Filename is required.");
   }
   const filePath = path.join(code, filename);
@@ -163,9 +168,10 @@ app.delete("/files", (req, res) => {
   }
 });
 
-app.get("/file", (req, res) => {
+app.get("/files/*", (req, res) => {
   console.log("Checking for file")
-  const { filename } = req.query;
+  const filename = req.params[0];
+  console.log(filename);
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
