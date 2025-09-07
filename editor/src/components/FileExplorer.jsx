@@ -128,7 +128,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
   }
     
 
-    fetch(new URL(SERVER_URL, "/files/", contextMenu.file), {
+    fetch(SERVER_URL + "/files/" + contextMenu.file, {
       method: "DELETE",
     })
       .then((response) => {
