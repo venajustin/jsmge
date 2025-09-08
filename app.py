@@ -6,7 +6,7 @@ import shutil
 from flask import jsonify
 import jwt
 from functools import wraps
-# from flask_cors import CORS
+from flask_cors import CORS
 from engine.docker.dockersetup import setup, shutdown
 from engine.docker.nodeimages import (
     new_app,
@@ -23,7 +23,7 @@ import bcrypt
 import datetime
 
 app = Flask(__name__)
-# CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 jenv = Environment(loader=FileSystemLoader("templates"))
 
 example_script = jenv.get_template("example.js").render()
@@ -52,6 +52,8 @@ def token_required(f):
             return jsonify({"message": "Invalid token"}), 401
         return f(*args, **kwargs)
     return decorated
+
+
 # test connection to database
 def test_connection():
     print("giving time to wait for db to start")
@@ -178,15 +180,15 @@ def test_register():
     try:
         conn = get_connection()
         cur = conn.cursor()
-        user = request.form.get("username")
+        # user = request.form.get("username")
         passWord = request.form.get("password")
         email = request.form.get("email")
 
         cur.execute(
             """
-            insert into users (username, email, password_hash) values (%s, %s, crypt(%s, gen_salt('bf')))  
+            insert into users (email, password) values ( %s, crypt(%s, gen_salt('bf')))  
         """,
-            (user, email, passWord),
+            (email, passWord),
         )
 
         conn.commit()
@@ -215,11 +217,12 @@ def prot():
 
 @app.route("/login", methods=["POST"])
 def login():
-    user = request.form.get("username")
+    email = request.form.get("email")
     password = request.form.get("password")
+    print(email, password)
 
-    if not user or not password:
-        return jsonify({"message": "username and password are required"}), 400
+    if not email or not password:
+        return jsonify({"message": "email and password are required"}), 400
 
     try:
         conn = get_connection()
@@ -227,26 +230,36 @@ def login():
 
         cur.execute(
             """
-        SELECT password_hash FROM users where username = %s  
+        SELECT password, uid FROM users where email = %s  
     """,
-            (user,),
+            (email,),
         )
 
         row = cur.fetchone()
 
         if row is None:
-            return jsonify({"message": "User was not found with associated username"})
+            return jsonify({"message": "User was not found with associated email"})
         else:
-            hashpw = row[0]
+            hashpw, uid = row
 
             if bcrypt.checkpw(password.encode("utf-8"), hashpw.encode("utf-8")):
                 # need to include either flask session here or JWT Acess token
                 expire = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
                 payload = {
-                    "username":user,
+                    "email":email,
                     "exp": expire
                 }
                 token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+                cur.execute(
+                    """
+                    INSERT INTO Sessions (uid, token, expire)
+                    VALUES (%s,%s,%s)
+                
+                    """,
+                    (uid, token, expire),
+                )
+                conn.commit()
                 
                 return jsonify({"message": "Login successful", "token": token})
 
@@ -258,7 +271,8 @@ def login():
 @app.route('/protected', methods=['GET'])
 @token_required
 def protected():
-    return jsonify({"message": f"Hello , {request.user}! This is a protected route."})
+    return jsonify({"message": f"Hello , {request.email}! This is a protected route."})
+
 # @app.route('/api/files', methods=['GET'])
 # def get_files():
 #         folder_path = './applications/1'

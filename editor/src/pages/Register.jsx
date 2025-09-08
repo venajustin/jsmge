@@ -42,6 +42,7 @@ const Register = () => {
   setEmailError('');
 
   // Your registration logic here
+  
   alert("Registration submitted!");
   };
 
