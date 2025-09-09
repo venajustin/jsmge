@@ -24,10 +24,6 @@ import {createGame, GameState} from './server-core/game.js';
 
 // import {} from '../usrcode/test.js';
 
-import {createGame, GameState} from './server-core/game.js';
-
-// import {} from '../usrcode/test.js';
-
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -41,7 +37,6 @@ debug_set_env();
 const game = createGame();
 const flask = "http://127.0.0.1/app/2/"
 
-const game = createGame();
 
 app.use(express.static('static'));
 app.use("/static", express.static("static"));
