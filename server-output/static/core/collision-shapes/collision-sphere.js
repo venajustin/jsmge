@@ -1,4 +1,4 @@
-class CollisionSphere {
+export class CollisionSphere {
 
     // copy constructor, allows objects to be easily cast to this type
     constructor(obj) {
@@ -22,10 +22,10 @@ class CollisionSphere {
         }
     }
 
-    _draw() {
-        fill(0,0,0,0);
-        stroke(0,0,50,100);
-        ellipse(0,0,this.radius * 2, this.radius * 2);
+    _draw(p) {
+        p.fill(0,0,0,0);
+        p.stroke(0,0,50,100);
+        p.ellipse(0,0,this.radius * 2, this.radius * 2);
     }
 
     // testShapeIntersection(shape) {

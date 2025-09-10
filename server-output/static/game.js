@@ -5,121 +5,131 @@
 // frameModule =  import("./core/frame.js");
 // import("./core/frame.js").then((frameMod) => {
 
+import { Scene } from  "/core/scene.js";
+import { Frame } from "/core/frame/frame.js";
+import { AnimatedSprite } from "/core/frame/animated-sprite.js";
+import { process_edit_input } from "/core/input/edit_input.js";
+import { Collider } from "/core/frame/collider.js";
+import { CollisionSphere } from "/core/collision-shapes/collision-sphere.js";
+import { edit_mouse_click, edit_mouse_press, edit_mouse_drag } from "/core/input/edit_input.js";
 
 let events = []
 
-function preload() {
-    scene = new Scene();
-    const obj1 = new Frame();
-    obj1._pos = {x:560,y:520,z:0};
+const sketch = (p) => {
 
-    horse = new Frame();
-    horse._pos = {x:500,y:500,z:0};
-    animSprite = new AnimatedSprite();
-    animSprite._pos = {x:-100,y:-80,z:0};
+    p.preload = () => {
+        p.scene = new Scene();
+        const obj1 = new Frame();
+        obj1._pos = {x:560,y:520,z:0};
 
-    horse_img = loadImage('/static/horse.png');
-    horse._children.push(animSprite);
+        p.horse = new Frame();
+        p.horse._pos = {x:500,y:500,z:0};
+        p.animSprite = new AnimatedSprite();
+        p.animSprite._pos = {x:-100,y:-80,z:0};
 
-    let coll = new Collider();
-    // coll._shape = new CollisionRect({width: 200, height: 200});
-    coll._shape = new CollisionSphere({radius: 50});
-    horse._children.push(coll);
+        p.horse_img = p.loadImage('/static/horse.png');
+        p.horse._children.push(p.animSprite);
 
-    scene._addObject(obj1);
-    scene._addObject(horse);
+        let coll = new Collider();
+        // coll._shape = new CollisionRect({width: 200, height: 200});
+        coll._shape = new CollisionSphere({radius: 50});
+        p.horse._children.push(coll);
 
-    scene._load();
+        p.scene._addObject(obj1);
+        p.scene._addObject(p.horse);
 
-}
+        p.scene._load();
 
-function setup() {
-    createCanvas(1600, 1200, P2D, document.getElementById('display-canvas'));
+    };
 
-    editState = {};
+    p.setup = () => {
+        p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
 
-    mode = 'edit';
-    animSprite._add_images(horse_img, 192, 144, 7);
-    animSprite.add_animation([0, 1, 2, 3, 4, 5, 6]);
-    animSprite.add_animation([0]);
-    animSprite.play_animation(1);
+        p.editState = {};
 
-
-}
-
-function keyPressed() {
-    if (key === 'r') {
-        location.reload();
-        // console.log("a pressed");
-        // let newnum = 0;
-        // events.forEach((num) => {
-        //     if (num >= newnum) {
-        //         newnum = parseint(num) + 1;
-        //     }
-        // });
-        // console.log("newnum: " + newnum);
-        // events.push(newnum.toString());
-    }
-}
-
-function draw() {
+        p.mode = 'edit';
+        p.animSprite._add_images(p.horse_img, 192, 144, 7);
+        p.animSprite.add_animation([0, 1, 2, 3, 4, 5, 6]);
+        p.animSprite.add_animation([0]);
+        p.animSprite.play_animation(1);
 
 
+    };
 
-    if (keyIsDown(65)) {
-        console.log(animSprite._pos.x);
-        horse._pos.x += -10;
+    p.keyPressed = () => {
+        if (p.key === 'r') {
+            location.reload();
+            // console.log("a pressed");
+            // let newnum = 0;
+            // events.forEach((num) => {
+            //     if (num >= newnum) {
+            //         newnum = parseint(num) + 1;
+            //     }
+            // });
+            // console.log("newnum: " + newnum);
+            // events.push(newnum.toString());
+        }
+    };
 
-    }
-
-    if (keyIsDown(68)) {
-        horse._pos.x += 10;
-    }
-
-    if (keyIsDown(65) || keyIsDown(68)) {
-        animSprite.play_animation(0);
-    } else {
-        animSprite.play_animation(1);
-    }
-
-
-    scene._update(null);
-
-    textSize(30);
-    scene._draw();
-    if (mode === 'edit') {
-        scene._draw_editor();
-    }
-    if (mode === 'edit') {
-        process_edit_input(editState);
-    }
-
-    // message telling user to focus page
-    if (!focused) {
-        fill(0,0,0,100);
-        rect(0,0,1600,1200);
-        fill(0,0,0,255);
-        textAlign(CENTER, CENTER);
-        text("Click To Focus", 500, 400);
-    }
-
-}
-
-function mousePressed() {
-    if (mode === 'edit') {
-        edit_mouse_press(editState);
-    }
-}
-
-function mouseDragged() {
-    if (mode === 'edit') {
-        edit_mouse_drag(editState);
-    }
-}
-function mouseReleased() {
-    if (mode === 'edit') {
-        edit_mouse_click(editState);
-    }
-}
+    p.draw = () => {
 
 
+
+        if (p.keyIsDown(65)) {
+            console.log(p.animSprite._pos.x);
+            p.horse._pos.x += -10;
+
+        }
+
+        if (p.keyIsDown(68)) {
+            p.horse._pos.x += 10;
+        }
+
+        if (p.keyIsDown(65) || p.keyIsDown(68)) {
+            p.animSprite.play_animation(0);
+        } else {
+            p.animSprite.play_animation(1);
+        }
+
+
+        p.scene._update(null);
+
+        p.textSize(30);
+        p.scene._draw(p);
+        if (p.mode === 'edit') {
+            p.scene._draw_editor(p);
+        }
+        if (p.mode === 'edit') {
+            process_edit_input(p, p.editState);
+        }
+
+        // message telling user to focus page
+        if (!p.focused) {
+            p.fill(0,0,0,100);
+            p.rect(0,0,1600,1200);
+            p.fill(0,0,0,255);
+            p.textAlign(p.CENTER, p.CENTER);
+            p.text("Click To Focus", 500, 400);
+        }
+
+    };
+
+    p.mousePressed = () => {
+        if (p.mode === 'edit') {
+            edit_mouse_press(p, p.editState);
+        }
+    };
+
+    p.mouseDragged = () => {
+        if (p.mode === 'edit') {
+            edit_mouse_drag(p, p.editState);
+        }
+    };
+    p.mouseReleased = () => {
+        if (p.mode === 'edit') {
+            edit_mouse_click(p, p.editState);
+        }
+    };
+};
+
+const p5_session = new p5(sketch);

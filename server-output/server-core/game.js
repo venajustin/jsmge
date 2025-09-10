@@ -7,6 +7,7 @@ export const GameState = Object.freeze({
 export function createGame() {
     let game = {
         state: GameState.EDIT,
+        active_scene: "",
         players: [] // maybe switch to set or map
     }
     return game;

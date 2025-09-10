@@ -1,4 +1,4 @@
-class CollisionRect {
+export class CollisionRect {
 
     // copy constructor, allows objects to be easily cast to this type
     constructor(obj) {
@@ -22,10 +22,10 @@ class CollisionRect {
         }
     }
 
-    _draw() {
-        fill(0,0,0,0);
-        stroke(0,0,50,100);
-        rect(-1 * this.width / 2,-1 * this.height / 2,this.width, this.height);
+    _draw(p) {
+        p.fill(0,0,0,0);
+        p.stroke(0,0,50,100);
+        p.rect(-1 * this.width / 2,-1 * this.height / 2,this.width, this.height);
     }
 
     // testShapeIntersection(shape) {

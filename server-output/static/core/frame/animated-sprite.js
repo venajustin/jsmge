@@ -1,5 +1,7 @@
 
-class AnimatedSprite extends Frame {
+import { Frame } from "/core/frame/frame.js";
+
+export class AnimatedSprite extends Frame {
 
     // copy constructor, allows objects to be easily cast to this type
     constructor(obj) {
@@ -14,20 +16,20 @@ class AnimatedSprite extends Frame {
     _speed = .15;
 
 
-    _draw() {
+    _draw(p) {
 
-        push();
-        translate(this._pos.x,this._pos.y,this._pos.z);
-        rotate(this._rot.x,this._rot.y,this._rot.z);
-        scale(this._sca.x,this._sca.y,this._sca.z);
+        p.push();
+        p.translate(this._pos.x,this._pos.y,this._pos.z);
+        p.rotate(this._rot.x,this._rot.y,this._rot.z);
+        p.scale(this._sca.x,this._sca.y,this._sca.z);
         const index = Math.floor(this._index);
 
-        image(this._frames[index], 0, 0);
+        p.image(this._frames[index], 0, 0);
 
         this._children.forEach((child) => {
-            child._draw();
+            child._draw(p);
         });
-        pop();
+        p.pop();
     }
 
     _load() {

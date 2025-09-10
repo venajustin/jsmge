@@ -8,15 +8,15 @@ class Scene {
         srcObj && Object.assign(this,srcObj);
     }
 
-    _draw() {
-        clear()
+    _draw(p) {
+        p.clear()
         this._objects.forEach((o) => {
-            o._draw();
+            o._draw(p);
         });
     }
-    _draw_editor() {
+    _draw_editor(p) {
         this._objects.forEach((o) => {
-            o._draw_editor();
+            o._draw_editor(p);
         });
     }
 
@@ -24,10 +24,10 @@ class Scene {
         this._objects.push(obj);
     }
 
-    _edit_drag_intersect(point, editState) {
+    _edit_drag_intersect(p, point, editState) {
         let output = [];
         this._objects.forEach((o) => {
-           output.push(...o._edit_drag_intersect(point, editState));
+           output.push(...o._edit_drag_intersect(p, point, editState));
         });
         return output;
     }
@@ -45,4 +45,7 @@ class Scene {
     }
 
 }
+
+
+export { Scene } ;
 

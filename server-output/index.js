@@ -103,6 +103,17 @@ fs.watch(user_code_dir, {recursive: true}, () => {
 
 });
 
+import { Scene } from './static/core/scene.js';
+
+app.get('/tests/', (req,res) => {
+
+    // creating scene draft
+    const nscene = new Scene();
+
+    res.send("Tests complete");
+
+
+});
 
 app.get("/old-root", (req, res) => {
     let testhtml = "";
@@ -357,3 +368,4 @@ app.get('/test-db', (req, res) => {
 server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
+

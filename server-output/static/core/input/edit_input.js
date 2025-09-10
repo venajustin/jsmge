@@ -1,21 +1,21 @@
 
-function process_edit_input(editState) {
+export function process_edit_input(p, editState) {
 
     // function to check on key states
     // there are also keys mapped out as callbacks
 
 }
 
-function edit_mouse_press(editState) {
+export function edit_mouse_press(p, editState) {
     editState.lockX = false;
     editState.lockY = false;
-    const point = {x:mouseX, y:mouseY};
-    editState.selected = scene._edit_drag_intersect(point, editState);
+    const point = {x:p.mouseX, y:p.mouseY};
+    editState.selected = p.scene._edit_drag_intersect(p, point, editState);
     editState.dragLast = point;
 }
 
-function edit_mouse_drag(editState) {
-    const point = {x:mouseX, y:mouseY};
+export function edit_mouse_drag(p, editState) {
+    const point = {x:p.mouseX, y:p.mouseY};
     const dx = point.x - editState.dragLast.x;
     const dy = point.y - editState.dragLast.y;
     if (editState.selected.length > 0) {
@@ -49,7 +49,7 @@ function edit_mouse_drag(editState) {
     editState.dragLast = point;
 }
 
-function edit_mouse_click(editState) {
+export function edit_mouse_click(p, editState) {
     editState.selected = undefined;
 }
 
