@@ -7,9 +7,20 @@ import GamePreview from "../components/GamePreview.jsx";
 
 const Editor = ({appid}) => {
 
-    
 
-    const SERVER = `http://127.0.0.1/app/${appid}`.trim()
+    let SERVER;
+
+    // TODO: remove this feature, used for testing on local machine
+    if (appid == 9999999) {
+        console.log("APP_ID:" + appid); 
+        SERVER = `http://127.0.0.1:3000`.trim()
+    } else {
+
+        //TODO make this const when you remove the conditional
+        SERVER = `http://127.0.0.1/app/${appid}`.trim()
+    }
+
+
 
     let code_width = useState(400)
 

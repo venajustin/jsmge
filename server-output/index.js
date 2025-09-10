@@ -3,7 +3,7 @@ import path from "path";
 import * as fs from 'node:fs';
 
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
-const user_code_dir = "./test-usrcode";
+const user_code_dir = "./testUsr";
 
 import { createServer } from "node:http";
 import  { Server } from "socket.io";
@@ -22,6 +22,7 @@ import {debug_set_env} from "./server/util.js";
 
 import {createGame, GameState} from './server-core/game.js';
 
+
 // import {} from '../usrcode/test.js';
 
 const app = express();
@@ -30,13 +31,13 @@ const port = process.env.PORT || 3000;
 const code = "testUsr" // temp will need to change this to /usrcode
 
 
-const server = createServer(app);
-const io = new Server(server);
 debug_set_env();
 
 const game = createGame();
 const flask = "http://127.0.0.1/app/2/"
 
+
+const editors = [];
 
 app.use(express.static('static'));
 app.use("/static", express.static("static"));
@@ -52,10 +53,55 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
+app.use(cors({ origin: "http://localhost:5173" }));
+
+const server = createServer(app);
+const io = new Server(server,
+    {
+        cors: {
+            origin: "http://localhost:5173",
+            methods: ["GET", "POST"]
+        }
+    });
+
 io.engine.use(sessionMiddleware);
 
 //this is temporary fix for testing development
-app.use(cors({ origin: "http://localhost:5173" }));
+
+
+// watch files in the user's code directory to update editor
+fs.watch(user_code_dir, {recursive: true}, () => {
+
+
+  const getFilesFlat = (dirPath) => {
+    const items = fs.readdirSync(dirPath, { withFileTypes: true });
+    let files = [];
+    items.forEach((item) => {
+      const itemPath = path.join(dirPath, item.name);
+      if (item.isDirectory()) {
+        files = files.concat(getFilesFlat(itemPath)); // Recursively add files
+      } else {
+        files.push(itemPath); // Add file path
+      }
+    });
+    return files;
+  };
+
+  try {
+    const files = getFilesFlat(code); // Get all files as a flat list
+
+    // update all connected editors
+    editors.forEach((editor) => {
+
+        io.to(editor).emit('files_update', files);
+    });
+
+  } catch (error) {
+    console.error("Error reading folder:", error);
+  }
+
+
+});
 
 
 app.get("/old-root", (req, res) => {
@@ -242,8 +288,23 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+
     const sessionId = socket.request.session.id;
     socket.join(sessionId);
+
+    console.log("session: " + sessionId);
+
+    const clientType = socket.handshake.query.clientType;
+    if (clientType === "react-editor") {
+        console.log("Editor connected: " + sessionId);
+        editors.push(sessionId);
+
+        socket.on('disconnect',() => {
+            editors.splice(editors.indexOf(sessionId),1);
+        });
+        return;
+    }
+
 
     if (game.state === GameState.EDIT) {
         io.to(sessionId).emit('game_status', "edit");
@@ -293,6 +354,6 @@ app.get('/test-db', (req, res) => {
 });
 
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
