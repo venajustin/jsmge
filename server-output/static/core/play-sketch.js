@@ -1,9 +1,3 @@
-// let frameModule;
-// possibly conditional import depending on server/client 
-// aka ` if (typeof window === "undefined") { `
-
-// frameModule =  import("./core/frame.js");
-// import("./core/frame.js").then((frameMod) => {
 
 import { Scene } from  "/core/scene.js";
 import { Frame } from "/core/frame/frame.js";
@@ -15,9 +9,8 @@ import { edit_mouse_click, edit_mouse_press, edit_mouse_drag } from "/core/input
 import { editSketch } from "/core/edit-sketch.js";
 import { setSession } from "/core/session.js";
 
-let events = []
 
-const sketch = (p) => {
+const playSketch = (p) => {
 
     p.preload = () => {
         p.scene = new Scene();
@@ -59,17 +52,11 @@ const sketch = (p) => {
     };
 
     p.keyPressed = () => {
-        if (p.key === 'r') {
-            location.reload();
-            // console.log("a pressed");
-            // let newnum = 0;
-            // events.forEach((num) => {
-            //     if (num >= newnum) {
-            //         newnum = parseint(num) + 1;
-            //     }
-            // });
-            // console.log("newnum: " + newnum);
-            // events.push(newnum.toString());
+        // Enter edit mode
+        // TODO: make this triggered externally
+        if (p.key === 'p') {
+            p.remove();
+            setSession(editSketch);
         }
     };
 
@@ -98,12 +85,6 @@ const sketch = (p) => {
 
         p.textSize(30);
         p.scene._draw(p);
-        if (p.mode === 'edit') {
-            p.scene._draw_editor(p);
-        }
-        if (p.mode === 'edit') {
-            process_edit_input(p, p.editState);
-        }
 
         // message telling user to focus page
         if (!p.focused) {
@@ -117,25 +98,8 @@ const sketch = (p) => {
 
     };
 
-    p.mousePressed = () => {
-        if (p.mode === 'edit') {
-            edit_mouse_press(p, p.editState);
-        }
-    };
-
-    p.mouseDragged = () => {
-        if (p.mode === 'edit') {
-            edit_mouse_drag(p, p.editState);
-        }
-    };
-    p.mouseReleased = () => {
-        if (p.mode === 'edit') {
-            edit_mouse_click(p, p.editState);
-        }
-    };
-};
-
-// const p5_session = new p5(sketch);
-setSession(editSketch);
 
 
+}
+
+export { playSketch };
