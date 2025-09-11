@@ -6,7 +6,7 @@ const Login = () => {
   const handleLogin = async(e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const username = formData.get("username");
+    const username = formData.get("email");
     const password = formData.get("password");
 
     try {
@@ -57,8 +57,8 @@ return (
           <div style={{marginBottom: "10px"}}>
             <input
               type="text"
-              placeholder="Username"
-              name="username"
+              placeholder="john@doe.com"
+              name="email"
               className="custom-input"
               required
               style={{ width: "100%", padding: "8px" }}

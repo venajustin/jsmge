@@ -23,7 +23,7 @@ import bcrypt
 import datetime
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost"}}) # might get deleted when public
 jenv = Environment(loader=FileSystemLoader("templates"))
 
 example_script = jenv.get_template("example.js").render()
@@ -43,9 +43,26 @@ def token_required(f):
         if not token:
             return jsonify({"message": "Token is missing"}), 401
         try:
+            conn = get_connection()
+            cur = conn.cursor()
             token = token.split(" ")[1] if " " in token else token
+            cur.execute(
+                "SELECT uid, expire FROM Sessions WHERE token = %s",
+                (token,)
+            )
+            session_row = cur.fetchone()
+            if session_row is None:
+                return jsonify({"message": "Session not found or expired"}), 401
+            uid, expire = session_row
+            if expire < datetime.datetime.utcnow():
+                return jsonify({"message": "Session expired"}), 401
+
+            # Decode JWT and attach user info
             payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            request.user = payload["username"]  # Attach user info to the request
+            request.email = payload["email"]
+            # request.uid = uid
+
+            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             return jsonify({"message": "Token has expired"}), 401
         except jwt.InvalidTokenError:
