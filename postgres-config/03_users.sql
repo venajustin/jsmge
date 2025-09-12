@@ -28,7 +28,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Corrected trigger definition
+
 CREATE TRIGGER clean_expired_tokens
 AFTER INSERT OR UPDATE ON Sessions 
 FOR EACH ROW

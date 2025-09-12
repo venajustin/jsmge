@@ -18,16 +18,16 @@ const Register = () => {
     return emailRegex.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
   e.preventDefault();
 
   const formData = new FormData(e.target);
-  const email = formData.get('Email');
-  const username = formData.get('username');
+  const email = formData.get('email');
+  //const username = formData.get('username');
   const password = formData.get('password');
 
   // Check if any field is empty
-  if (!email.trim() || !username.trim() || !password.trim()) {
+  if (!email.trim()  || !password.trim()) {
     setEmailError('All fields are required.');
     return;
   }
@@ -42,8 +42,20 @@ const Register = () => {
   setEmailError('');
 
   // Your registration logic here
+  try{
+    const response = await fetch("http://127.0.0.1:5000/register", {
+      method: "POST",
+      body : formData,
+    });
+    alert("Registration complete");
+    window.location.href = "/";
+  }
+  catch (err) {
+    console.error("error during login:", err);
+    alert("An error occured. Please try again")
+  }
   
-  alert("Registration submitted!");
+  
   };
 
   const handleEmailChange = () => {
@@ -84,14 +96,14 @@ const Register = () => {
               <input
                 type="email"
                 placeholder="John@email.com"
-                name="Email"
+                name="email"
                 className="custom-input"
                 required
                 onChange={handleEmailChange}
                 style={{ width: "100%", padding: "8px" }}
               />
             </div>
-            <div style={{ marginBottom: "10px" }}>
+            {/* <div style={{ marginBottom: "10px" }}>
               <input
                 type="text"
                 placeholder="Username"
@@ -100,7 +112,7 @@ const Register = () => {
                 required
                 style={{ width: "100%", padding: "8px" }}
               />
-            </div>
+            </div> */}
             <div style={{ marginBottom: "10px" }}>
               <input
                 type="password"

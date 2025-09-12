@@ -15,6 +15,7 @@ import cors from "cors"
 //import {setupCanvas} from './server/canvas.js';
 import {get_client} from "./server/database/connect-db.js";
 import {debug_set_env} from "./server/util.js";
+import { nextTick } from "node:process";
 
 
 const app = express();
@@ -44,8 +45,38 @@ app.use(sessionMiddleware);
 io.engine.use(sessionMiddleware);
 
 //this is temporary fix for testing development
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: "http://localhost" }));
 
+
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if(!authHeader) {
+    return res.status(401).json({message: "Token is missing"})
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try{
+    const response = await fetch("http://127.0.0.1:5000/protected", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if(response.ok){
+      const data = await response.json();
+      req.user = data;
+      next();
+    }else {
+      const errorData = await response.json();
+      return res.status(401).json({message: errorData.message});
+    }
+  }catch (error){
+    console.error("Error verifying token:", error.message);
+    return res.status(500).json({message: "Internal server error"});
+  }
+}
 
 app.get("/old-root", (req, res) => {
     let testhtml = "";
@@ -72,7 +103,7 @@ app.get("/test/:inputnum", (req, res) => {
     res.send("hello from container, " + msg + " <br> param: " + req.params.inputnum + " <br> query: " + req.query.inputnum );
 });
 
-app.get("/status", (req, res) => {
+app.get("/status", verifyToken, (req, res) => {
     res.send("running");
 });
 
