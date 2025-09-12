@@ -22,6 +22,11 @@ import {debug_set_env} from "./server/util.js";
 
 import {createGame, GameState} from './server-core/game.js';
 
+// used for saving/loading scenes
+import ESSerializer from "esserializer";
+
+
+
 
 // import {} from '../usrcode/test.js';
 
@@ -103,12 +108,11 @@ fs.watch(user_code_dir, {recursive: true}, () => {
 
 });
 
-import { Scene } from './static/core/scene.js';
 
+import {testScenes} from './tests/testscenes.js';
 app.get('/tests/', (req,res) => {
 
-    // creating scene draft
-    const nscene = new Scene();
+    testScenes();
 
     res.send("Tests complete");
 

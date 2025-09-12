@@ -1,6 +1,9 @@
 {
   "name": "game-server",
   "type": "module",
+  "imports": {
+      "#static/*.js": "./static/*.js"
+  },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

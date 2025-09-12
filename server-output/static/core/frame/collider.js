@@ -1,4 +1,4 @@
-import { Frame } from "/core/frame/frame.js";
+import { Frame } from "#static/core/frame/frame.js";
 
 export class Collider extends Frame {
     // copy constructor, allows objects to be easily cast to this type

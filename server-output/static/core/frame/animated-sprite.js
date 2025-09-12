@@ -1,5 +1,5 @@
 
-import { Frame } from "/core/frame/frame.js";
+import { Frame } from "#static/core/frame/frame.js";
 
 export class AnimatedSprite extends Frame {
 
