@@ -16,6 +16,7 @@
 
     <!-- p5 library -->
     <script src="/libraries/p5.min.js"></script>
+    <script src="/libraries/esserializer.js"></script>
 
     <!--    <script type="module" src="/core/frame/frame.js"></script> -->
     <!--    <script type="module" src="/core/scene.js"></script> -->
@@ -43,25 +44,7 @@
         Game is paused, please start the game or edit through the editor
     </h1> -->
 
-<script type="module">
-   
-    import { Scene } from '#static/core/scene.js';
-    import { Frame } from '#static/core/frame/frame.js';
-    import { AnimatedSprite } from '#static/core/frame/animated-sprite.js';
-    import { Collider } from '#static/core/frame/collider.js';
-    import { CollisionSphere } from '#static/core/collision-shapes/collision-sphere.js';
 
-    // testing 
-    import('#static/utility/class-list.js').then((module) => {
-        module.getClassList().then(
-            (a) => a.map(([a]) =>  {
-                        const b = eval(a);
-                        console.log(b);
-                    })
-                )
-            
-        });
-</script>
 <!--        chat room test-->
 <!--    <form id="form" action="">-->
 <!--        <input id="input" autocomplete="off" /><button>Send</button>-->

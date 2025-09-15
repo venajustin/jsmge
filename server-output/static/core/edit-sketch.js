@@ -7,52 +7,58 @@ import { CollisionSphere } from "/core/collision-shapes/collision-sphere.js";
 import { edit_mouse_click, edit_mouse_press, edit_mouse_drag } from "/core/input/edit_input.js";
 import { setSession } from "/core/session.js";
 import { playSketch } from "/core/play-sketch.js";
+import {loadScene} from "#static/utility/load-scene.js";
 
 
 const editSketch = (p) => {
-
+    p.started = false
 
     p.preload = () => {
 
-        // TODO: load scene from file 
-        // preload objects
 
-        p.scene = new Scene();
-        const obj1 = new Frame();
-        obj1._pos = {x:560,y:520,z:0};
 
-        p.horse = new Frame();
-        p.horse._pos = {x:500,y:500,z:0};
-        p.animSprite = new AnimatedSprite();
-        p.animSprite._pos = {x:-100,y:-80,z:0};
 
-        p.horse_img = p.loadImage('/static/horse.png');
-        p.horse._children.push(p.animSprite);
 
-        let coll = new Collider();
-        // coll._shape = new CollisionRect({width: 200, height: 200});
-        coll._shape = new CollisionSphere({radius: 50});
-        p.horse._children.push(coll);
-
-        p.scene._addObject(obj1);
-        p.scene._addObject(p.horse);
-
-        p.scene._load();
+        // // TODO: load scene from file
+        // // preload objects
+        //
+        // p.scene = new Scene();
+        // const obj1 = new Frame();
+        // obj1._pos = {x:560,y:520,z:0};
+        //
+        // p.horse = new Frame();
+        // p.horse._pos = {x:500,y:500,z:0};
+        // p.animSprite = new AnimatedSprite();
+        // p.animSprite._pos = {x:-100,y:-80,z:0};
+        //
+        // p.horse_img = p.loadImage('/static/horse.png');
+        // p.horse._children.push(p.animSprite);
+        //
+        // let coll = new Collider();
+        // // coll._shape = new CollisionRect({width: 200, height: 200});
+        // coll._shape = new CollisionSphere({radius: 50});
+        // p.horse._children.push(coll);
+        //
+        // p.scene._addObject(obj1);
+        // p.scene._addObject(p.horse);
+        //
+        // p.scene._load();
 
     };
 
-    p.setup = () => {
+    p.setup = async () => {
+
         p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
+
+        const response = await fetch("/files/scenes/testscene1.scene", {method:'GET'});
+        const scene_json = await response.json();
+        p.scene = await loadScene(scene_json.content);
 
         p.editState = {};
 
         p.mode = 'edit';
-        p.animSprite._add_images(p.horse_img, 192, 144, 7);
-        p.animSprite.add_animation([0, 1, 2, 3, 4, 5, 6]);
-        p.animSprite.add_animation([0]);
-        p.animSprite.play_animation(1);
 
-
+        p.started = true;
     };
 
     p.keyPressed = () => {
@@ -71,6 +77,9 @@ const editSketch = (p) => {
     };
 
     p.draw = () => {
+        if (!p.started) {
+            return;
+        }
         p.scene._update(null);
 
         p.textSize(30);
