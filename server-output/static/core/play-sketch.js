@@ -8,45 +8,27 @@ import { CollisionSphere } from "/core/collision-shapes/collision-sphere.js";
 import { edit_mouse_click, edit_mouse_press, edit_mouse_drag } from "/core/input/edit_input.js";
 import { editSketch } from "/core/edit-sketch.js";
 import { setSession } from "/core/session.js";
+import {loadScene} from "#static/utility/load-scene.js";
 
 
 const playSketch = (p) => {
 
-    p.preload = () => {
-        p.scene = new Scene();
-        const obj1 = new Frame();
-        obj1._pos = {x:560,y:520,z:0};
-
-        p.horse = new Frame();
-        p.horse._pos = {x:500,y:500,z:0};
-        p.animSprite = new AnimatedSprite();
-        p.animSprite._pos = {x:-100,y:-80,z:0};
-
-        p.horse_img = p.loadImage('/static/horse.png');
-        p.horse._children.push(p.animSprite);
-
-        let coll = new Collider();
-        // coll._shape = new CollisionRect({width: 200, height: 200});
-        coll._shape = new CollisionSphere({radius: 50});
-        p.horse._children.push(coll);
-
-        p.scene._addObject(obj1);
-        p.scene._addObject(p.horse);
-
-        p.scene._load(p);
-
-    };
-
-    p.setup = () => {
+    p.setup = async () => {
         p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
+
+
+        const response = await fetch("/files/scenes/testscene1.scene", {method:'GET'});
+        const scene_json = await response.json();
+        p.scene = await loadScene(scene_json.content);
+        await p.scene._load(p);
+
 
         p.editState = {};
 
-        p.mode = 'edit';
-        p.animSprite._add_images(p.horse_img, 192, 144, 7);
-        p.animSprite.add_animation([0, 1, 2, 3, 4, 5, 6]);
-        p.animSprite.add_animation([0]);
-        p.animSprite.play_animation(1);
+        p.mode = 'play';
+
+
+        p.started = true;
 
 
     };
@@ -61,24 +43,26 @@ const playSketch = (p) => {
     };
 
     p.draw = () => {
-
-
-
-         if (p.keyIsDown(65)) {
-            console.log(p.animSprite._pos.x);
-            p.horse._pos.x += -10;
-
+        if (!p.started) {
+            return;
         }
 
-        if (p.keyIsDown(68)) {
-            p.horse._pos.x += 10;
-        }
 
-        if (p.keyIsDown(65) || p.keyIsDown(68)) {
-            p.animSprite.play_animation(0);
-        } else {
-            p.animSprite.play_animation(1);
-        }
+        //  if (p.keyIsDown(65)) {
+        //     console.log(p.animSprite._pos.x);
+        //     p.horse._pos.x += -10;
+        //
+        // }
+        //
+        // if (p.keyIsDown(68)) {
+        //     p.horse._pos.x += 10;
+        // }
+        //
+        // if (p.keyIsDown(65) || p.keyIsDown(68)) {
+        //     p.animSprite.play_animation(0);
+        // } else {
+        //     p.animSprite.play_animation(1);
+        // }
 
 
         p.scene._update(null);
