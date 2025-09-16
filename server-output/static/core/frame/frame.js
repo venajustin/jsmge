@@ -10,7 +10,6 @@ export class Frame {
     _sca = { x:1,y:1,z:1 };
     _parent = undefined;
     _children = [];
-    _input_handlers = [];
 
 
     _apply_transforms(p) {
@@ -28,7 +27,14 @@ export class Frame {
         });
         p.pop();
     }
+
+    handle_input(inputs) {
+
+    }
     _update(inputs) {
+        this.handle_input(inputs);
+
+
         this._children.forEach((o) => {
             o._update(inputs);
         });

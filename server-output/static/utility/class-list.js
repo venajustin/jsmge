@@ -8,7 +8,8 @@ export async function getClassList() {
         '#static/core/frame/frame.js',
         '#static/core/frame/animated-sprite.js',
         '#static/core/frame/collider.js',
-        '#static/core/collision-shapes/collision-sphere.js'
+        '#static/core/collision-shapes/collision-sphere.js',
+        '#static/core/frame/TestFrame.js'
     ];
 
     let classes = [];

@@ -5,6 +5,7 @@ import { AnimatedSprite } from "/core/frame/animated-sprite.js";
 import { process_edit_input } from "/core/input/edit_input.js";
 import { Collider } from "/core/frame/collider.js";
 import { CollisionSphere } from "/core/collision-shapes/collision-sphere.js";
+import { TestFrame } from "/core/frame/TestFrame.js";
 import { edit_mouse_click, edit_mouse_press, edit_mouse_drag } from "/core/input/edit_input.js";
 import { editSketch } from "/core/edit-sketch.js";
 import { setSession } from "/core/session.js";
@@ -47,25 +48,20 @@ const playSketch = (p) => {
             return;
         }
 
+        let inputs = [];
 
-        //  if (p.keyIsDown(65)) {
-        //     console.log(p.animSprite._pos.x);
-        //     p.horse._pos.x += -10;
-        //
-        // }
-        //
-        // if (p.keyIsDown(68)) {
-        //     p.horse._pos.x += 10;
-        // }
-        //
-        // if (p.keyIsDown(65) || p.keyIsDown(68)) {
-        //     p.animSprite.play_animation(0);
-        // } else {
-        //     p.animSprite.play_animation(1);
-        // }
+        if (p.keyIsDown(65)) {
+            inputs.push("move_left");
+
+        }
+
+        if (p.keyIsDown(68)) {
+            inputs.push("move_right");
+        }
 
 
-        p.scene._update(null);
+
+        p.scene._update(inputs);
 
         p.textSize(30);
         p.scene._draw(p);
@@ -82,11 +78,11 @@ const playSketch = (p) => {
 
     };
 
-    p.mousePressed = () => {
-        if (!p.focused) {
-            p.focused = true;
-        }
-    }
+    // p.mousePressed = () => {
+    //     if (!p.focused) {
+    //         p.focused = true;
+    //     }
+    // }
 
 
 

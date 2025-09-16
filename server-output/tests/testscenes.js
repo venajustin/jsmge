@@ -7,6 +7,8 @@ import { Frame } from '../static/core/frame/frame.js';
 import { AnimatedSprite } from '../static/core/frame/animated-sprite.js';
 import { Collider } from '../static/core/frame/collider.js';
 import { CollisionSphere } from '../static/core/collision-shapes/collision-sphere.js';
+import { TestFrame } from '../static/core/frame/TestFrame.js';
+
 
 import { getClassList } from '#static/utility/class-list.js';
 
@@ -18,6 +20,7 @@ import * as FrameExports from '../static/core/frame/frame.js';
 import * as AnimatedSpriteExports from '../static/core/frame/animated-sprite.js';
 import * as ColliderExports from '../static/core/frame/collider.js';
 import * as CollisionSphereExports from '../static/core/collision-shapes/collision-sphere.js';
+import * as TestFrameExports from '../static/core/frame/TestFrame.js';
 
 import  ESSerializer from 'esserializer';
 
@@ -29,9 +32,10 @@ export async function testScenes() {
 
     
     const obj1 = new Frame();
+
     obj1._pos = {x:560,y:520,z:0};
 
-    const horse = new Frame();
+    const horse = new TestFrame();
     horse._pos = {x:500,y:500,z:0};
     const animSprite = new AnimatedSprite();
     animSprite._pos = {x:-100,y:-80,z:0};
@@ -39,6 +43,8 @@ export async function testScenes() {
     animSprite._add_image_source('/static/horse.png',192, 144, 7 );
     animSprite.add_animation([0, 1, 2, 3, 4, 5, 6]);
     animSprite.add_animation([0]);
+
+
 
 //    horse_img = loadImage('/static/horse.png');
     //horse._children.push(animSprite);
