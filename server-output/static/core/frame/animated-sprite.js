@@ -8,6 +8,7 @@ export class AnimatedSprite extends Frame {
         super(obj)
     }
 
+    _image_sources = [];
     _frames = [];
     _index = 0;
     _animations = [];
@@ -24,7 +25,10 @@ export class AnimatedSprite extends Frame {
         p.scale(this._sca.x,this._sca.y,this._sca.z);
         const index = Math.floor(this._index);
 
-        p.image(this._frames[index], 0, 0);
+        if (this._frames[index]) {
+            p.image(this._frames[index], 0, 0);
+        }
+
 
         this._children.forEach((child) => {
             child._draw(p);
@@ -32,13 +36,34 @@ export class AnimatedSprite extends Frame {
         p.pop();
     }
 
-    _load() {
+    async _load(p) {
+
+        // TODO: make this mess parallel cause everything is sync rn
+        for (const imgSource of this._image_sources) {
+            p.loadImage(imgSource.img,
+                (img) => {
+                // success
+                   this._add_images(img, imgSource.w, imgSource.h, imgSource.count);
+
+                },
+                (e) => {
+                // fail
+                console.log("failed to load img: " + imgSource.img);
+            });
+
+        }
+
+       // const img = await p.loadImage('/static/horse.png');
+
+        //this._add_images(img,192, 144, 7 );
 
 
 
-        this._children.forEach((o) => {
-            o._load();
-        });
+        for (const o of this._children) {
+            await o._load(p);
+        }
+
+        this.play_animation(1);
     }
     _update(inputs) {
         this._animate();
@@ -54,6 +79,10 @@ export class AnimatedSprite extends Frame {
                 this._index = this._index - this._animations[this._selected_animation].length;
             }
         }
+    }
+
+    _add_image_source(img, w, h, count) {
+        this._image_sources.push({img: img, w: w, h: h, count: count});
     }
 
     // divides image into *count* number of frames

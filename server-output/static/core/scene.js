@@ -32,10 +32,10 @@ class Scene {
         return output;
     }
 
-    _load() {
-        this._objects.forEach((o) => {
-           o._load();
-        });
+    async _load(p) {
+        for (const o of this._objects) {
+           await o._load(p);
+        }
     }
 
     _update(inputs) {

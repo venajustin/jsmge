@@ -33,10 +33,10 @@ export class Frame {
         });
     }
 
-    _load() {
-        this._children.forEach((o) => {
-            o._load();
-        });
+    async _load(p) {
+        for (const o of this._children) {
+            await o._load(p);
+        }
     }
 
     _draw_editor(p) {

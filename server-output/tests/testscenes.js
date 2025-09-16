@@ -28,13 +28,17 @@ export async function testScenes() {
     const nscene = new SceneExports.Scene();
 
     
-    const obj1 = new FrameExports.Frame();
+    const obj1 = new Frame();
     obj1._pos = {x:560,y:520,z:0};
 
-    const horse = new FrameExports.Frame();
+    const horse = new Frame();
     horse._pos = {x:500,y:500,z:0};
-    const animSprite = new AnimatedSpriteExports.AnimatedSprite();
+    const animSprite = new AnimatedSprite();
     animSprite._pos = {x:-100,y:-80,z:0};
+
+    animSprite._add_image_source('/static/horse.png',192, 144, 7 );
+    animSprite.add_animation([0, 1, 2, 3, 4, 5, 6]);
+    animSprite.add_animation([0]);
 
 //    horse_img = loadImage('/static/horse.png');
     //horse._children.push(animSprite);
@@ -43,9 +47,11 @@ export async function testScenes() {
     // coll._shape = new CollisionRect({width: 200, height: 200});
     coll._shape = new CollisionSphereExports.CollisionSphere({radius: 50});
     horse._children.push(coll);
+    horse._children.push(animSprite);
 
     nscene._addObject(obj1);
     nscene._addObject(horse);
+
 
 
     // getting all classes

@@ -13,39 +13,6 @@ import {loadScene} from "#static/utility/load-scene.js";
 const editSketch = (p) => {
     p.started = false
 
-    p.preload = () => {
-
-
-
-
-
-        // // TODO: load scene from file
-        // // preload objects
-        //
-        // p.scene = new Scene();
-        // const obj1 = new Frame();
-        // obj1._pos = {x:560,y:520,z:0};
-        //
-        // p.horse = new Frame();
-        // p.horse._pos = {x:500,y:500,z:0};
-        // p.animSprite = new AnimatedSprite();
-        // p.animSprite._pos = {x:-100,y:-80,z:0};
-        //
-        // p.horse_img = p.loadImage('/static/horse.png');
-        // p.horse._children.push(p.animSprite);
-        //
-        // let coll = new Collider();
-        // // coll._shape = new CollisionRect({width: 200, height: 200});
-        // coll._shape = new CollisionSphere({radius: 50});
-        // p.horse._children.push(coll);
-        //
-        // p.scene._addObject(obj1);
-        // p.scene._addObject(p.horse);
-        //
-        // p.scene._load();
-
-    };
-
     p.setup = async () => {
 
         p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
@@ -53,6 +20,7 @@ const editSketch = (p) => {
         const response = await fetch("/files/scenes/testscene1.scene", {method:'GET'});
         const scene_json = await response.json();
         p.scene = await loadScene(scene_json.content);
+        await p.scene._load(p);
 
         p.editState = {};
 
@@ -109,6 +77,9 @@ const editSketch = (p) => {
     // 
 
     p.mousePressed = () => {
+        if (!p.focused) {
+            p.focused = true;
+        }
         if (p.mode === 'edit') {
             edit_mouse_press(p, p.editState);
         }

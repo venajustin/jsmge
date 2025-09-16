@@ -33,7 +33,7 @@ const playSketch = (p) => {
         p.scene._addObject(obj1);
         p.scene._addObject(p.horse);
 
-        p.scene._load();
+        p.scene._load(p);
 
     };
 
@@ -97,6 +97,12 @@ const playSketch = (p) => {
 
 
     };
+
+    p.mousePressed = () => {
+        if (!p.focused) {
+            p.focused = true;
+        }
+    }
 
 
 
