@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import '../css/userGames.css';
+
 const UserGames = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -7,6 +8,18 @@ const UserGames = () => {
 
   useEffect(() => {
     // Simulate API call with setTimeout
+    async function testDb() {
+    const pool = db();
+    try {
+      const res = await pool.query('SELECT NOW()');
+      console.log('DB Connected:', res.rows[0]);
+    } catch (err) {
+      console.error('DB Error:', err);
+    } finally {
+      await pool.end();
+    }
+  }
+  testDb();
     setTimeout(() => {
       const dummyGames = [
   {
@@ -104,6 +117,9 @@ const UserGames = () => {
     const handleClosePopup = () => {
       setShowPopup(false);
     }
+    const handleSubmit = () => {
+
+    }
   // Return the rendered JSX
   return (
     <div className="mainBody">
@@ -177,7 +193,8 @@ const UserGames = () => {
                   border: "1px solid #ccc",
                 }}
               />
-              <input
+              {/* IMAGE URL IF ADDED LATER */}
+              {/* <input
                 type="text"
                 placeholder="Image URL"
                 style={{
@@ -187,7 +204,7 @@ const UserGames = () => {
                   borderRadius: "5px",
                   border: "1px solid #ccc",
                 }}
-              />
+              /> */}
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <button
                   type="submit"
