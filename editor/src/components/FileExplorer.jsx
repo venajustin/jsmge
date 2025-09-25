@@ -11,7 +11,7 @@ import ContextMenu from "./ContextMenu";
 import { io } from "socket.io-client"
 
 
-
+/*
 const testFolder = "http://127.0.0.1:3000/files"
 const folder = {
   name: "",
@@ -41,6 +41,7 @@ const folder = {
     },
   ],
 };
+*/
 
 const buildTree = (paths) => {
   const root = { name: "testUsr", children: [], path: "" };

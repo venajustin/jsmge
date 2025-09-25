@@ -39,7 +39,7 @@ const code = "testUsr" // temp will need to change this to /usrcode
 debug_set_env();
 
 const game = createGame();
-const flask = "http://127.0.0.1/app/2/"
+// const flask = "http://127.0.0.1/app/2/"
 
 
 const editors = [];

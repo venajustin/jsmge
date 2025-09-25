@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: ["jsmge-editor"],
+      allowedHosts: ["jsmge-editor", "localhost:3000"],
 
   }
 })
