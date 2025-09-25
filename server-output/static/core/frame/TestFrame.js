@@ -20,7 +20,7 @@ export class TestFrame extends Frame {
     my_words = "words words";
 
     handle_input(inputs) {
-        console.log("input handled");
+        // console.log("input handled");
 
         if (!inputs) {
             return;

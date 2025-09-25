@@ -22,6 +22,10 @@ export async function testScenes() {
     const nscene = new (findclass(cl, "Scene"))();
     
     const obj1 = new (findclass(cl, "Frame"))();
+    const obj2 = new (findclass(cl, "TestUserFrame"))();
+    obj2._pos = {x:400,y:400,z:0};
+    console.log("TestuserFrame:");
+    console.log(obj2);
 
     obj1._pos = {x:560,y:520,z:0};
 
@@ -48,6 +52,7 @@ export async function testScenes() {
     horse._children.push(animSprite);
 
     nscene._addObject(obj1);
+    nscene._addObject(obj2);
     nscene._addObject(horse);
 
 

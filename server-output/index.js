@@ -236,7 +236,9 @@ app.get("/files/*", (req, res) => {
       return res.status(404).send("File not found.");
     }
     const content = fs.readFileSync(filePath, "utf8");
-    res.json({ filename, content });
+    res.contentType(path.basename(filePath));
+    res.send(content);
+    //res.json({ filename, content });
   } catch (error) {
     console.error("Error reading file:", error);
     res.status(500).send("Error reading file.");

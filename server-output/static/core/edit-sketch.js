@@ -18,8 +18,8 @@ const editSketch = (p) => {
         p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
 
         const response = await fetch("/files/scenes/testscene1.scene", {method:'GET'});
-        const scene_json = await response.json();
-        p.scene = await loadScene(scene_json.content);
+        const scene_json = await response.text();
+        p.scene = await loadScene(scene_json);
         await p.scene._load(p);
 
         p.editState = {};
