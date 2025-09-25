@@ -30,7 +30,7 @@ export async function testScenes() {
 
     obj1._pos = {x:560,y:520,z:0};
 
-    const horse = new (findclass(cl, "TestFrame"))();
+    const horse = new (findclass(cl, "TestUserFrame"))();
     horse._pos = {x:500,y:500,z:0};
     const animSprite = new (findclass(cl, "AnimatedSprite"))();
     animSprite._pos = {x:-100,y:-80,z:0};

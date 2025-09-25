@@ -249,11 +249,11 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
 
   const handleFileClick = (filename) => {
     fetch(SERVER_URL +  `/files/${filename}`)
-      .then((response) => response.json())
+      .then((response) => response.text())
       .then((data) =>{
         console.log(data)
-        setActiveFile(data.filename);
-        setEditorContent(data.content);
+        setActiveFile(filename);
+        setEditorContent(data);
       })
       .catch((error) => console.error("Error fetching file content:", error));
   };
