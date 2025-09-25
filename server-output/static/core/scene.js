@@ -13,7 +13,7 @@ class Scene {
         this._objects.forEach((o) => {
             o._draw(p);
         });
-    }
+    }  
     _draw_editor(p) {
         this._objects.forEach((o) => {
             o._draw_editor(p);

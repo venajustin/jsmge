@@ -1,13 +1,13 @@
-import { Scene } from  "/core/scene.js";
-import { Frame } from "/core/frame/frame.js";
-import { AnimatedSprite } from "/core/frame/animated-sprite.js";
-import { process_edit_input } from "/core/input/edit_input.js";
-import { Collider } from "/core/frame/collider.js";
-import { CollisionSphere } from "/core/collision-shapes/collision-sphere.js";
-import { edit_mouse_click, edit_mouse_press, edit_mouse_drag } from "/core/input/edit_input.js";
-import { setSession } from "/core/session.js";
-import { playSketch } from "/core/play-sketch.js";
-import {loadScene} from "#static/utility/load-scene.js";
+import { Scene } from  "#static/core/scene.js";
+import { Frame } from "#static/core/frame/frame.js";
+import { AnimatedSprite } from "#static/core/frame/animated-sprite.js";
+import { process_edit_input } from "#static/core/input/edit_input.js";
+import { Collider } from "#static/core/frame/collider.js";
+import { CollisionSphere } from "#static/core/collision-shapes/collision-sphere.js";
+import { edit_mouse_click, edit_mouse_press, edit_mouse_drag } from "#static/core/input/edit_input.js";
+import { setSession } from "#static/core/session.js";
+import { playSketch } from "#static/core/play-sketch.js";
+import { loadScene } from "#static/utility/load-scene.js";
 
 
 const editSketch = (p) => {

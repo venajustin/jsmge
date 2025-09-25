@@ -1,43 +1,33 @@
 
 import fs from 'node:fs';
 
-// imports from static core
-import { Scene } from '../static/core/scene.js';
-import { Frame } from '../static/core/frame/frame.js';
-import { AnimatedSprite } from '../static/core/frame/animated-sprite.js';
-import { Collider } from '../static/core/frame/collider.js';
-import { CollisionSphere } from '../static/core/collision-shapes/collision-sphere.js';
-import { TestFrame } from '../static/core/frame/TestFrame.js';
-
 
 import { getClassList } from '#static/utility/class-list.js';
-
-// imports for getting class names
-// in final product this should be its own service that parses through 
-// all the files that we should get frame classes from
-import * as SceneExports from '../static/core/scene.js';
-import * as FrameExports from '../static/core/frame/frame.js';
-import * as AnimatedSpriteExports from '../static/core/frame/animated-sprite.js';
-import * as ColliderExports from '../static/core/frame/collider.js';
-import * as CollisionSphereExports from '../static/core/collision-shapes/collision-sphere.js';
-import * as TestFrameExports from '../static/core/frame/TestFrame.js';
 
 import  ESSerializer from 'esserializer';
 
 export async function testScenes() {
 
+    const cl = await getClassList();
+    console.log("classes:");
+    console.log(cl);
+
+    const findclass = (cl, name) => {
+        return cl.find((c) => {
+            return c.name === name;
+        });
+    }
 
     // creating scene draft
-    const nscene = new SceneExports.Scene();
-
+    const nscene = new (findclass(cl, "Scene"))();
     
-    const obj1 = new Frame();
+    const obj1 = new (findclass(cl, "Frame"))();
 
     obj1._pos = {x:560,y:520,z:0};
 
-    const horse = new TestFrame();
+    const horse = new (findclass(cl, "TestFrame"))();
     horse._pos = {x:500,y:500,z:0};
-    const animSprite = new AnimatedSprite();
+    const animSprite = new (findclass(cl, "AnimatedSprite"))();
     animSprite._pos = {x:-100,y:-80,z:0};
 
     animSprite._add_image_source('/static/horse.png',192, 144, 7 );
@@ -46,12 +36,14 @@ export async function testScenes() {
 
 
 
+
+
 //    horse_img = loadImage('/static/horse.png');
     //horse._children.push(animSprite);
 
-    let coll = new ColliderExports.Collider();
-    // coll._shape = new CollisionRect({width: 200, height: 200});
-    coll._shape = new CollisionSphereExports.CollisionSphere({radius: 50});
+    let coll = new (findclass(cl, "Collider"))();
+    // coll._shape = new cl.CollisionRect({width: 200, height: 200});
+    coll._shape = new (findclass(cl, "CollisionSphere"))({radius: 50});
     horse._children.push(coll);
     horse._children.push(animSprite);
 
@@ -62,24 +54,22 @@ export async function testScenes() {
 
     // getting all classes
 
-    // we have to call eval within the scope of the declared objects
-    const classes = await getClassList().then((val) => val.map(([classstr]) => eval(classstr)));
-    //classes = [ Scene, Frame, AnimatedSprite, Collider, CollisionSphere ];
-
     console.log("@test >> Detected classes in imported files");
-    console.log(classes);
+    console.log(cl);
 
     const serialScene = ESSerializer.serialize(nscene);
 
     console.log("@test >> Scene serialized as json");
     console.log(serialScene);
 
-    const recreatedScene = ESSerializer.deserialize(serialScene, classes);
+    const recreatedScene = ESSerializer.deserialize(serialScene, cl);
     console.log("@test >> Scene object recreated from json");
     console.log(recreatedScene);
 
     // saving scene to json file 
     fs.writeFileSync("testUsr/scenes/testscene1.scene", serialScene);
 
+    const serial_horse = ESSerializer.serialize(horse);
+    fs.writeFileSync("testUsr/scenes/testobj.obj", serial_horse);
 }
 

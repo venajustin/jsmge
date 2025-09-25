@@ -17,7 +17,7 @@ import cors from "cors"
 
 //import {setupCanvas} from './server/canvas.js';
 import {get_client} from "./server/database/connect-db.js";
-import {debug_set_env} from "./server/util.js";
+import {debug_set_env, get_source_paths} from "./server/util.js";
 
 
 import {createGame, GameState} from './server-core/game.js';
@@ -373,3 +373,12 @@ server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
 
+
+app.get('/get-source-paths/', (req, res) => {
+
+    get_source_paths(user_code_dir).then((paths) => {
+        res.send({
+            paths: paths
+        });
+    });
+});

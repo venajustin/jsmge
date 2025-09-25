@@ -1,16 +1,13 @@
+import { getSources } from '#static/utility/get-sources.js';
+
 let sources = [];
 
 export async function getClassList() {
 
     // TODO: programatically find all modules
-    sources = [
-        '#static/core/scene.js',
-        '#static/core/frame/frame.js',
-        '#static/core/frame/animated-sprite.js',
-        '#static/core/frame/collider.js',
-        '#static/core/collision-shapes/collision-sphere.js',
-        '#static/core/frame/TestFrame.js'
-    ];
+    sources = await getSources();
+    console.log(sources);
+
 
     let classes = [];
     let promises = [];
@@ -21,7 +18,16 @@ export async function getClassList() {
     });
 
     await Promise.all(promises);
-    return classes;
+
+    let output = [];
+    for ( let i = 0; i < classes.length; i++) {
+        const class_fns = classes[i];
+        for (const class_fn of class_fns) {
+            output.push(class_fn);
+        }
+    }
+
+    return output;
 
 }
 
@@ -29,6 +35,10 @@ function getExportedClasses(module) {
 
     return Object.entries(module)
         .filter(([_, value]) => typeof value === "function" && /^class\s/.test(value.toString()))
-        .map(([name]) => name);
+        .map(([name, class_fn]) => class_fn);
+
+}
+
+export function getSourcePaths() {
 
 }

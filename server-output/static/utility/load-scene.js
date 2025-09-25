@@ -1,26 +1,14 @@
-import { Scene } from '#static/core/scene.js';
-import { Frame } from '#static/core/frame/frame.js';
-import { AnimatedSprite } from '#static/core/frame/animated-sprite.js';
-import { Collider } from '#static/core/frame/collider.js';
-import { CollisionSphere } from '#static/core/collision-shapes/collision-sphere.js';
-import { TestFrame } from "#static/core/frame/TestFrame.js";
 
 import { getClassList } from '#static/utility/class-list.js'
 
 export async function loadScene(sceneJson) {
-    let classes = [];
 
 
+// for some reason, the classes have to be pulled out of their containing
+// single element arrays here in this module or it wont work
 
-        const class_strs = await getClassList();
-        for ( let i = 0; i < class_strs.length; i++) {
-            const class_str = class_strs[i][0];
-            classes.push(eval(class_str));
-        }
-        //console.log(classes);
-        return window.ESSerializer.deserialize(sceneJson, classes);
-
-
-
+    const classes = await getClassList();
+    // console.log(classes);
+    return window.ESSerializer.deserialize(sceneJson, classes);
 
 }
