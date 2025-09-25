@@ -4,6 +4,7 @@ import fs from 'node:fs';
 
 import { getClassList } from '#static/utility/class-list.js';
 
+import { Scene } from "#static/core/scene.js";
 import  ESSerializer from 'esserializer';
 
 export async function testScenes() {
@@ -19,7 +20,7 @@ export async function testScenes() {
     }
 
     // creating scene draft
-    const nscene = new (findclass(cl, "Scene"))();
+    const nscene = new Scene();
     
     const obj1 = new (findclass(cl, "Frame"))();
     const obj2 = new (findclass(cl, "TestUserFrame"))();

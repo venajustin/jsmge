@@ -5,4 +5,8 @@ export class TestUserFrame extends Frame {
 
     testusermember = "hi from testuser";
 
+    printmember() {
+        console.log(this.testusermember);
+    }
+
 }
