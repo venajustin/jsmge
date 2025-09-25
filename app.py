@@ -270,7 +270,6 @@ def login():
                     """
                     INSERT INTO Sessions (uid, token, expire)
                     VALUES (%s,%s,%s)
-                cor
                     """,
                     (uid, token, expire),
                 )
