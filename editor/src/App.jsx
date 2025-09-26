@@ -32,7 +32,7 @@ const EditorWrapper = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         {/* This editor is currently done in a very unsecure way as in anybody can access anyone's editor currently */}
-        <Route path="/editor/:appId/*" element={<ProtectedRoute><EditorWrapper /></ProtectedRoute>} />
+        <Route path="/editor/:appId/*" element={<EditorWrapper />} />
         <Route path="/UserGamesTest" element={<UserGamesTest />} />
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>} />
