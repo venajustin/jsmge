@@ -1,11 +1,25 @@
 import { useEffect, useState } from "react";
 import '../css/userGames.css';
+
 const UserGames = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const[showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     // Simulate API call with setTimeout
+    async function testDb() {
+    const pool = db();
+    try {
+      const res = await pool.query('SELECT NOW()');
+      console.log('DB Connected:', res.rows[0]);
+    } catch (err) {
+      console.error('DB Error:', err);
+    } finally {
+      await pool.end();
+    }
+  }
+  testDb();
     setTimeout(() => {
       const dummyGames = [
   {
@@ -80,7 +94,7 @@ const UserGames = () => {
   }
 ];
 
-      setGames(dummyGames);
+      //setGames(dummyGames);
       setLoading(false);
     }, 1000);
   }, []);
@@ -95,17 +109,33 @@ const UserGames = () => {
     // TODO:Add edit logic
   };
 
+    const handleCreate = () => {
+      console.log("Create button pressed");
+      setShowPopup(!showPopup);
+      
+    }
+    const handleClosePopup = () => {
+      setShowPopup(false);
+    }
+    const handleSubmit = () => {
+
+    }
   // Return the rendered JSX
   return (
     <div className="mainBody">
-      <h1>User Games</h1>
+      <div className="title-container">
+        <h1>Your Games</h1>
+        <button className="create-game-button" onClick={handleCreate}>
+          Create Game
+        </button>
+      </div>
       {
         // Conditional rendering: if still loading
         loading ? (
-            <p>Loading...</p>
+            <p style={{display: 'flex', justifyContent: 'center', }}>Loading...</p>
           ) :
           games.length === 0 ? (
-            <p>No games found.</p>
+            <p style={{display: 'flex', justifyContent: 'center', }}>No games found.</p>
           ) : (
             // If games are present, render a list
             <ul className="games-list">
@@ -137,6 +167,78 @@ const UserGames = () => {
             </ul>
           )
       }
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="createBody">
+            <h2 style={{display:'flex', justifyContent: "center"}}>Create New Game</h2>
+            <form>
+              <input
+                type="text"
+                placeholder="Game Title"
+                style={{
+                  width: "90%",
+                  padding: "10px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              />
+              <textarea
+                placeholder="Game Description"
+                style={{
+                  width: "90%",
+                  padding: "10px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              />
+              {/* IMAGE URL IF ADDED LATER */}
+              {/* <input
+                type="text"
+                placeholder="Image URL"
+                style={{
+                  width: "90%",
+                  padding: "10px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              /> */}
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <button
+                  type="submit"
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Add Game
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClosePopup}
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#ccc",
+                    color: "black",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      )}
     </div>
   );
 };

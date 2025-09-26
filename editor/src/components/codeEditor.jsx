@@ -1,24 +1,14 @@
 import { Editor } from "@monaco-editor/react";
 import { useEffect, useRef, useState } from "react";
 
-const codeEditor = ({ activeFile, setActiveFile, editorContent, setEditorContent }) => {
+
+const codeEditor = ({ activeFile, setActiveFile, editorContent, setEditorContent, SERVER_URL}) => {
   const editorRef = useRef();
   //const [activeFile, setActiveFile] = useState("");
   const [files, setFiles] = useState({});
   const [openFiles, setOpenFiles] = useState([]); // Array of filenames
     const [fileContents, setFileContents] = useState({}); // { filename: content }
 
-//   useEffect(() => {
-//     fetch("/files")
-//       .then((response) => response.json())
-//       .then((data) => {
-//         console.log("Response JSON:", data);
-//         setFiles(data);
-//         const firstFile = Object.keys(data)[0];
-//         setActiveFile(firstFile);
-//       })
-//       .catch((error) => console.error("Error fetching files:", error));
-//   }, []);
 useEffect(() => {
   if (activeFile) {
     setOpenFiles((prev) =>
@@ -56,7 +46,7 @@ const handleEditorChange = (newValue) => {
 const handleSave = async () => {
   // Save all open files
   const savePromises = openFiles.map((file) =>
-    fetch("http://127.0.0.1:3000/save", {
+    fetch(SERVER_URL + "/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ filename: file, content: fileContents[file] || "" }),
@@ -148,19 +138,7 @@ const handleSave = async () => {
                 height="100%"
                 theme="vs-dark"
                 defaultLanguage="javascript"
-                // defaultValue={`function greet(name) {
-                //         console.log("Hello, " + name + "!");
-                //     }
-
-                //     greet("John");`}
-                //onMount={onMount}
-                // value={files[activeFile]}
-                // onChange={(newValue) => {
-                //     setFiles((prev) => ({
-                //         ...prev,
-                //         [activeFile]: newValue
-                //     }));
-                // }}
+                
                 value={editorContent}
                 onChange={(newValue) => setEditorContent(newValue)}
 

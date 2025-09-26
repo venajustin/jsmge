@@ -1,2 +1,2 @@
 postgres-config/00_entrypoint.sh eol=lf
-postgres-config/01_create_tables.sql eol=lf
+postgres-config/02_create_tables.sql eol=lf

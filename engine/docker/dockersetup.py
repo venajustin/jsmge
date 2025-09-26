@@ -171,7 +171,7 @@ def setup():
     img = create_node_image()
     ed = start_editor()
     nx = start_nginx()
-    db = start_db()
+    # db = start_db()
 
 
 

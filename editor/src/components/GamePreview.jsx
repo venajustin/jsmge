@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
-const codeEditor = () => {
+const codeEditor = ({SERVER_URL}) => {
+    //console.log(SERVER_URL);
 
   return (
       <div className={"game-controls-and-preview"}>
@@ -18,7 +19,7 @@ const codeEditor = () => {
                   // src="/app/1/gamewindow.html"
 
                   // for dev without flask running: comment out above and uncomment below
-                  src = "http://127.0.0.1:3000/gamewindow.html"
+                  src = {SERVER_URL+ "/gamewindow.html"}
 
                   allow="fullscreen"
                   width="100%"
