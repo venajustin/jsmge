@@ -15,7 +15,8 @@ const editSketch = (p) => {
 
     p.setup = async () => {
 
-        p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
+        // p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
+        p.createCanvas(1600, 1200, p.P2D);
 
         const response = await fetch("/files/scenes/testscene2.scene", {method:'GET'});
         const scene_json = await response.text();
@@ -39,13 +40,14 @@ const editSketch = (p) => {
         // Enter play mode
         // TODO: make this triggered externally
         if (p.key === 'p') {
-            p.remove();
+           // p.remove();
             setSession(playSketch);
         }
 
     };
 
     p.draw = () => {
+
         if (!p.started) {
             return;
         }
@@ -97,7 +99,7 @@ const editSketch = (p) => {
         }
     };
     
-    //
+
     
 
 

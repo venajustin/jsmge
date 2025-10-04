@@ -38,7 +38,7 @@ const playSketch = (p) => {
         // Enter edit mode
         // TODO: make this triggered externally
         if (p.key === 'p') {
-            p.remove();
+           // p.remove();
             setSession(editSketch);
         }
     };
@@ -84,11 +84,11 @@ const playSketch = (p) => {
 
     };
 
-    // p.mousePressed = () => {
-    //     if (!p.focused) {
-    //         p.focused = true;
-    //     }
-    // }
+    p.mousePressed = () => {
+        if (!p.focused) {
+            p.focused = true;
+        }
+    }
 
 
 

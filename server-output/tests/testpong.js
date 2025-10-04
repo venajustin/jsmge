@@ -47,7 +47,7 @@ export async function testpong() {
 
     const ballSprite = new AnimatedSprite();
     ballSprite._add_image_source('/files/resources/joystick_circle_pad_d.png', 256, 256, 1);
-    ballSprite._pos = {x:0, y:0,z:0};
+    ballSprite._pos = {x:-10, y:-10,z:0};
     ballSprite.add_animation([0]);
     ballSprite._selected_animation = 0;
     ballSprite._sca = {x:.1,y:.1,z:1};
