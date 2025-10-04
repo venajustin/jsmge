@@ -26,6 +26,7 @@ export class AnimatedSprite extends Frame {
         const index = Math.floor(this._index);
 
         if (this._frames[index]) {
+            p.noSmooth();
             p.image(this._frames[index], 0, 0);
         }
 
@@ -63,7 +64,7 @@ export class AnimatedSprite extends Frame {
             await o._load(p);
         }
 
-        this.play_animation(1);
+        this.play_animation(0);
     }
     _update(inputs) {
         this._animate();

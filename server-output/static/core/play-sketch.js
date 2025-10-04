@@ -18,7 +18,7 @@ const playSketch = (p) => {
         p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
 
 
-        const response = await fetch("/files/scenes/testscene1.scene", {method:'GET'});
+        const response = await fetch("/files/scenes/testscene2.scene", {method:'GET'});
         const scene_json = await response.text();
         p.scene = await loadScene(scene_json);
         await p.scene._load(p);
@@ -59,9 +59,15 @@ const playSketch = (p) => {
             inputs.push("move_right");
         }
 
+        if (p.keyIsDown(87)) {
+            inputs.push("move_up");
+        }
+        if (p.keyIsDown(83)) {
+            inputs.push("move_down");
+        }
 
 
-        p.scene._update(inputs);
+        p.scene._update(p, inputs);
 
         p.textSize(30);
         p.scene._draw(p);

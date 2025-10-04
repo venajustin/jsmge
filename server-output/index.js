@@ -110,9 +110,11 @@ fs.watch(user_code_dir, {recursive: true}, () => {
 
 
 import {testScenes} from './tests/testscenes.js';
+import {testpong} from './tests/testpong.js';
 app.get('/tests/', (req,res) => {
 
     testScenes();
+    testpong();
 
     res.send("Tests complete");
 
@@ -235,9 +237,10 @@ app.get("/files/*", (req, res) => {
     if (!fs.existsSync(filePath)) {
       return res.status(404).send("File not found.");
     }
-    const content = fs.readFileSync(filePath, "utf8");
-    res.contentType(path.basename(filePath));
-    res.send(content);
+    res.sendFile(path.resolve(filePath));
+//    const content = fs.readFileSync(filePath, "utf8");
+ //   res.contentType(path.basename(filePath));
+  //  res.send(content);
     //res.json({ filename, content });
   } catch (error) {
     console.error("Error reading file:", error);

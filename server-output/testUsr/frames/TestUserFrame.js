@@ -1,5 +1,5 @@
 
-import { Frame } from "#static/core/frame/Frame.js";
+import { Frame } from "#static/core/frame/frame.js";
 
 
 export class TestUserFrame extends Frame {

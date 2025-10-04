@@ -11,6 +11,8 @@ export class Frame {
     _parent = undefined;
     _children = [];
 
+    _animated_sprites = [];
+    _colliders = [];
 
     _apply_transforms(p) {
         p.translate(this._pos.x,this._pos.y,this._pos.z);
@@ -19,8 +21,14 @@ export class Frame {
     }
 
     _draw(p) {
+
+
         p.push();
         this._apply_transforms(p);
+
+        this._animated_sprites.forEach((child) => {
+            child._draw(p);
+        });
 
         this._children.forEach((child) => {
             child._draw(p);
@@ -28,19 +36,30 @@ export class Frame {
         p.pop();
     }
 
+
     handle_input(inputs) {
 
     }
-    _update(inputs) {
+    process_physics(deltaTime) {
+    }
+    _update(p, inputs) {
         this.handle_input(inputs);
+        this.process_physics(p.deltaTime);
 
 
         this._children.forEach((o) => {
-            o._update(inputs);
+            o._update(p, inputs);
         });
     }
 
     async _load(p) {
+        for (const o of this._animated_sprites) {
+            await o._load(p);
+        }
+        for (const o of this._colliders) {
+            await o._load(p);
+        }
+
         for (const o of this._children) {
             await o._load(p);
         }
@@ -83,6 +102,7 @@ export class Frame {
     _edit_drag_intersect(p, point, editState) {
         p.push();
         p.translate(this._pos.x,this._pos.y,this._pos.z);
+
 
         let output = [];
 
