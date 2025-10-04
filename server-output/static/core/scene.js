@@ -38,9 +38,9 @@ class Scene {
         }
     }
 
-    _update(p, inputs) {
+    _update(dtime, inputs) {
         this._objects.forEach((o) => {
-            o._update(p, inputs);
+            o._update(dtime, inputs);
         });
     }
 

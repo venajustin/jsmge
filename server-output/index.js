@@ -76,37 +76,41 @@ io.engine.use(sessionMiddleware);
 
 // watch files in the user's code directory to update editor
 fs.watch(user_code_dir, {recursive: true}, () => {
-
-
-  const getFilesFlat = (dirPath) => {
-    const items = fs.readdirSync(dirPath, { withFileTypes: true });
-    let files = [];
-    items.forEach((item) => {
-      const itemPath = path.join(dirPath, item.name);
-      if (item.isDirectory()) {
-        files = files.concat(getFilesFlat(itemPath)); // Recursively add files
-      } else {
-        files.push(itemPath); // Add file path
-      }
-    });
-    return files;
-  };
-
-  try {
-    const files = getFilesFlat(code); // Get all files as a flat list
-
-    // update all connected editors
-    editors.forEach((editor) => {
-
-        io.to(editor).emit('files_update', files);
-    });
-
-  } catch (error) {
-    console.error("Error reading folder:", error);
-  }
-
-
+    sendFilesToSockets();
 });
+
+function sendFilesToSockets() {
+
+
+    const getFilesFlat = (dirPath) => {
+        const items = fs.readdirSync(dirPath, { withFileTypes: true });
+        let files = [];
+        items.forEach((item) => {
+            const itemPath = path.join(dirPath, item.name);
+            if (item.isDirectory()) {
+                files = files.concat(getFilesFlat(itemPath)); // Recursively add files
+            } else {
+                files.push(itemPath); // Add file path
+            }
+        });
+        return files;
+    };
+
+    try {
+        const files = getFilesFlat(code); // Get all files as a flat list
+
+        // update all connected editors
+        editors.forEach((editor) => {
+
+            io.to(editor).emit('files_update', files);
+        });
+
+    } catch (error) {
+        console.error("Error reading folder:", error);
+    }
+
+
+}
 
 
 import {testScenes} from './tests/testscenes.js';
@@ -320,7 +324,16 @@ io.on('connection', (socket) => {
         editors.push(sessionId);
 
         socket.on('disconnect',() => {
+            console.log("Editor disconnect: " + sessionId);
             editors.splice(editors.indexOf(sessionId),1);
+        });
+        socket.on('playButtonPress', () => {
+            console.log("editor play button press");
+            sendPlay();
+        });
+        socket.on('editButtonPress', () => {
+            console.log("editor edit button press");
+            sendEdit();
         });
         return;
     }
@@ -373,20 +386,30 @@ app.get('/test-db', (req, res) => {
    test_db(res);
 });
 
-app.post('/test-edit', (req, res) => {
+function sendEdit() {
     let count = 0;
     for (const playerid of game.players) {
         io.to(playerid).emit('game_status', "edit");
         count++;
     }
-    res.send(`Edit mode set for ${count} players`);
-});
-app.post('/test-play', (req, res) => {
+    return count;
+}
+
+function sendPlay() {
     let count = 0;
     for (const playerid of game.players) {
         io.to(playerid).emit('game_status', "play");
         count++;
     }
+    return count;
+}
+
+app.post('/test-edit', (req, res) => {
+    const count = sendEdit();
+    res.send(`Edit mode set for ${count} players`);
+});
+app.post('/test-play', (req, res) => {
+    const count = sendPlay();
     res.send(`Edit mode set for ${count} players`);
 });
 

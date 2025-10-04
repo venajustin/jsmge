@@ -14,10 +14,10 @@ socket.on('game_status', (msg) => {
         console.log("game is in edit mode")
         setSession(editSketch);
         // document.getElementById('edit-message').style.display = 'block';
-    } else {
+    } else if (msg === 'play') {
         setSession(playSketch);
         // document.getElementById('edit-message').style.display = 'none';
-    }
+    } 
 });
 
 // Chat room test:

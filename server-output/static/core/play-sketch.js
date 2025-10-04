@@ -15,7 +15,8 @@ import {loadScene} from "#static/utility/load-scene.js";
 const playSketch = (p) => {
 
     p.setup = async () => {
-        p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
+        // p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
+        p.createCanvas(1600, 1200, p.P2D);
 
 
         const response = await fetch("/files/scenes/testscene2.scene", {method:'GET'});
@@ -67,7 +68,7 @@ const playSketch = (p) => {
         }
 
 
-        p.scene._update(p, inputs);
+        p.scene._update(p.deltaTime, inputs);
 
         p.textSize(30);
         p.scene._draw(p);

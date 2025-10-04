@@ -42,9 +42,9 @@ export class Frame {
     }
     process_physics(deltaTime) {
     }
-    _update(p, inputs) {
+    _update(dtime, inputs) {
         this.handle_input(inputs);
-        this.process_physics(p.deltaTime);
+        this.process_physics(dtime);
 
 
         this._children.forEach((o) => {
