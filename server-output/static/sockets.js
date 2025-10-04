@@ -1,6 +1,7 @@
 
 import { editSketch } from "/core/edit-sketch.js";
-import { setSession } from "/core/session.js";
+import { playSketch } from "/core/play-sketch.js";
+import { setSession, active_session} from "/core/session.js";
 
 const socket = io();
 
@@ -11,10 +12,10 @@ socket.on('chat message', (msg) => {
 socket.on('game_status', (msg) => {
     if (msg === 'edit') {
         console.log("game is in edit mode")
-        //setSession(editSketch);
+        setSession(editSketch);
         // document.getElementById('edit-message').style.display = 'block';
     } else {
-        // setSession(playSketch);
+        setSession(playSketch);
         // document.getElementById('edit-message').style.display = 'none';
     }
 });

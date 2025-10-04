@@ -373,6 +373,22 @@ app.get('/test-db', (req, res) => {
    test_db(res);
 });
 
+app.post('/test-edit', (req, res) => {
+    let count = 0;
+    for (const playerid of game.players) {
+        io.to(playerid).emit('game_status', "edit");
+        count++;
+    }
+    res.send(`Edit mode set for ${count} players`);
+});
+app.post('/test-play', (req, res) => {
+    let count = 0;
+    for (const playerid of game.players) {
+        io.to(playerid).emit('game_status', "play");
+        count++;
+    }
+    res.send(`Edit mode set for ${count} players`);
+});
 
 server.listen(port, () => {
     console.log(`Server listening on port ${port}`);

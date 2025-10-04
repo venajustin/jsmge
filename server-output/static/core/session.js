@@ -1,4 +1,4 @@
-let active_session = undefined;
+export let active_session = undefined;
 
 export function setSession(sketch) {
     // const canvHTML =  `<canvas id="display-canvas" width="1600" height="1200" style="background-color:#ffffff"> </canvas>`

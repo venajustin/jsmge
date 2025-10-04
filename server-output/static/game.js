@@ -18,6 +18,14 @@ import { setSession } from "/core/session.js";
 let events = []
 
 
+/////////////////////////////////////////
+//
+//  NOTE: this code is not called and may be deleted in the future.
+//        The scene is loaded when the 'game_status' message is sent
+//        via socket.io
+//
+/////////////////////////////////////////
+
 // const p5_session = new p5(sketch);
 setSession(editSketch);
 
