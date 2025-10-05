@@ -36,7 +36,9 @@ setup()
 # breakpoint()
 SECRET_KEY = "secret_key"
 
-#verification of token
+
+# verification of token
+# uses a decorator so that we can just call @token_requried and use request.uid to get users uid in a app route
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -47,10 +49,7 @@ def token_required(f):
             conn = get_connection()
             cur = conn.cursor()
             token = token.split(" ")[1] if " " in token else token
-            cur.execute(
-                "SELECT uid, expire FROM Sessions WHERE token = %s",
-                (token,)
-            )
+            cur.execute("SELECT uid, expire FROM Sessions WHERE token = %s", (token,))
             session_row = cur.fetchone()
             if session_row is None:
                 return jsonify({"message": "Session not found or expired"}), 401
@@ -58,17 +57,16 @@ def token_required(f):
             if expire < datetime.datetime.utcnow():
                 return jsonify({"message": "Session expired"}), 401
 
-            # Decode JWT and attach user info
             payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            request.email = payload["email"]
-            # request.uid = uid
-
-            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            request.uid = payload["uid"]
         except jwt.ExpiredSignatureError:
             return jsonify({"message": "Token has expired"}), 401
         except jwt.InvalidTokenError:
             return jsonify({"message": "Invalid token"}), 401
+        except Exception as e:
+            return jsonify({"message": str(e)}), 401
         return f(*args, **kwargs)
+
     return decorated
 
 
@@ -228,16 +226,17 @@ def test_register():
 def login_page():
     return jenv.get_template("login.html").render(jsstart="work in progress")
 
+
 @app.route("/protector")
 def prot():
-    return jenv.get_template("protected.html").render(jssstart='work in progress')
+    return jenv.get_template("protected.html").render(jssstart="work in progress")
 
 
 @app.route("/login", methods=["POST"])
 def login():
     email = request.form.get("email")
     password = request.form.get("password")
-    print(email, password)
+    #print(email, password)
 
     if not email or not password:
         return jsonify({"message": "email and password are required"}), 400
@@ -263,22 +262,18 @@ def login():
             if bcrypt.checkpw(password.encode("utf-8"), hashpw.encode("utf-8")):
                 # need to include either flask session here or JWT Acess token
                 expire = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-                payload = {
-                    "email":email,
-                    "exp": expire
-                }
+                payload = {"uid": uid, "exp": expire}
                 token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
                 cur.execute(
                     """
                     INSERT INTO Sessions (uid, token, expire)
                     VALUES (%s,%s,%s)
-                
                     """,
                     (uid, token, expire),
                 )
                 conn.commit()
-                
+
                 return jsonify({"message": "Login successful", "token": token})
 
             else:
@@ -286,10 +281,12 @@ def login():
     except Exception as e:
         return jsonify({"message": str(e)})
 
-@app.route('/protected', methods=['GET'])
+
+@app.route("/protected", methods=["GET"])
 @token_required
 def protected():
-    return jsonify({"message": f"Hello , {request.email}! This is a protected route."})
+    return jsonify({"message": f"Hello! This is a protected route."})
+
 
 # @app.route('/api/files', methods=['GET'])
 # def get_files():
@@ -306,6 +303,98 @@ def protected():
 #         return jsonify(files)
 
 
+@app.route("/newGame", methods=["POST"])
+@token_required
+def insertNewGame():
+    gameTitle = request.form.get("gameTitle")
+    gameDesc = request.form.get("gameDescription")
+    #print(gameTitle, gameDesc)
+
+    if not gameTitle or not gameDesc:
+        return jsonify({"message": "title and description are required"}), 400
+
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+
+        cur.execute(
+            """
+                    INSERT INTO Games ( title, description)
+                    VALUES (%s,%s)
+                    RETURNING id
+                    """,
+            ( gameTitle, gameDesc),
+        )
+
+        # cur.execute(
+        #             """
+        #             SELECT id FROM Games where title = %s and description = %s
+                
+        #             """,
+        #             (gameTitle, gameDesc),
+        # )
+
+        row = cur.fetchone()
+        if row is None:
+            return jsonify({"message": "Game not found after insert"}), 500
+        game_id = row[0]
+
+
+        cur.execute(
+            """
+                    INSERT INTO Owns (uid, gameID)
+                    VALUES (%s,%s)
+                
+                    """,
+            ( request.uid, game_id),
+        )
+        
+        conn.commit()
+
+        return "", 201
+
+    except Exception as e:
+        return jsonify({"message": str(e)})
+
+#work on this tmmrw
+@app.route("/getGames", methods=["GET"])
+@token_required
+def getGames():
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+
+
+        cur.execute(
+                    """
+                    SELECT gameid FROM owns where uid = %s
+                
+                    """,
+                    (request.uid,)
+        )
+
+        row = cur.fetchall()
+        #print(row)
+        if row is None:
+            return jsonify({"message": "Games not found"}), 500
+        games = []
+        for(game_id,) in row:
+            cur.execute(
+                "SELECT title, description FROM games where id = %s",
+                (game_id,)
+            )
+            data = cur.fetchone()
+            if data:
+                games.append({
+                    "title": data[0],
+                    "description": data[1]
+                })
+        print(games)
+        return jsonify({"games": games}),200
+
+    except Exception as e:
+        return jsonify({"message": str(e)})
+    
 if __name__ == "__main__":
     app.run()
 

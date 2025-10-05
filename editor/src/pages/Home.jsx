@@ -24,13 +24,17 @@ const Home = () => {
             </h1>
           </div>
           <div className="card home-container">
+            <a href="/login">
             <button className='custom-button'>
               Login
             </button>
+            </a>
             <br></br>
+            <a href="/register">
             <button className='custom-button'>
               Register
             </button>
+            </a>
           </div>
           {/* <p className="read-the-docs">
         Click here for our workbook
