@@ -10,8 +10,6 @@ import { useState } from "react";
 import ContextMenu from "./ContextMenu";
 // import { io } from "socket.io-client"
 
-
-
 const testFolder = "http://127.0.0.1:3000/files"
 const folder = {
   name: "",
@@ -74,11 +72,12 @@ const buildTree = (paths) => {
   return root;
 };
 
-
-
 function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_URL}) {
   const [folder, setFolder] = useState({ name: "testUsr", children: [] })
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, file: null });
+  const [draggedItem, setDraggedItem] = useState(null);
+  const [dragOverItem, setDragOverItem] = useState(null);
+
   //console.log("SERVER_URL:", SERVER_URL);
   const fetchFiles = () => {
     fetch(SERVER_URL + "/files")
@@ -86,7 +85,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
       .then((data) => {
         const transformedFolder = buildTree(data);
         //console.log("Transformed Folder Structure:", transformedFolder);
-        setFolder(transformedFolder); 
+        setFolder(transformedFolder);
       })
       .catch((error) => console.error("Error fetching files:", error));
   };
@@ -103,7 +102,6 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     return () => clearInterval(intervalId);
   }, []);
 
-
   const handleContextMenu = (event, file, isFolder) => {
     event.preventDefault();
     console.log(file);
@@ -116,9 +114,110 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     });
   };
 
+  // Drag and Drop Event Handlers
+  const handleDragStart = (event, element, isBranch) => {
+    event.stopPropagation();
+    setDraggedItem({
+      path: element.path,
+      name: element.name,
+      isFolder: isBranch
+    });
+
+    // Set drag effect
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', element.path);
+
+    // Add visual feedback
+    event.target.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (event) => {
+    event.target.style.opacity = '';
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
+
+  const handleDragOver = (event, element, isBranch) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Only allow dropping on folders
+    if (isBranch) {
+      event.dataTransfer.dropEffect = 'move';
+      setDragOverItem(element.path);
+    } else {
+      event.dataTransfer.dropEffect = 'none';
+    }
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragOverItem(null);
+  };
+
+  const handleDrop = (event, targetElement, targetIsBranch) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Only allow dropping on folders
+    if (!targetIsBranch) return;
+
+    const draggedPath = event.dataTransfer.getData('text/plain');
+    const targetPath = targetElement.path;
+
+    // Prevent dropping on itself or into its own subdirectory
+    if (draggedPath === targetPath || targetPath.startsWith(draggedPath + '/')) {
+      setDraggedItem(null);
+      setDragOverItem(null);
+      return;
+    }
+
+    handleDragAndDrop(draggedPath, targetPath);
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
+
+  const handleDragAndDrop = (sourcePath, targetPath) => {
+    if (!sourcePath || !draggedItem) return;
+
+    // Extract the filename/foldername from the source path
+    const sourcePathParts = sourcePath.split('/');
+    const itemName = sourcePathParts[sourcePathParts.length - 1];
+
+    // Construct the new path
+    const newPath = targetPath ? `${targetPath}/${itemName}` : itemName;
+
+    // Determine the endpoint based on whether it's a file or folder
+    const endpoint = draggedItem.isFolder ? '/folder/move' : '/files/move';
+
+    const requestBody = draggedItem.isFolder
+      ? { oldPath: sourcePath, newPath: newPath }
+      : { oldPath: sourcePath, newPath: newPath };
+
+    fetch(SERVER_URL + endpoint, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log(`Moved ${sourcePath} to ${newPath}`);
+          fetchFiles(); // Refresh the file tree
+        } else {
+          console.error(`Failed to move ${sourcePath}`);
+          response.text().then(text => console.error('Server response:', text));
+        }
+      })
+      .catch((error) => {
+        console.error('Error moving item:', error);
+      });
+  };
+
   const handleClickOutside = () => {
     setContextMenu({ visible: false, x: 0, y: 0, file: null });
   };
+
   const handleDelete = () => {
     if (!contextMenu.file) return;
 
@@ -126,7 +225,6 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     handleDeleteFolder();
     return;
   }
-    
 
     fetch(SERVER_URL + "/files/" + contextMenu.file, {
       method: "DELETE",
@@ -134,7 +232,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
       .then((response) => {
         if (response.ok) {
           console.log(`${contextMenu.file} deleted successfully`);
-          fetchFiles(); 
+          fetchFiles();
         } else {
           console.error(`Failed to delete ${contextMenu.file}`);
         }
@@ -230,6 +328,51 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
       .catch((error) => console.error("Error fetching file content:", error));
   };
 
+  // Node renderer with drag and drop support
+  const nodeRenderer = ({ element, isBranch, getNodeProps, level }) => {
+    const nodeProps = getNodeProps();
+
+    // Only add onClick for files
+    if (!isBranch) {
+      nodeProps.onClick = () => handleFileClick(element.path);
+    }
+
+    // Add drag and drop event handlers
+    const dragDropProps = {
+      draggable: true,
+      onDragStart: (e) => handleDragStart(e, element, isBranch),
+      onDragEnd: handleDragEnd,
+      onDragOver: (e) => handleDragOver(e, element, isBranch),
+      onDragLeave: handleDragLeave,
+      onDrop: (e) => handleDrop(e, element, isBranch),
+    };
+
+    // Add visual feedback classes
+    const isDraggedOver = dragOverItem === element.path && isBranch;
+    const isDragging = draggedItem?.path === element.path;
+
+    return (
+      <div
+        {...nodeProps}
+        {...dragDropProps}
+        style={{
+          paddingLeft: 20 * (level - 1),
+          backgroundColor: isDraggedOver ? 'rgba(124, 180, 184, 0.3)' : 'transparent',
+          opacity: isDragging ? 0.5 : 1,
+          transition: 'background-color 0.2s ease, opacity 0.2s ease'
+        }}
+        onContextMenu={(event) => handleContextMenu(event, element.path, isBranch)}
+      >
+        {isBranch ? (
+          <FolderIcon isOpen={element.isExpanded} />
+        ) : (
+          <FileIcon filename={element.name} />
+        )}
+        {element.name}
+      </div>
+    );
+  };
+
   const data = flattenTree(folder).map(node => {
     function findPath(tree, name) {
       if (tree.name === name) return tree.path;
@@ -242,6 +385,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     }
     return { ...node, path: findPath(folder, node.name) };
   });
+
   return (
     <div onClick={handleClickOutside}>
       <div className="ide">
@@ -251,27 +395,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
           togglableSelect
           clickAction="EXCLUSIVE_SELECT"
           multiSelect
-          nodeRenderer={({ element, isBranch, getNodeProps, level }) => {
-            const nodeProps = getNodeProps();
-            // Only add onClick for files
-            if (!isBranch) {
-              nodeProps.onClick = () => handleFileClick(element.path);
-            }
-            return (
-              <div
-                {...nodeProps}
-                style={{ paddingLeft: 20 * (level - 1) }}
-                onContextMenu={(event) => handleContextMenu(event, element.path, isBranch)}
-              >
-                {isBranch ? (
-                  <FolderIcon isOpen={element.isExpanded} />
-                ) : (
-                  <FileIcon filename={element.name} />
-                )}
-                {element.name}
-              </div>
-            );
-          }}
+          nodeRenderer={nodeRenderer}
         />
       </div>
       <ContextMenu
@@ -310,4 +434,5 @@ const FileIcon = ({ filename }) => {
       return null;
   }
 };
+
 export default MultiSelectDirectoryTreeView;

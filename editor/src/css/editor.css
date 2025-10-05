@@ -113,3 +113,11 @@ html {
   cursor: ew-resize;
   background: transparent;
 }
+
+.drag-over {
+  background-color: rgba(124, 180, 184, 0.3) !important;
+}
+
+.dragging {
+  opacity: 0.5 !important;
+}
