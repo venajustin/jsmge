@@ -23,8 +23,8 @@ import bcrypt
 import datetime
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
-# CORS(app, resources={r"/*": {"origins": "http://localhost"}}) # might get deleted when public
+#CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost"}}) # might get deleted when public
 jenv = Environment(loader=FileSystemLoader("templates"))
 
 example_script = jenv.get_template("example.js").render()

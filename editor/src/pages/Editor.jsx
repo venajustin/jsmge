@@ -9,8 +9,8 @@ const Editor = ({appid}) => {
 
     
 
-    // const SERVER = `http://127.0.0.1/app/${appid}`.trim()
-    const SERVER = 'http://127.0.0.1:3000'
+    const SERVER = `http://127.0.0.1/app/${appid}`.trim()
+    //const SERVER = 'http://127.0.0.1:3000'
 
     let code_width = useState(400)
 

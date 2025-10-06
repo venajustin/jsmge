@@ -45,8 +45,8 @@ app.use(sessionMiddleware);
 io.engine.use(sessionMiddleware);
 
 //this is temporary fix for testing development
-app.use(cors({ origin: "http://localhost:5174" }));
-
+//app.use(cors({ origin: "http://localhost:5174" }));
+app.use(cors({ origin: "http://localhost" }));
 
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
