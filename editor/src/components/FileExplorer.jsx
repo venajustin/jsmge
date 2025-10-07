@@ -5,11 +5,13 @@ import { DiCss3, DiJavascript, DiNpm } from "react-icons/di";
 import { FaList, FaRegFolder, FaRegFolderOpen } from "react-icons/fa";
 import TreeView, { flattenTree } from "react-accessible-treeview";
 import "../css/fileExplorer.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
 import ContextMenu from "./ContextMenu";
-// import { io } from "socket.io-client"
+import { io } from "socket.io-client"
 
+
+/*
 const testFolder = "http://127.0.0.1:3000/files"
 const folder = {
   name: "",
@@ -39,6 +41,7 @@ const folder = {
     },
   ],
 };
+*/
 
 const buildTree = (paths) => {
   const root = { name: "testUsr", children: [], path: "" };
@@ -89,17 +92,43 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
       })
       .catch((error) => console.error("Error fetching files:", error));
   };
+    
+  function loadFiles(update) {
+        const data = (update);
+        const transformedFolder = buildTree(data);
+        setFolder(transformedFolder);
+  };
 
+    const server_url_ref = useRef(SERVER_URL);
   useEffect(() => {
     // Call fetchFiles immediately
     fetchFiles();
 
+    // establish socket connection to server 
+    const socket = io(server_url_ref.current,
+        {
+            query: {
+                clientType: "react-editor"
+            }
+
+        }
+    );
+
     // TODO: remove this, and call it on socket responce
     // Set up an interval to call fetchFiles every second
-    const intervalId = setInterval(fetchFiles, 250);
+    // const intervalId = setInterval(fetchFiles, 250);
+
+    // setup socket callbacks for filesystem
+    socket.on('files_update', loadFiles);
 
     // Cleanup the interval when the component unmounts
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
+    return () => {
+        // clearInterval(intervalId);
+        socket.off('files_update', loadFiles);
+        socket.disconnect();
+    };
+
   }, []);
 
   const handleContextMenu = (event, file, isFolder) => {
@@ -319,11 +348,11 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
 
   const handleFileClick = (filename) => {
     fetch(SERVER_URL +  `/files/${filename}`)
-      .then((response) => response.json())
+      .then((response) => response.text())
       .then((data) =>{
         console.log(data)
-        setActiveFile(data.filename);
-        setEditorContent(data.content);
+        setActiveFile(filename);
+        setEditorContent(data);
       })
       .catch((error) => console.error("Error fetching file content:", error));
   };
@@ -434,5 +463,4 @@ const FileIcon = ({ filename }) => {
       return null;
   }
 };
-
 export default MultiSelectDirectoryTreeView;

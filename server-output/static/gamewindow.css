@@ -7,11 +7,18 @@ html, body {
 }
 
 canvas {
-  overflow: hidden;
-  image-rendering: pixelated;
-  display: block;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
+  background-color: white;
+  overflow:hidden;
+  display:block;
+  width:100%;
+  height:100%;
 }
+/*canvas {*/
+/*  overflow: hidden;*/
+/*  image-rendering: pixelated;*/
+/*  display: block;*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  width: 100%;*/
+/*  height: 100%;*/
+/*}*/
