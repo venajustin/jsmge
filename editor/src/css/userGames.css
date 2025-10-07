@@ -97,3 +97,64 @@ body {
 .edit-button:hover {
   background-color: #8a312c;
 }
+
+.title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.create-game-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.create-game-button:hover {
+  background-color: #0056b3;
+}
+
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  z-index: 1000; 
+}
+
+.createBody {
+  padding: 15px;
+  border-radius: 15px;
+  color: #ffffff;
+  background-color: #1c0221;
+  width: 50vw;
+  max-width: 90vw; 
+  height: 50vh;
+  border-style: solid;
+  border-width: 5px;
+  border-color: #3b0b44;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.createBody form {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+

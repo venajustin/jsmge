@@ -72,7 +72,38 @@ const io = new Server(server,
 io.engine.use(sessionMiddleware);
 
 //this is temporary fix for testing development
+//app.use(cors({ origin: "http://localhost:5174" }));
+app.use(cors({ origin: "http://localhost" }));
 
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if(!authHeader) {
+    return res.status(401).json({message: "Token is missing"})
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try{
+    const response = await fetch("http://127.0.0.1:5000/protected", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if(response.ok){
+      const data = await response.json();
+      req.user = data;
+      next();
+    }else {
+      const errorData = await response.json();
+      return res.status(401).json({message: errorData.message});
+    }
+  }catch (error){
+    console.error("Error verifying token:", error.message);
+    return res.status(500).json({message: "Internal server error"});
+  }
+}
 
 // watch files in the user's code directory to update editor
 fs.watch(user_code_dir, {recursive: true}, () => {
@@ -149,7 +180,7 @@ app.get("/test/:inputnum", (req, res) => {
     let msg = testfn();
     res.send("hello from container, " + msg + " <br> param: " + req.params.inputnum + " <br> query: " + req.query.inputnum );
 });
-
+//This would need to verify token in future but for now it is fine
 app.get("/status", (req, res) => {
     res.send(game.state);
 });
@@ -307,6 +338,97 @@ app.delete("/folder", (req, res) => {
     res.status(500).send("Error deleting folder.");
   }
 });
+
+// Move file endpoint
+app.put("/files/move", (req, res) => {
+  const { oldPath, newPath } = req.body;
+
+  if (!oldPath || !newPath) {
+    return res.status(400).send("Both oldPath and newPath are required.");
+  }
+
+  const oldFilePath = path.join(code, oldPath);
+  const newFilePath = path.join(code, newPath);
+
+  try {
+    // Check if source file exists
+    if (!fs.existsSync(oldFilePath)) {
+      return res.status(404).send("Source file not found.");
+    }
+
+    // Check if destination directory exists, create if it doesn't
+    const newDir = path.dirname(newFilePath);
+    if (!fs.existsSync(newDir)) {
+      fs.mkdirSync(newDir, { recursive: true });
+    }
+
+    // Check if destination file already exists
+    if (fs.existsSync(newFilePath)) {
+      return res.status(409).send("Destination file already exists.");
+    }
+
+    // Move the file
+    fs.renameSync(oldFilePath, newFilePath);
+
+    console.log(`File moved from ${oldPath} to ${newPath}`);
+    res.send(`File moved from ${oldPath} to ${newPath}`);
+
+  } catch (error) {
+    console.error("Error moving file:", error);
+    res.status(500).send("Error moving file.");
+  }
+});
+
+// Move folder endpoint
+app.put("/folder/move", (req, res) => {
+  const { oldPath, newPath } = req.body;
+
+  if (!oldPath || !newPath) {
+    return res.status(400).send("Both oldPath and newPath are required.");
+  }
+
+  const oldFolderPath = path.join(code, oldPath);
+  const newFolderPath = path.join(code, newPath);
+
+  try {
+    // Check if source folder exists
+    if (!fs.existsSync(oldFolderPath)) {
+      return res.status(404).send("Source folder not found.");
+    }
+
+    // Check if it's actually a directory
+    if (!fs.statSync(oldFolderPath).isDirectory()) {
+      return res.status(400).send("Source path is not a directory.");
+    }
+
+    // Prevent moving a folder into itself or its subdirectories
+    if (newPath.startsWith(oldPath + '/') || newPath === oldPath) {
+      return res.status(400).send("Cannot move folder into itself or its subdirectories.");
+    }
+
+    // Check if destination parent directory exists, create if it doesn't
+    const newParentDir = path.dirname(newFolderPath);
+    if (!fs.existsSync(newParentDir)) {
+      fs.mkdirSync(newParentDir, { recursive: true });
+    }
+
+    // Check if destination folder already exists
+    if (fs.existsSync(newFolderPath)) {
+      return res.status(409).send("Destination folder already exists.");
+    }
+
+    // Move the folder
+    fs.renameSync(oldFolderPath, newFolderPath);
+
+    console.log(`Folder moved from ${oldPath} to ${newPath}`);
+    res.send(`Folder moved from ${oldPath} to ${newPath}`);
+
+  } catch (error) {
+    console.error("Error moving folder:", error);
+    res.status(500).send("Error moving folder.");
+  }
+});
+
 app.get('/favicon.ico', (req, res) => {
     res.sendFile( process.cwd() + "/favicon.ico");
 });
