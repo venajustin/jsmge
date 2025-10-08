@@ -44,10 +44,11 @@ class Scene {
             o._update(dtime, inputs);
         });
     }
-    _test_collisions() {
+    _test_collisions(p) {
+
         let colliders = [];
         for (const obj of this._objects) {
-            colliders.push(...obj._get_colliders());
+            colliders.push(...obj._get_colliders(p)); // TODO: make independant of p5, probably pass matrix rather than p context
         }
         // console.log("Colliders:");
         // console.log(colliders);
@@ -55,11 +56,13 @@ class Scene {
         //     console.log(col.collider._shape.get_axis()) ;
         // }
 
+        // TODO: use octree
         for (const col1 of colliders) {
             for (const col2 of colliders) {
                 if (col1 !== col2) {
                     if (collide(col1.collider._shape, col2.collider._shape)) {
-                        console.log("collision");
+                        col1.collider._parent._collision(col2.collider._parent);
+                        // console.log("collision");
                     }
                 }
             }

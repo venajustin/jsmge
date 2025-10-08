@@ -36,7 +36,7 @@ const editSketch = (p) => {
             location.reload();
         }
         if (p.key === 'c') {
-            p.scene._test_collisions();
+            p.scene._test_collisions(p);
         }
     
 

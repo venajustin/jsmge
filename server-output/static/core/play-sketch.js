@@ -62,18 +62,22 @@ const playSketch = (p) => {
 
 
         p.scene._update(p.deltaTime, inputs);
+        p.scene._test_collisions(p);
+
 
         p.textSize(30);
         p.scene._draw(p);
 
+
+
         // message telling user to focus page
-        if (!p.focused) {
-            p.fill(0,0,0,100);
-            p.rect(0,0,1600,1200);
-            p.fill(0,0,0,255);
-            p.textAlign(p.CENTER, p.CENTER);
-            p.text("Click To Focus", 500, 400);
-        }
+        // if (!p.focused) {
+        //     p.fill(0,0,0,100);
+        //     p.rect(0,0,1600,1200);
+        //     p.fill(0,0,0,255);
+        //     p.textAlign(p.CENTER, p.CENTER);
+        //     p.text("Click To Focus", 500, 400);
+        // }
 
 
     };

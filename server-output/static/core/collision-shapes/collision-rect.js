@@ -69,7 +69,6 @@ export class CollisionRect extends CollisionShape {
     }
 
     _draw(p) {
-        this._position_cache = p.drawingContext.getTransform().transformPoint(new DOMPoint(0,0,0));
         p.fill(0,0,0,0);
         p.stroke(255,255,255,255);
         p.rect(-1 * this.width / 2,-1 * this.height / 2,this.width, this.height);

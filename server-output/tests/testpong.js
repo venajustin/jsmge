@@ -11,6 +11,7 @@ import { AnimatedSprite } from "#static/core/frame/animated-sprite.js";
 import  ESSerializer from 'esserializer';
 import { Collider } from "#static/core/frame/collider.js";
 import { CollisionRect } from "#static/core/collision-shapes/collision-rect.js";
+import { Walls } from "#files/frames/Walls.js";
 
 
 export async function testpong() {
@@ -38,6 +39,25 @@ export async function testpong() {
     ball._pos = {x:500,y:500,z:0};
 
     ball.velocity = {x:1, y: 0, z:0};
+
+    const walls = new Walls();
+    walls._pos = {x:500,y:0,z:0};
+
+
+    const wallsprite = new AnimatedSprite();
+    wallsprite._add_image_source('/files/resources/button_square_wide.png', 256, 128, 1);
+    wallsprite._pos = {x:-600, y:0,z:0};
+    wallsprite.add_animation([0]);
+    wallsprite._selected_animation = 0;
+    wallsprite._sca = {x:5,y:.1,z:1};
+
+    const wallcol = new Collider();
+    wallcol._shape = new CollisionRect();
+    wallcol._shape.width = 1024;
+    wallcol._shape.height = 15;
+    walls._colliders.push(wallcol);
+    walls._animated_sprites.push(wallsprite);
+
 
 
     const paddleSprite = new AnimatedSprite();
@@ -72,9 +92,16 @@ export async function testpong() {
     p2Col._shape.height = 256;
     player2._colliders.push(p2Col);
 
+    const ballCol = new Collider();
+    ballCol._shape = new CollisionRect();
+    ballCol._shape.width = 25;
+    ballCol._shape.height = 25;
+    ball._colliders.push(ballCol);
+
     nscene._addObject(player1);
     nscene._addObject(player2);
     nscene._addObject(ball);
+    nscene._addObject(walls);
     
 
     const serialScene = ESSerializer.serialize(nscene);

@@ -66,13 +66,15 @@ export class Frame {
     async _load(p) {
         for (const o of this._animated_sprites) {
             await o._load(p);
+            o._parent = this;
         }
         for (const o of this._colliders) {
             await o._load(p);
+            o._parent = this;
         }
-
         for (const o of this._children) {
             await o._load(p);
+            o._parent = this;
         }
     }
 
@@ -183,17 +185,25 @@ export class Frame {
         return JSON.stringify(this);
     }
 
-    _get_colliders() {
+    _get_colliders(p) {
+        p.push();
+        p.translate(this._pos.x,this._pos.y,this._pos.z);
+
         const arr = [];
 
         for (const coll of this._colliders) {
+            coll._set_cache(p);
             arr.push({ collider: coll })
         }
 
         for (const obj of this._children) {
             arr.push(obj._get_colliders());
         }
+
+        p.pop();
+
         return arr;
+
     }
 }
 
