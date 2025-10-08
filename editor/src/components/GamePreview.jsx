@@ -31,7 +31,7 @@ const codeEditor = ({SERVER_URL, socket}) => {
           <div className="preview-container">
               <iframe
                   id={"game-iframe"}
-                  // src="/app/1/gamewindow.html"
+                  //src="/app/1/gamewindow.html"
 
                   // for dev without flask running: comment out above and uncomment below
                   src = {SERVER_URL+ "/gamewindow.html"}

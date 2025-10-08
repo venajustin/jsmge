@@ -3,7 +3,12 @@ import path from "path";
 import * as fs from 'node:fs';
 
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
-const user_code_dir = "./testUsr";
+let user_code_dir = "/usrcode";
+if (process.env.IS_DOCKER_CONTAINER !== "true") {
+        
+        user_code_dir = path.resolve("./testUsr");
+
+    } 
 
 import { createServer } from "node:http";
 import  { Server } from "socket.io";
@@ -46,7 +51,7 @@ const editors = [];
 
 app.use(express.static('static'));
 app.use("/static", express.static("static"));
-app.use("/user-static", express.static(user_code_dir + "/resources"));
+//app.use("/user-static", express.static(user_code_dir + "/resources"));
 
 app.use(express.json()) // This allows to parse json requests
 
@@ -202,7 +207,7 @@ app.get("/files", (req, res) => {
   };
 
   try {
-    const files = getFilesFlat(code); // Get all files as a flat list
+    const files = getFilesFlat(user_code_dir); // Get all files as a flat list
     res.json(files); // Return the flat list of file paths
   } catch (error) {
     console.error("Error reading folder:", error);
@@ -267,12 +272,24 @@ app.get("/files/*", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  const filePath = path.join(code, filename);
+  let filePath = path.join(user_code_dir, filename);
+  console.log(filePath)
+  if (process.env.IS_DOCKER_CONTAINER == "true") {
+        
+        filePath =  "/" + filePath
+
+  } 
   try {
-    if (!fs.existsSync(filePath)) {
+    if (!fs.existsSync( filePath)) {
       return res.status(404).send("File not found.");
     }
-    res.sendFile(path.resolve(filePath));
+    else{
+      console.log("file path doesnt exist " + filePath)
+    }
+    console.log("trying to grab file from this path: " + filePath);
+    //res.sendFile(path.resolve(filePath));
+    res.sendFile(filePath);
+    console.log("file found")
 //    const content = fs.readFileSync(filePath, "utf8");
  //   res.contentType(path.basename(filePath));
   //  res.send(content);

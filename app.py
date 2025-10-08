@@ -23,8 +23,8 @@ import bcrypt
 import datetime
 
 app = Flask(__name__)
-#CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
-CORS(app, resources={r"/*": {"origins": "http://localhost"}}) # might get deleted when public
+CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
+#CORS(app, resources={r"/*": {"origins": "http://localhost"}}) # might get deleted when public
 jenv = Environment(loader=FileSystemLoader("templates"))
 
 example_script = jenv.get_template("example.js").render()
@@ -73,7 +73,7 @@ def token_required(f):
 # test connection to database
 def test_connection():
     print("giving time to wait for db to start")
-    time.sleep(3)
+    #time.sleep(3)
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
