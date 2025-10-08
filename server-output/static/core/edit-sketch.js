@@ -35,6 +35,9 @@ const editSketch = (p) => {
         if (p.key === 'r') {
             location.reload();
         }
+        if (p.key === 'c') {
+            p.scene._test_collisions();
+        }
     
 
         // Enter play mode

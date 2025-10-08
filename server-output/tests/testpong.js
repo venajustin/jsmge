@@ -9,6 +9,9 @@ import { Paddle } from "#files/frames/Paddle.js";
 import { Ball } from "#files/frames/Ball.js";
 import { AnimatedSprite } from "#static/core/frame/animated-sprite.js";
 import  ESSerializer from 'esserializer';
+import { Collider } from "#static/core/frame/collider.js";
+import { CollisionRect } from "#static/core/collision-shapes/collision-rect.js";
+
 
 export async function testpong() {
 
@@ -57,7 +60,17 @@ export async function testpong() {
     player1._animated_sprites.push(paddleSprite);
     player2._animated_sprites.push(paddleSprite);
 
-    
+    const p1Col = new Collider();
+    p1Col._shape = new CollisionRect();
+    p1Col._shape.width = 64;
+    p1Col._shape.height = 256;
+    player1._colliders.push(p1Col);
+
+    const p2Col = new Collider();
+    p2Col._shape = new CollisionRect();
+    p2Col._shape.width = 64;
+    p2Col._shape.height = 256;
+    player2._colliders.push(p2Col);
 
     nscene._addObject(player1);
     nscene._addObject(player2);

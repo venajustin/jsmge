@@ -1,3 +1,4 @@
+import {collide} from "#static/core/collision-shapes/collision-shape.js";
 
 
 class Scene {
@@ -42,6 +43,27 @@ class Scene {
         this._objects.forEach((o) => {
             o._update(dtime, inputs);
         });
+    }
+    _test_collisions() {
+        let colliders = [];
+        for (const obj of this._objects) {
+            colliders.push(...obj._get_colliders());
+        }
+        // console.log("Colliders:");
+        // console.log(colliders);
+        // for (const col of colliders) {
+        //     console.log(col.collider._shape.get_axis()) ;
+        // }
+
+        for (const col1 of colliders) {
+            for (const col2 of colliders) {
+                if (col1 !== col2) {
+                    if (collide(col1.collider._shape, col2.collider._shape)) {
+                        console.log("collision");
+                    }
+                }
+            }
+        }
     }
 
 }

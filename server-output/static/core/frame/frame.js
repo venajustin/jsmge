@@ -37,10 +37,17 @@ export class Frame {
     }
 
 
+    // user override
     handle_input(inputs) {
 
     }
+    // user override
+    handle_collision(other) {
+
+    }
+    // user override
     process_physics(deltaTime) {
+
     }
     _update(dtime, inputs) {
         this.handle_input(inputs);
@@ -50,6 +57,10 @@ export class Frame {
         this._children.forEach((o) => {
             o._update(p, inputs);
         });
+    }
+    _collision(other) {
+        this.handle_collision(other);
+
     }
 
     async _load(p) {
@@ -92,6 +103,9 @@ export class Frame {
         p.fill(0,0,0,255);
         p.rect(-1,-1,4,4);
 
+        this._colliders.forEach((child) => {
+            child._draw(p);
+        });
         this._children.forEach((child) => {
             child._draw_editor(p);
         });
@@ -167,6 +181,19 @@ export class Frame {
     // objects. They can be saved and loaded through stringify and parse
     toString() {
         return JSON.stringify(this);
+    }
+
+    _get_colliders() {
+        const arr = [];
+
+        for (const coll of this._colliders) {
+            arr.push({ collider: coll })
+        }
+
+        for (const obj of this._children) {
+            arr.push(obj._get_colliders());
+        }
+        return arr;
     }
 }
 

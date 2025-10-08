@@ -1,8 +1,9 @@
-export class CollisionSphere {
+import {CollisionShape} from "#static/core/collision-shapes/collision-shape.js";
 
-    // copy constructor, allows objects to be easily cast to this type
-    constructor(obj) {
-        obj && Object.assign(this, obj);
+export class CollisionSphere extends CollisionShape {
+
+    get_type() {
+        return "circle";
     }
 
 
