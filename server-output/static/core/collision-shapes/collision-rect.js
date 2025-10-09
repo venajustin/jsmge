@@ -29,10 +29,10 @@ export class CollisionRect extends CollisionShape {
     project(axis) {
        const verticies = [];
        const pos = this._position_cache;
-       verticies.push([ pos.x + this.width / 2, pos.y + this.height / 2]);
-       verticies.push([ pos.x + this.width / 2, pos.y - this.height / 2]);
-       verticies.push([ pos.x - this.width / 2, pos.y + this.height / 2]);
-       verticies.push([ pos.x - this.width / 2, pos.y - this.height / 2]);
+       verticies.push([ pos[0] + this.width / 2, pos[1] + this.height / 2]);
+       verticies.push([ pos[0] + this.width / 2, pos[1] - this.height / 2]);
+       verticies.push([ pos[0] - this.width / 2, pos[1]+ this.height / 2]);
+       verticies.push([ pos[0] - this.width / 2, pos[1] - this.height / 2]);
 
         let min = math.dot(axis, verticies[0]);
         let max = min;

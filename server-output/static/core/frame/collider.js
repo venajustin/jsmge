@@ -37,11 +37,12 @@ export class Collider extends Frame {
         p.pop();
     }
 
-    _set_cache(p) {
-        p.push();
-        this._apply_transforms(p);
-        this._shape._position_cache = p.drawingContext.getTransform().transformPoint(new DOMPoint(0,0,0));
-        p.pop();
+    _set_cache(context) {
+        context.mat = math.multiply(context.mat, this._get_matrix());
+        const  p = math.matrix([0, 0, 1]);
+        const global_pos = math.multiply(context.mat, p);
+        this._shape._position_cache = global_pos.toArray();
+        context.mat = math.multiply(context.mat, math.inv(this._get_matrix()));
     }
 
 

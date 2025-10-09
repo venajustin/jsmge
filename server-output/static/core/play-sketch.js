@@ -62,7 +62,10 @@ const playSketch = (p) => {
 
 
         p.scene._update(p.deltaTime, inputs);
-        p.scene._test_collisions(p);
+        let collision_context = {
+            mat: math.identity(3, 3)
+        }
+        p.scene._test_collisions(collision_context);
 
 
         p.textSize(30);

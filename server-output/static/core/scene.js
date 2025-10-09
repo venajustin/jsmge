@@ -44,11 +44,11 @@ class Scene {
             o._update(dtime, inputs);
         });
     }
-    _test_collisions(p) {
+    _test_collisions(curr_matrix) {
 
         let colliders = [];
         for (const obj of this._objects) {
-            colliders.push(...obj._get_colliders(p)); // TODO: make independant of p5, probably pass matrix rather than p context
+            colliders.push(...obj._get_colliders(curr_matrix)); // TODO: make independant of p5, probably pass matrix rather than p context
         }
         // console.log("Colliders:");
         // console.log(colliders);

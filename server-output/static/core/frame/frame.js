@@ -19,6 +19,47 @@ export class Frame {
         p.rotate(this._rot.x,this._rot.y,this._rot.z);
         p.scale(this._sca.x,this._sca.y,this._sca.z);
     }
+    _get_m_translate() {
+        return math.matrix([
+            [1, 0, this._pos.x],
+            [0, 1, this._pos.y],
+            [0, 0, 1]
+        ]);
+    }
+    _get_m_rotate() {
+        let m =  math.identity(3,3);
+        m = math.multiply(m, math.matrix([
+            [1, 0, 0],
+            [0, math.cos(this._rot.x), -math.sin(this._rot.x)],
+            [0, math.sin(this._rot.x), math.cos(this._rot.x)]
+        ]));
+        m = math.multiply(m, math.matrix([
+            [math.cos(this._rot.y), 0, math.sin(this._rot.y)],
+            [0, 1, 0],
+            [-math.sin(this._rot.y), 0, math.cos(this._rot.y)]
+        ]));
+        m = math.multiply(m, math.matrix([
+            [math.cos(this._rot.z), -math.sin(this._rot.z), 0],
+            [math.sin(this._rot.z), math.cos(this._rot.z), 0],
+            [0, 0, 1]
+        ]));
+        return m;
+    }
+    _get_m_scale() {
+        return math.matrix([
+            [this._sca.x, 0, 0],
+            [0, this._sca.y, 0],
+            [0, 0, 1]
+        ]);
+
+    }
+    _get_matrix() {
+        let mat = math.identity(3,3);
+        mat = math.multiply(mat, this._get_m_translate());
+        mat = math.multiply(mat, this._get_m_rotate());
+        mat = math.multiply(mat, this._get_m_scale());
+        return mat;
+    }
 
     _draw(p) {
 
@@ -185,14 +226,13 @@ export class Frame {
         return JSON.stringify(this);
     }
 
-    _get_colliders(p) {
-        p.push();
-        p.translate(this._pos.x,this._pos.y,this._pos.z);
+    _get_colliders(context) {
+        context.mat = math.multiply(context.mat, this._get_matrix());
 
         const arr = [];
 
         for (const coll of this._colliders) {
-            coll._set_cache(p);
+            coll._set_cache(context);
             arr.push({ collider: coll })
         }
 
@@ -200,7 +240,8 @@ export class Frame {
             arr.push(obj._get_colliders());
         }
 
-        p.pop();
+
+        context.mat = math.multiply(context.mat, math.inv(this._get_matrix()));
 
         return arr;
 

@@ -26,9 +26,9 @@ export class Paddle extends Frame {
             return;
         }
         
-        if (inputs.includes("move_up")) {
+        if (inputs.includes("move_up") &&  (this._pos.y > 50)) {
             this.velocity.y = -1;
-        } else if (inputs.includes("move_down")) {
+        } else if (inputs.includes("move_down") && (this._pos.y < 750)) {
             this.velocity.y = 1;
         } else {
             this.velocity.y = 0;

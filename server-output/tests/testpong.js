@@ -40,8 +40,10 @@ export async function testpong() {
 
     ball.velocity = {x:1, y: 0, z:0};
 
-    const walls = new Walls();
-    walls._pos = {x:500,y:0,z:0};
+    const wall_top = new Walls();
+    wall_top._pos = {x:500,y:0,z:0};
+    const wall_bottom = new Walls();
+    wall_bottom._pos = {x:500,y:750,z:0};
 
 
     const wallsprite = new AnimatedSprite();
@@ -51,12 +53,15 @@ export async function testpong() {
     wallsprite._selected_animation = 0;
     wallsprite._sca = {x:5,y:.1,z:1};
 
+
     const wallcol = new Collider();
     wallcol._shape = new CollisionRect();
     wallcol._shape.width = 1024;
     wallcol._shape.height = 15;
-    walls._colliders.push(wallcol);
-    walls._animated_sprites.push(wallsprite);
+    wall_top._colliders.push(wallcol);
+    wall_top._animated_sprites.push(wallsprite);
+    wall_bottom._colliders.push(wallcol);
+    wall_bottom._animated_sprites.push(wallsprite);
 
 
 
@@ -101,8 +106,10 @@ export async function testpong() {
     nscene._addObject(player1);
     nscene._addObject(player2);
     nscene._addObject(ball);
-    nscene._addObject(walls);
-    
+    nscene._addObject(wall_top);
+    nscene._addObject(wall_bottom);
+
+
 
     const serialScene = ESSerializer.serialize(nscene);
 
