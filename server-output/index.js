@@ -20,11 +20,10 @@ import {get_client} from "./server/database/connect-db.js";
 import {debug_set_env, get_source_paths} from "./server/util.js";
 
 
-import {createGame, GameState} from './server-core/game.js';
+import {Game, GameState} from './server-core/game.js';
 
 // used for saving/loading scenes
 import ESSerializer from "esserializer";
-
 
 
 
@@ -38,9 +37,12 @@ const code = "testUsr" // temp will need to change this to /usrcode
 
 debug_set_env();
 
-const game = createGame();
+const game = new Game();
 // const flask = "http://127.0.0.1/app/2/"
 
+
+import {fork} from 'node:child_process';
+const child_process = fork('./server-core/server.js');
 
 const editors = [];
 
@@ -430,3 +432,5 @@ app.get('/get-source-paths/', (req, res) => {
         });
     });
 });
+
+game.start();

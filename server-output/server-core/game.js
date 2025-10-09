@@ -4,11 +4,29 @@ export const GameState = Object.freeze({
     PLAY: 'play'
 })
 
-export function createGame() {
-    let game = {
-        state: GameState.EDIT,
-        active_scene: "testscene2.scene",
-        players: [] // maybe switch to set or map
-    }
-    return game;
+export class Game {
+        state = GameState.EDIT;
+        active_scene = "testscene2.scene";
+        players = []; // maybe switch to set or map
+
+
+        running = true;
+        stopGame() { this.running = false; }
+        async start() {
+
+            while (this.running) {
+
+                await new Promise((resolve) => setTimeout(resolve,1000));
+                console.log("Tick");
+
+
+            }
+
+
+        }
+
+
+
+
+
 }
