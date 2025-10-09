@@ -119,6 +119,10 @@ app.get('/tests/', (req,res) => {
 
     testScenes();
     testpong();
+    // for (const player of game.players) {
+    //     console.log("testing set scene")
+    //     io.to(player).emit('set_scene', "./files/scenes/testscene2.scene");
+    // }
 
     res.send("Tests complete");
 

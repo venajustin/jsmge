@@ -49,6 +49,18 @@ const editSketch = (p) => {
 
     };
 
+    p.setScene = async (scene_route) => {
+        console.log("changing scene to :" + scene_route);
+        p.started = false;
+
+        const response = await fetch(scene_route, {method:'GET'});
+        const scene_json = await response.text();
+        p.scene = await loadScene(scene_json);
+        await p.scene._load(p);
+
+        p.started = true;
+    }
+
     p.draw = () => {
 
         if (!p.started) {

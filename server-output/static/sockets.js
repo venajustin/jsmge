@@ -20,6 +20,10 @@ socket.on('game_status', (msg) => {
     } 
 });
 
+socket.on('set_scene', (msg) => {
+    active_session.setScene(msg);
+});
+
 // Chat room test:
 // const form = document.getElementById('form');
 // const input = document.getElementById('input');
