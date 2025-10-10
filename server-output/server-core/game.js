@@ -10,14 +10,25 @@ export class Game {
         players = []; // maybe switch to set or map
 
 
-        running = true;
-        stopGame() { this.running = false; }
+        running_instances = [];
+        // only one instance should be running at a time
+        // This system allows for game.start() to stop all other start() functions that are still running async
+        stopGame() {
+            for (let instance of this.running_instances) {
+                instance.running = false;
+            }
+            this.running_instances.length = 0;
+        }
         async start() {
+            this.stopGame();
+            const instance = { running: true };
+            this.running_instances.push(instance);
 
-            while (this.running) {
+            while (instance.running) {
 
                 await new Promise((resolve) => setTimeout(resolve,1000));
                 console.log("Tick");
+                console.log(this.running_instances);
 
 
             }
