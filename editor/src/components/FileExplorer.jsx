@@ -48,12 +48,15 @@ const buildTree = (paths) => {
 
   paths.forEach((filePath) => {
     const parts = filePath.split(/[\\/]/); // Split path into parts
+    console.log(parts)
+   // if (parts.length && parts[0] === "usrcode") parts.shift();
     let current = root;
     let currentPath = ""; // Track relative path
 
     parts.forEach((part, index) => {
-      if (index > 0) {
+      if (index > 0 && index != 1) {
         currentPath += (currentPath ? "/" : "") + part;
+        
       }
 
       let child = current.children.find((child) => child.name === part);
@@ -71,7 +74,7 @@ const buildTree = (paths) => {
       current = child; // Go deeper
     });
   });
-
+  console.log(root);
   return root;
 };
 

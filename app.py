@@ -23,8 +23,8 @@ import bcrypt
 import datetime
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
-#CORS(app, resources={r"/*": {"origins": "http://localhost"}}) # might get deleted when public
+#CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost"}}) # might get deleted when public
 jenv = Environment(loader=FileSystemLoader("templates"))
 
 example_script = jenv.get_template("example.js").render()
@@ -351,6 +351,16 @@ def insertNewGame():
         
         conn.commit()
 
+        folderName = str(game_id)
+        headFolder = "applications"
+        try:
+            path = os.path.join(headFolder, folderName)
+            print(path)
+            source = "usrcode"
+            #os.makedirs(path)
+            shutil.copytree(source, path)
+        except Exception as e:
+            print("An error occured making game folder", repr(e))
         return "", 201
 
     except Exception as e:
