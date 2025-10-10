@@ -32,7 +32,13 @@ class Scene {
         });
         return output;
     }
-
+    async _setup() {
+        for (const o of this._objects) {
+            await o._setup();
+        }
+    }
+    // like setup but with p5 context
+    // for loading images to p5
     async _load(p) {
         for (const o of this._objects) {
            await o._load(p);

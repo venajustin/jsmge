@@ -20,7 +20,7 @@ import {get_client} from "./server/database/connect-db.js";
 import {debug_set_env, get_source_paths} from "./server/util.js";
 
 
-import {Game, GameState} from './server-core/game.js';
+import {game, GameState} from './server-core/game.js';
 
 // used for saving/loading scenes
 import ESSerializer from "esserializer";
@@ -37,12 +37,13 @@ const code = "testUsr" // temp will need to change this to /usrcode
 
 debug_set_env();
 
-const game = new Game();
+
+// const game = new Game();   imported from game.js
 // const flask = "http://127.0.0.1/app/2/"
 
 
-import {fork} from 'node:child_process';
-const child_process = fork('./server-core/server.js');
+// import {fork} from 'node:child_process';
+// const server_process = fork('./server-core/server.js');
 
 const editors = [];
 
@@ -236,9 +237,9 @@ app.delete("/files/*", (req, res) => {
 });
 
 app.get("/files/*", (req, res) => {
-  console.log("Checking for file")
+  // console.log("Checking for file")
   const filename = req.params[0];
-  console.log(filename);
+  // console.log(filename);
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
@@ -393,6 +394,8 @@ app.get('/test-db', (req, res) => {
 });
 
 function sendEdit() {
+    // server_process.send("stop_game");
+    game.stopGame();
     let count = 0;
     for (const playerid of game.players) {
         io.to(playerid).emit('game_status', "edit");
@@ -403,6 +406,8 @@ function sendEdit() {
 
 function sendPlay() {
     let count = 0;
+    // server_process.send("start_game");
+    game.start();
     for (const playerid of game.players) {
         io.to(playerid).emit('game_status', "play");
         count++;
@@ -432,5 +437,3 @@ app.get('/get-source-paths/', (req, res) => {
         });
     });
 });
-
-game.start();

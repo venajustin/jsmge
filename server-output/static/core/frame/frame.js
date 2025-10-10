@@ -104,18 +104,31 @@ export class Frame {
 
     }
 
-    async _load(p) {
+    async _setup() {
         for (const o of this._animated_sprites) {
-            await o._load(p);
+            await o._setup();
             o._parent = this;
         }
         for (const o of this._colliders) {
-            await o._load(p);
+            await o._setup();
             o._parent = this;
         }
         for (const o of this._children) {
-            await o._load(p);
+            await o._setup();
             o._parent = this;
+        }
+    }
+    // like setup but with p5 context
+    // for loading images to p5
+    async _load(p) {
+        for (const o of this._animated_sprites) {
+            await o._load(p);
+        }
+        for (const o of this._colliders) {
+            await o._load(p);
+        }
+        for (const o of this._children) {
+            await o._load(p);
         }
     }
 
