@@ -1,5 +1,6 @@
 // Represents the class-like structures that code and resources are 
 // attached to before being instantiated in the scene as objects
+import * as math from "mathjs";
 
 export class Frame {
 

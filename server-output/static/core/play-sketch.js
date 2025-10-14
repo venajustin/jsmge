@@ -5,6 +5,7 @@ import { setSession } from "#static/core/session.js";
 import { loadScene } from "#static/utility/load-scene.js";
 import { getClassList } from "#static/utility/class-list.js";
 
+import * as math from "#static/libraries/math.js";
 
 const playSketch = (p) => {
 

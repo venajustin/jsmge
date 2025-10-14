@@ -1,5 +1,6 @@
 import {loadScene} from "./scene-operations.js";
 import { json_exclude_members } from "#static/utility/json_exclusion.js";
+import * as math from "mathjs";
 
 export const GameState = Object.freeze({
     EDIT: 'edit',
@@ -52,19 +53,19 @@ export class Game {
             this.lastTime = Date.now();
             this.state = GameState.PLAY;
 
-            if (this.scene === undefined) {
+            // Loading scene every time
+            //if (this.scene === undefined) {
                 loadScene("./testUsr/scenes/testscene2.scene").then((scene) => {
                     this.scene = scene;
                     this.ready = true;
                 });
-            }
+            //}
 
             if (!this.running) {
                 this.running = true;
                 setImmediate(update_loop, this);
                 // process.nextTick(update_loop);
             }
-            this.ready = true;
 
         }
         setScene(scenepath) {
@@ -92,8 +93,17 @@ function update_loop(game) {
 
     if (game.ready) {
         game.timer += dt;
+
+        game.scene._update(dt, []);
+        let collision_context = {
+            mat: math.identity(3, 3)
+        }
+        game.scene._test_collisions(collision_context);
+
+
+
         if (game.timer > 3000) {
-            console.log('tick');
+            console.log('tick: (clients updated)');
             
             let allobjects = [];
             let olist = [];

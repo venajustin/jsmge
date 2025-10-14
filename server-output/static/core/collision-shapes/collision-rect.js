@@ -1,6 +1,8 @@
 
 import {CollisionShape} from "#static/core/collision-shapes/collision-shape.js";
 
+import * as math from "mathjs";
+
 export class CollisionRect extends CollisionShape {
 
    get_type() {

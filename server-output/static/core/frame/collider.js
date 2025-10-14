@@ -1,5 +1,5 @@
 import { Frame } from "#static/core/frame/frame.js";
-
+import * as math from "mathjs";
 export class Collider extends Frame {
     // copy constructor, allows objects to be easily cast to this type
     constructor(obj) {

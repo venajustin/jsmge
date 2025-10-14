@@ -37,10 +37,10 @@ export class Ball extends Frame {
         this.bouncetimer = 0;
         if (axis === 'x') {
             this.velocity.x = -this.velocity.x;
-            this.velocity.y = this.velocity.y + 0.1 * Math.random();
+            this.velocity.y = this.velocity.y  ;
         } else {
             this.velocity.y = -this.velocity.y;
-            this.velocity.x = this.velocity.x + 0.1 * Math.random();
+            this.velocity.x = this.velocity.x  ;
         }
 
 
