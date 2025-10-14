@@ -24,6 +24,11 @@ socket.on('set_scene', (msg) => {
     active_session.setScene(msg);
 });
 
+socket.on('update_scene', (msg) => {
+    active_session.updates.push(JSON.parse(msg));
+});
+
+
 // Chat room test:
 // const form = document.getElementById('form');
 // const input = document.getElementById('input');

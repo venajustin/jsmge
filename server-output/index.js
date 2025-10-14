@@ -20,7 +20,7 @@ import {get_client} from "./server/database/connect-db.js";
 import {debug_set_env, get_source_paths} from "./server/util.js";
 
 
-import {game, GameState} from './server-core/game.js';
+import {Game, GameState} from './server-core/game.js';
 
 // used for saving/loading scenes
 import ESSerializer from "esserializer";
@@ -38,7 +38,6 @@ const code = "testUsr" // temp will need to change this to /usrcode
 debug_set_env();
 
 
-// const game = new Game();   imported from game.js
 // const flask = "http://127.0.0.1/app/2/"
 
 
@@ -74,7 +73,7 @@ const io = new Server(server,
 
 io.engine.use(sessionMiddleware);
 
-//this is temporary fix for testing development
+const game = new Game(io);
 
 
 // watch files in the user's code directory to update editor
@@ -391,6 +390,10 @@ async function test_db(res) {
 
 app.get('/test-db', (req, res) => {
    test_db(res);
+});
+
+app.get('/set-scene', (req, res) => {
+
 });
 
 function sendEdit() {

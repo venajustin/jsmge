@@ -2,17 +2,22 @@
 
 import { editSketch } from "#static/core/edit-sketch.js";
 import { setSession } from "#static/core/session.js";
-import {loadScene} from "#static/utility/load-scene.js";
+import { loadScene } from "#static/utility/load-scene.js";
+import { getClassList } from "#static/utility/class-list.js";
 
 
 const playSketch = (p) => {
+
+    p.updates = []
 
     p.setup = async () => {
         // p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
         p.createCanvas(1600, 1200, p.P2D);
 
+
         p.setScene("/files/scenes/testscene2.scene");
         p.mode = 'play';
+
 
     };
 
@@ -29,12 +34,17 @@ const playSketch = (p) => {
         p.started = true;
     }
 
+
     p.keyPressed = () => {
         // Enter edit mode
         // TODO: make this triggered externally
         if (p.key === 'p') {
            // p.remove();
             setSession(editSketch);
+        }
+        if (p.key === 'r') {
+            // test reload scene from server
+
         }
     };
 

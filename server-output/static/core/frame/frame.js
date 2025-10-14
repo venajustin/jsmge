@@ -3,7 +3,7 @@
 
 export class Frame {
 
-
+    _id;
 
     _pos = { x:0,y:0,z:0 };
     _rot = { x:0,y:0,z:0 };
@@ -104,17 +104,18 @@ export class Frame {
 
     }
 
-    async _setup() {
+    async _setup(scene) {
+        scene._s_index.set(this._id, this);
         for (const o of this._animated_sprites) {
-            await o._setup();
+            await o._setup(scene);
             o._parent = this;
         }
         for (const o of this._colliders) {
-            await o._setup();
+            await o._setup(scene);
             o._parent = this;
         }
         for (const o of this._children) {
-            await o._setup();
+            await o._setup(scene);
             o._parent = this;
         }
     }

@@ -10,8 +10,13 @@ export class Game {
         state = GameState.EDIT;
         active_scene = "testscene2.scene";
         players = []; // maybe switch to set or map
+        socket;
+        constructor(io) {
+            this.socket = io;
+        }
 
         client_updates = [];
+        server_updates = []; // possibly not needed
 
         lastTime = Date.now();
 
@@ -19,8 +24,6 @@ export class Game {
 
         running = false;
         ready = false;
-
-
 
         // running_instances = [];
         // only one instance should be running at a time
@@ -48,21 +51,38 @@ export class Game {
             this.lastTime = Date.now();
             this.state = GameState.PLAY;
 
-            loadScene("./testUsr/scenes/testscene2.scene").then((scene) => {
-                this.scene = scene;
-                this.ready = true;
-            });
+            if (this.scene === undefined) {
+                loadScene("./testUsr/scenes/testscene2.scene").then((scene) => {
+                    this.scene = scene;
+                    this.ready = true;
+                });
+            }
 
             if (!this.running) {
                 this.running = true;
-                process.nextTick(update_loop);
+                setImmediate(update_loop, this);
+                // process.nextTick(update_loop);
             }
 
         }
+        setScene(scenepath) {
+            this.ready = false;
+            loadScene(scenepath).then((scene) => {
+                this.scene = scene;
+                this.ready = true;
+            });
+        }
+
+        updatePlayers(msg) {
+            for (const player of this.players) {
+                this.socket.to(player).emit('update_scene', JSON.stringify(msg));
+            }
+        }
+
         timer = 0;
 }
 
-function update_loop() {
+function update_loop(game) {
     const currtime = Date.now();
     const dt = currtime - game.lastTime;
     game.lastTime = currtime;
@@ -71,14 +91,14 @@ function update_loop() {
         game.timer += dt;
         if (game.timer > 3000) {
             console.log('tick');
+            game.updatePlayers("Test message");
             // console.log(game.scene);
             game.timer = 0;
         }
     }
 
     if (game.running) {
-        setImmediate(update_loop);
+        setImmediate(update_loop, game);
     }
 }
 
-export const game = new Game();

@@ -33,8 +33,11 @@ class Scene {
         return output;
     }
     async _setup() {
+
+        this._s_index = new Map();
+
         for (const o of this._objects) {
-            await o._setup();
+            await o._setup(this);
         }
     }
     // like setup but with p5 context
