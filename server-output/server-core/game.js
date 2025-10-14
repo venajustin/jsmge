@@ -1,4 +1,5 @@
 import {loadScene} from "./scene-operations.js";
+import { json_exclude_members } from "#static/utility/json_exclusion.js";
 
 export const GameState = Object.freeze({
     EDIT: 'edit',
@@ -76,7 +77,8 @@ export class Game {
 
         updatePlayers(msg) {
             for (const player of this.players) {
-                this.socket.to(player).emit('update_scene', JSON.stringify(msg));
+                const json = JSON.stringify(msg);
+                this.socket.to(player).emit('update_scene', json);
             }
         }
 
@@ -104,21 +106,21 @@ function update_loop(game) {
                     for (const child of obj._children) {
                         nextlist.push(child);
                     }
-                    for (const child of obj._animated_sprites) {
-                        nextlist.push(child);
-                    }
-                    for (const child of obj._colliders) {
-                        nextlist.push(child);
-                    }
-                    allobjects.push(obj);
+                    // for (const child of obj._animated_sprites) {
+                        // nextlist.push(child);
+                    // }
+                    // for (const child of obj._colliders) {
+                        // nextlist.push(child);
+                    // }
+                    allobjects.push({ _id : obj._id, _pos : obj._pos });
                 }
                 olist = nextlist;
                 nextlist = [];
             }
 
-            // console.log(allobjects);
+            console.log(allobjects);
             
-            game.updatePlayers({objlist: [{_id: 0, _pos: {x:1, y:1, z:1}}]});
+            game.updatePlayers({objlist: allobjects});
             // console.log(game.scene);
             game.timer = 0;
         }
