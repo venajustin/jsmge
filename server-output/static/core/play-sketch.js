@@ -53,6 +53,9 @@ const playSketch = (p) => {
             return;
         }
 
+        p.processServerUpdates();
+
+
         let inputs = [];
 
         if (p.keyIsDown(65)) {
@@ -102,7 +105,10 @@ const playSketch = (p) => {
         }
     }
 
-
+    p.processServerUpdates = () => {
+        p.scene._process_server_updates(p.updates);
+        p.updates.length = 0;
+    }
 
 }
 

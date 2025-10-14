@@ -63,6 +63,7 @@ export class Game {
                 setImmediate(update_loop, this);
                 // process.nextTick(update_loop);
             }
+            this.ready = true;
 
         }
         setScene(scenepath) {
@@ -91,7 +92,33 @@ function update_loop(game) {
         game.timer += dt;
         if (game.timer > 3000) {
             console.log('tick');
-            game.updatePlayers("Test message");
+            
+            let allobjects = [];
+            let olist = [];
+            for (const obj of game.scene._objects) {
+                olist.push(obj);
+            }
+            let nextlist = [];
+            while (olist.length > 0) {
+                for (const obj of olist) {
+                    for (const child of obj._children) {
+                        nextlist.push(child);
+                    }
+                    for (const child of obj._animated_sprites) {
+                        nextlist.push(child);
+                    }
+                    for (const child of obj._colliders) {
+                        nextlist.push(child);
+                    }
+                    allobjects.push(obj);
+                }
+                olist = nextlist;
+                nextlist = [];
+            }
+
+            // console.log(allobjects);
+            
+            game.updatePlayers({objlist: [{_id: 0, _pos: {x:1, y:1, z:1}}]});
             // console.log(game.scene);
             game.timer = 0;
         }

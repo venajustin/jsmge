@@ -38,7 +38,7 @@ export async function testpong() {
     const ball = new Ball();
     ball._pos = {x:500,y:500,z:0};
 
-    ball.velocity = {x:1, y: 0, z:0};
+    ball.velocity = {x:.1, y: 0, z:0};
 
     const wall_top = new Walls();
     wall_top._pos = {x:500,y:0,z:0};

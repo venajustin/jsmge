@@ -78,6 +78,15 @@ class Scene {
         }
     }
 
+    _process_server_updates(update_list) {
+        for (const update of update_list) {
+            for (const obj of update.objlist) {
+                const target = this._s_index.get(obj._id);
+                Object.assign(target, obj); // copies all data from obj into target and overwrites same-named members
+            }
+        }
+    }
+
 }
 
 
