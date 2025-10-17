@@ -10,7 +10,12 @@ import * as math from "#static/libraries/math.js";
 const playSketch = (p) => {
 
     p.updates = []
+    p.server = { connected: false, socket: undefined };
 
+    p.setServer = (socket) => {
+        p.server.socket = socket;
+        p.server.connected = true;
+    };
     p.setup = async () => {
         // p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
         p.createCanvas(1600, 1200, p.P2D);
@@ -61,7 +66,6 @@ const playSketch = (p) => {
 
         if (p.keyIsDown(65)) {
             inputs.push("move_left");
-
         }
 
         if (p.keyIsDown(68)) {
@@ -86,6 +90,9 @@ const playSketch = (p) => {
         p.textSize(30);
         p.scene._draw(p);
 
+        if (p.server.connected) {
+            p.server.socket.emit('inputs', inputs);
+        }
 
 
         // message telling user to focus page

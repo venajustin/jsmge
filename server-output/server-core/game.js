@@ -18,7 +18,6 @@ export class Game {
         }
 
         client_updates = [];
-        server_updates = []; // possibly not needed
 
         lastTime = Date.now();
 
@@ -94,7 +93,14 @@ function update_loop(game) {
     if (game.ready) {
         game.timer += dt;
 
-        game.scene._update(dt, []);
+
+        let inputs = game.client_updates.pop();
+        if (inputs == undefined) {
+            inputs = [];
+        }
+
+
+        game.scene._update(dt, inputs.inputs);
         let collision_context = {
             mat: math.identity(3, 3)
         }

@@ -359,6 +359,10 @@ io.on('connection', (socket) => {
        console.log("Session " + sessionId + " disconnected");
        console.log("Active Sessions: " + game.players.length);
     });
+
+    socket.on('inputs',(inputlist) => {
+        game.client_updates.push({type:'input', inputs: inputlist});
+    });
     // chat room test:
     // socket.on('chat message', (msg) => {
     //     io.emit('chat message', msg);
