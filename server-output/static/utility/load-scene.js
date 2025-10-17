@@ -8,7 +8,8 @@ export async function loadScene(sceneJson) {
 // single element arrays here in this module or it wont work
 
     const classes = await getClassList();
-    // console.log(classes);
+    console.log("classes: " + classes);
     return window.ESSerializer.deserialize(sceneJson, classes);
+    
 
 }

@@ -1,9 +1,17 @@
 import express from "express";
 import path from "path";
 import * as fs from 'node:fs';
+import multer from "multer";
 
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
-const user_code_dir = "./testUsr";
+let user_code_dir = "/usrcode";
+if (process.env.IS_DOCKER_CONTAINER !== "true") {
+        
+        user_code_dir = path.resolve("./testUsr");
+        console.log("this is the path resolve" + user_code_dir);
+
+
+} 
 
 import { createServer } from "node:http";
 import  { Server } from "socket.io";
@@ -48,7 +56,7 @@ const editors = [];
 
 app.use(express.static('static'));
 app.use("/static", express.static("static"));
-app.use("/user-static", express.static(user_code_dir + "/resources"));
+//app.use("/user-static", express.static(user_code_dir + "/resources"));
 
 app.use(express.json()) // This allows to parse json requests
 
@@ -60,7 +68,7 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
-app.use(cors({ origin: "http://localhost:5173" }));
+//app.use(cors({ origin: "http://localhost:5173" }));
 
 const server = createServer(app);
 const io = new Server(server,
@@ -75,7 +83,39 @@ const io = new Server(server,
 io.engine.use(sessionMiddleware);
 
 const game = new Game(io);
+//this is temporary fix for testing development
+app.use(cors({ origin: "http://localhost:5173" }));
+//app.use(cors({ origin: "http://localhost" }));
 
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if(!authHeader) {
+    return res.status(401).json({message: "Token is missing"})
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try{
+    const response = await fetch("http://127.0.0.1:5000/protected", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if(response.ok){
+      const data = await response.json();
+      req.user = data;
+      next();
+    }else {
+      const errorData = await response.json();
+      return res.status(401).json({message: errorData.message});
+    }
+  }catch (error){
+    console.error("Error verifying token:", error.message);
+    return res.status(500).json({message: "Internal server error"});
+  }
+}
 
 // watch files in the user's code directory to update editor
 fs.watch(user_code_dir, {recursive: true}, () => {
@@ -156,7 +196,7 @@ app.get("/test/:inputnum", (req, res) => {
     let msg = testfn();
     res.send("hello from container, " + msg + " <br> param: " + req.params.inputnum + " <br> query: " + req.query.inputnum );
 });
-
+//This would need to verify token in future but for now it is fine
 app.get("/status", (req, res) => {
     res.send(game.state);
 });
@@ -178,7 +218,7 @@ app.get("/files", (req, res) => {
   };
 
   try {
-    const files = getFilesFlat(code); // Get all files as a flat list
+    const files = getFilesFlat(user_code_dir); // Get all files as a flat list
     res.json(files); // Return the flat list of file paths
   } catch (error) {
     console.error("Error reading folder:", error);
@@ -192,6 +232,43 @@ app.get("/testConnection", (req,res) => {
   return "You are connected";
 })
 
+app.post("/frames/*", (req,res) => {
+  let frame = req.params[0];
+  frame += ".js";
+  if(!frame){
+    return res.status(400).send("Frame name is needed")
+  }
+  let contentPath = path.resolve("static/core/frame/FrameTemplate.js")
+  console.log("content Path : " + contentPath);
+  let content = fs.readFileSync(contentPath)
+  let filePath = path.join(user_code_dir, "frames", frame);
+  try {
+    fs.writeFileSync(filePath, content);
+    res.send("Frame was created");
+  }
+  catch (error){
+    console.error("Error creating frame", error);
+  }
+})
+
+const upload = multer ({
+  storage: multer.diskStorage({
+    destination: function (req,file,cb) {
+      cb(null,path.join(user_code_dir, "resources"));
+    },
+    filename: function (req,file,cb) {
+      cb (null, file.originalname);
+    }
+  })
+})
+app.post("/resources", upload.single("file"), (req,res) => {
+  let file = req.file;
+  if(!file){
+    return res.status(400).send("No file uploaded");
+  }
+
+  res.status(200).send(`File ${file.originalname} uploaded successfully.`);
+})
 
 app.post("/files/*", (req, res) => {
   //console.log(req.headers);
@@ -203,7 +280,7 @@ app.post("/files/*", (req, res) => {
   if(!filename){
     return res.status(400).send("Filename is required.");
   }
-  const filePath = path.join(code, filename);
+  const filePath = path.join(user_code_dir, filename);
   try {
     fs.writeFileSync(filePath, content || "");
     res.send(`File ${filename} created`);
@@ -243,12 +320,23 @@ app.get("/files/*", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  const filePath = path.join(code, filename);
+  let filePath = path.join(user_code_dir , filename);
+  
+  if (process.env.IS_DOCKER_CONTAINER == "true") {
+        
+        filePath =  "/" + filePath
+
+  } 
+  console.log("filepath: " + filePath)
   try {
-    if (!fs.existsSync(filePath)) {
+    if (!fs.existsSync( filePath)) {
+      console.log("file path doesnt exist " + filePath)
       return res.status(404).send("File not found.");
     }
-    res.sendFile(path.resolve(filePath));
+    console.log("trying to grab file from this path: " + filePath);
+    //res.sendFile(path.resolve(filePath));
+    res.sendFile(filePath);
+    console.log("file found")
 //    const content = fs.readFileSync(filePath, "utf8");
  //   res.contentType(path.basename(filePath));
   //  res.send(content);
@@ -314,6 +402,97 @@ app.delete("/folder", (req, res) => {
     res.status(500).send("Error deleting folder.");
   }
 });
+
+// Move file endpoint
+app.put("/files/move", (req, res) => {
+  const { oldPath, newPath } = req.body;
+
+  if (!oldPath || !newPath) {
+    return res.status(400).send("Both oldPath and newPath are required.");
+  }
+
+  const oldFilePath = path.join(code, oldPath);
+  const newFilePath = path.join(code, newPath);
+
+  try {
+    // Check if source file exists
+    if (!fs.existsSync(oldFilePath)) {
+      return res.status(404).send("Source file not found.");
+    }
+
+    // Check if destination directory exists, create if it doesn't
+    const newDir = path.dirname(newFilePath);
+    if (!fs.existsSync(newDir)) {
+      fs.mkdirSync(newDir, { recursive: true });
+    }
+
+    // Check if destination file already exists
+    if (fs.existsSync(newFilePath)) {
+      return res.status(409).send("Destination file already exists.");
+    }
+
+    // Move the file
+    fs.renameSync(oldFilePath, newFilePath);
+
+    console.log(`File moved from ${oldPath} to ${newPath}`);
+    res.send(`File moved from ${oldPath} to ${newPath}`);
+
+  } catch (error) {
+    console.error("Error moving file:", error);
+    res.status(500).send("Error moving file.");
+  }
+});
+
+// Move folder endpoint
+app.put("/folder/move", (req, res) => {
+  const { oldPath, newPath } = req.body;
+
+  if (!oldPath || !newPath) {
+    return res.status(400).send("Both oldPath and newPath are required.");
+  }
+
+  const oldFolderPath = path.join(code, oldPath);
+  const newFolderPath = path.join(code, newPath);
+
+  try {
+    // Check if source folder exists
+    if (!fs.existsSync(oldFolderPath)) {
+      return res.status(404).send("Source folder not found.");
+    }
+
+    // Check if it's actually a directory
+    if (!fs.statSync(oldFolderPath).isDirectory()) {
+      return res.status(400).send("Source path is not a directory.");
+    }
+
+    // Prevent moving a folder into itself or its subdirectories
+    if (newPath.startsWith(oldPath + '/') || newPath === oldPath) {
+      return res.status(400).send("Cannot move folder into itself or its subdirectories.");
+    }
+
+    // Check if destination parent directory exists, create if it doesn't
+    const newParentDir = path.dirname(newFolderPath);
+    if (!fs.existsSync(newParentDir)) {
+      fs.mkdirSync(newParentDir, { recursive: true });
+    }
+
+    // Check if destination folder already exists
+    if (fs.existsSync(newFolderPath)) {
+      return res.status(409).send("Destination folder already exists.");
+    }
+
+    // Move the folder
+    fs.renameSync(oldFolderPath, newFolderPath);
+
+    console.log(`Folder moved from ${oldPath} to ${newPath}`);
+    res.send(`Folder moved from ${oldPath} to ${newPath}`);
+
+  } catch (error) {
+    console.error("Error moving folder:", error);
+    res.status(500).send("Error moving folder.");
+  }
+});
+
 app.get('/favicon.ico', (req, res) => {
     res.sendFile( process.cwd() + "/favicon.ico");
 });
@@ -342,6 +521,7 @@ io.on('connection', (socket) => {
             console.log("editor edit button press");
             sendEdit();
         });
+        //need a new socket.on(propertychange, (changedObject))
         return;
     }
 

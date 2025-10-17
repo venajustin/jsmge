@@ -130,7 +130,7 @@ def start_node(app_id):
     # defines the mounting of server backend code
 
     volumes = {
-        host_server_js + str(app_id): {'bind':container_server_js, 'mode': 'ro'}
+        host_server_js + str(app_id): {'bind':container_server_js, 'mode': 'rw'} #changed this to readwrite instead of read only
     }
 
     name = container_names['node'] + '-' + str(app_id)

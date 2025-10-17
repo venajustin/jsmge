@@ -1,7 +1,7 @@
 
-import { editSketch } from "/core/edit-sketch.js";
-import { playSketch } from "/core/play-sketch.js";
-import { setSession, active_session} from "/core/session.js";
+import { editSketch } from "./core/edit-sketch.js";
+import { playSketch } from "./core/play-sketch.js";
+import { setSession, active_session} from "./core/session.js";
 
 const socket = io();
 

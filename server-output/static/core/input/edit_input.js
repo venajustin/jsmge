@@ -50,7 +50,7 @@ export function edit_mouse_drag(p, editState) {
 }
 
 export function edit_mouse_click(p, editState) {
-    editState.selected = undefined;
+    editState.selected = undefined; //will remove this line to put like .isSelected = false
 }
 
 

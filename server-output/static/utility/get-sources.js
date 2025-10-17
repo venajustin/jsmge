@@ -14,8 +14,11 @@ export async function getSources() {
         
     } else {
         // we call the endpoint to get all paths
-        const res = await fetch('/get-source-paths/');
-        return (await res.json()).paths;
+        const res = await fetch('./get-source-paths/', {method:'GET'});
+        let j = await res.json();
+        console.log("response from get sources: ");
+        console.log(j);
+        return j.paths;
     }
     
 

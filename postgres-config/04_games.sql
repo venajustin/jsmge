@@ -7,5 +7,12 @@ CREATE TABLE Games (
     title VARCHAR(255),
     description VARCHAR(1000)
 );
+
+CREATE TABLE Owns(
+    uid UUID,
+    gameID INTEGER,
+    FOREIGN KEY (uid) REFERENCES Users(uid),
+    FOREIGN KEY (gameID) REFERENCES Games(id)
+);
 COMMIT;
 

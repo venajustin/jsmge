@@ -66,7 +66,7 @@ export async function testpong() {
 
 
     const paddleSprite = new AnimatedSprite();
-    paddleSprite._add_image_source('/files/resources/button_square_wide.png', 256, 128, 1);
+    paddleSprite._add_image_source('./files/resources/button_square_wide.png', 256, 128, 1);
     paddleSprite._pos = {x:30, y:-130,z:0};
     paddleSprite.add_animation([0]);
     paddleSprite._selected_animation = 0;
@@ -74,7 +74,7 @@ export async function testpong() {
     paddleSprite._rot = {x:3.1415 * .5,y:0,z:0};
 
     const ballSprite = new AnimatedSprite();
-    ballSprite._add_image_source('/files/resources/joystick_circle_pad_d.png', 256, 256, 1);
+    ballSprite._add_image_source('./files/resources/joystick_circle_pad_d.png', 256, 256, 1);
     ballSprite._pos = {x:-10, y:-10,z:0};
     ballSprite.add_animation([0]);
     ballSprite._selected_animation = 0;

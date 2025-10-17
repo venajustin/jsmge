@@ -12,10 +12,24 @@ COMMIT;
 CREATE TABLE Sessions (
     uid UUID,
     token VARCHAR(255) NOT NULL,
-    expire TIME,
+    expire TIMESTAMP,
     FOREIGN KEY (uid) REFERENCES Users(uid)
 );
 COMMIT;
 
 CREATE INDEX i_session_token ON Sessions(token);
 COMMIT;
+
+CREATE OR REPLACE FUNCTION delete_expired_tokens()
+RETURNS TRIGGER AS $$
+BEGIN
+    DELETE FROM Sessions WHERE expire <= NOW(); 
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER clean_expired_tokens
+AFTER INSERT OR UPDATE ON Sessions 
+FOR EACH ROW
+EXECUTE FUNCTION delete_expired_tokens();
