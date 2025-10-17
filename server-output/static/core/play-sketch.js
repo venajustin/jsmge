@@ -73,7 +73,6 @@ const playSketch = (p) => {
 
         p.processServerUpdates();
 
-
         let inputs = [];
 
         if (p.keyIsDown(65)) {
@@ -138,7 +137,7 @@ const playSketch = (p) => {
     }
 
     p.processServerUpdates = () => {
-        p.scene._process_server_updates(p.updates);
+        p.scene._process_server_updates(p.updates, p.playerid);
         p.updates.length = 0;
     }
 
