@@ -13,6 +13,7 @@ import { loadScene } from "#static/utility/load-scene.js";
 const editSketch = (p) => {
     p.started = false
 
+    p.updates = [];
     p.setup = async () => {
 
         // p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
@@ -66,6 +67,7 @@ const editSketch = (p) => {
         if (!p.started) {
             return;
         }
+        p.updates.length = 0;
         // p.scene._update(null);
 
         p.textSize(30);
