@@ -513,6 +513,7 @@ io.on('connection', (socket) => {
             console.log("editor edit button press");
             sendEdit();
         });
+        //need a new socket.on(propertychange, (changedObject))
         return;
     }
 
