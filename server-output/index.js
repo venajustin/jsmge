@@ -1,14 +1,17 @@
 import express from "express";
 import path from "path";
 import * as fs from 'node:fs';
+import multer from "multer";
 
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
 let user_code_dir = "/usrcode";
 if (process.env.IS_DOCKER_CONTAINER !== "true") {
         
         user_code_dir = path.resolve("./testUsr");
+        console.log("this is the path resolve" + user_code_dir);
 
-    } 
+
+} 
 
 import { createServer } from "node:http";
 import  { Server } from "socket.io";
@@ -63,7 +66,7 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
-app.use(cors({ origin: "http://localhost:5173" }));
+//app.use(cors({ origin: "http://localhost:5173" }));
 
 const server = createServer(app);
 const io = new Server(server,
@@ -77,8 +80,8 @@ const io = new Server(server,
 io.engine.use(sessionMiddleware);
 
 //this is temporary fix for testing development
-//app.use(cors({ origin: "http://localhost:5174" }));
-app.use(cors({ origin: "http://localhost" }));
+app.use(cors({ origin: "http://localhost:5173" }));
+//app.use(cors({ origin: "http://localhost" }));
 
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -221,6 +224,36 @@ app.get("/testConnection", (req,res) => {
   return "You are connected";
 })
 
+app.post("/frames/*", (req,res) => {
+  let frame = req.params[0];
+  frame += ".js";
+  if(!frame){
+    return res.status(400).send("Frame name is needed")
+  }
+  let contentPath = path.resolve("static/core/frame/FrameTemplate.js")
+  console.log("content Path : " + contentPath);
+  let content = fs.readFileSync(contentPath)
+  let filePath = path.join(user_code_dir, "frames", frame);
+  try {
+    fs.writeFileSync(filePath, content);
+    res.send("Frame was created");
+  }
+  catch (error){
+    console.error("Error creating frame", error);
+  }
+})
+
+const upload = multer ({
+  dest: path.join(user_code_dir, "resources"),
+})
+app.post("/resources", upload.single("file"), (req,res) => {
+  let file = req.file;
+  if(!file){
+    return res.status(400).send("No file uploaded");
+  }
+
+  res.status(200).send(`File ${file.originalname} uploaded successfully.`);
+})
 
 app.post("/files/*", (req, res) => {
   //console.log(req.headers);
@@ -232,7 +265,7 @@ app.post("/files/*", (req, res) => {
   if(!filename){
     return res.status(400).send("Filename is required.");
   }
-  const filePath = path.join(code, filename);
+  const filePath = path.join(user_code_dir, filename);
   try {
     fs.writeFileSync(filePath, content || "");
     res.send(`File ${filename} created`);
@@ -272,19 +305,18 @@ app.get("/files/*", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  let filePath = path.join(user_code_dir, filename);
-  console.log(filePath)
+  let filePath = path.join(user_code_dir , filename);
+  
   if (process.env.IS_DOCKER_CONTAINER == "true") {
         
         filePath =  "/" + filePath
 
   } 
+  console.log("filepath: " + filePath)
   try {
     if (!fs.existsSync( filePath)) {
-      return res.status(404).send("File not found.");
-    }
-    else{
       console.log("file path doesnt exist " + filePath)
+      return res.status(404).send("File not found.");
     }
     console.log("trying to grab file from this path: " + filePath);
     //res.sendFile(path.resolve(filePath));

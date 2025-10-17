@@ -266,18 +266,6 @@ const UserGames = () => {
                   border: "1px solid #ccc",
                 }}
               />
-              {/* IMAGE URL IF ADDED LATER */}
-              {/* <input
-                type="text"
-                placeholder="Image URL"
-                style={{
-                  width: "90%",
-                  padding: "10px",
-                  marginBottom: "10px",
-                  borderRadius: "5px",
-                  border: "1px solid #ccc",
-                }}
-              /> */}
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <button
                   type="submit"

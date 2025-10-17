@@ -320,6 +320,54 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
         setContextMenu({ visible: false, x: 0, y: 0, file: null })
       );
   };
+  const handleNewFrame = () => {
+    const frameName = window.prompt("Enter your Frame name");
+    if(!frameName) return;
+    fetch(SERVER_URL + "/frames/" + frameName,{
+      method: "POST"
+    })
+    .then((res)=> {
+      if(res.ok){
+        console.log("created frame");
+        fetchFiles();
+      }
+    })
+    .catch((error) => console.error("Error creating file:", error))
+      .finally(() =>
+        setContextMenu({ visible: false, x: 0, y: 0, file: null })
+      );
+
+  }
+
+  const handleNewResource = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "*"; //could restrict uploads to just pictures and sounds
+    input.onchange = (event) =>{
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+    }
+    fetch(SERVER_URL + "/resources", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log(`Uploaded resource: ${file.name}`);
+          fetchFiles(); // Refresh the file tree
+        } else {
+          console.error("Failed to upload resource");
+          response.text().then((text) => console.error("Server response:", text));
+        }
+      })
+      .catch((error) => console.error("Error uploading resource:", error));
+
+      input.click();
+    
+  }
 
   const handleNewFolder = () => {
   if (contextMenu.file === undefined || contextMenu.file === null) return;
@@ -439,6 +487,8 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
         onDelete={handleDelete}
         onNewFile={handleNewFile}
         onNewFolder={handleNewFolder}
+        onNewFrame={handleNewFrame}
+        onNewResource={handleNewResource}
       />
     </div>
   );

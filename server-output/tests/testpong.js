@@ -58,7 +58,7 @@ export async function testpong() {
     player2._animated_sprites.push(paddleSprite);
 
     
-
+    //work on a right click that will add a frame object to a scene when doing this make an animated sprite with no image source
     nscene._addObject(player1);
     nscene._addObject(player2);
     nscene._addObject(ball);
