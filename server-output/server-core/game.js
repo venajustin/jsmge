@@ -105,30 +105,9 @@ function update_loop(game) {
         if (game.timer > 3000) {
             console.log('tick: (clients updated)');
             
-            let allobjects = [];
-            let olist = [];
-            for (const obj of game.scene._objects) {
-                olist.push(obj);
-            }
-            let nextlist = [];
-            while (olist.length > 0) {
-                for (const obj of olist) {
-                    for (const child of obj._children) {
-                        nextlist.push(child);
-                    }
-                    // for (const child of obj._animated_sprites) {
-                        // nextlist.push(child);
-                    // }
-                    // for (const child of obj._colliders) {
-                        // nextlist.push(child);
-                    // }
-                    allobjects.push({ _id : obj._id, _pos : obj._pos });
-                }
-                olist = nextlist;
-                nextlist = [];
-            }
 
-            console.log(allobjects);
+            const allobjects = game.scene._get_sync_members_synchronous();
+            //console.log(allobjects);
             
             game.updatePlayers({objlist: allobjects});
             // console.log(game.scene);

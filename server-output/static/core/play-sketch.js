@@ -45,7 +45,7 @@ const playSketch = (p) => {
         }
         if (p.key === 'r') {
             // test reload scene from server
-
+            console.log(p.scene._get_sync_members_synchronous());
         }
     };
 

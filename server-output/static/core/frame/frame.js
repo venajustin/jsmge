@@ -2,6 +2,14 @@
 // attached to before being instantiated in the scene as objects
 import * as math from "mathjs";
 
+const excluded_members = [
+    "_parent",
+    "_children",
+    "_animated_sprites",
+    "_colliders"
+]
+    
+
 export class Frame {
 
     _id;
@@ -262,6 +270,23 @@ export class Frame {
         return arr;
 
     }
+
+    _get_sync_members() {
+        let output = {};
+        let list = [];
+        for (const property in this) {
+            if (excluded_members.indexOf(property) == -1) {
+                output[property] = this[property];
+            }
+        }
+        list.push(output);
+        for (const  child in this._children) {
+            list.push(...child._get_sync_members());
+        }
+        return list;
+           
+    }
+
 }
 
 

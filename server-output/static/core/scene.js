@@ -91,6 +91,22 @@ class Scene {
         }
     }
 
+    // Gets all objects in the scene, but only their members that are 
+    // synced between clients & server
+    //
+    // Confusing naming i know but I really can't come up with a better
+    // name than sync. This is also a synchronous version of what should
+    // probably be an async method so i tacked the word synchronous to the 
+    // end to differentiate it from the future _get_sync_members() func
+    // that we will probably want
+    _get_sync_members_synchronous() {
+        let list = [];
+        for (const obj of this._objects) {
+            list.push(...obj._get_sync_members())
+        }
+        return list;
+    }
+
 }
 
 
