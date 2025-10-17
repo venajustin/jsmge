@@ -74,7 +74,7 @@ const server = createServer(app);
 const io = new Server(server,
     {
         cors: {
-            origin: "http://localhost:5173",
+            origin: ["http://localhost:5173", "https://"],
             methods: ["GET", "POST"],
             credentials: true
         }
@@ -540,8 +540,17 @@ io.on('connection', (socket) => {
        console.log("Active Sessions: " + game.players.length);
     });
 
+    // probably gettting rid of this
     socket.on('inputs',(inputlist) => {
         game.client_updates.push({type:'input', inputs: inputlist});
+    });
+    socket.on('client_update', (packet) => {
+        game.client_updates.set(packet.playerid, packet.objects);
+    });
+    socket.on('select_seat', (seat) => {
+        if (seat > 0 && seat <= game.scene.players_max) {
+            game.players_seat.set(sessionId, seat);
+        }
     });
     // chat room test:
     // socket.on('chat message', (msg) => {

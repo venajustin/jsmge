@@ -6,11 +6,14 @@ import { loadScene } from "#static/utility/load-scene.js";
 import { getClassList } from "#static/utility/class-list.js";
 
 import * as math from "#static/libraries/math.js";
+import {draw_seat_selection, test_seat_selection} from "#static/core/seat-selection.js";
 
 const playSketch = (p) => {
 
     p.updates = []
     p.server = { connected: false, socket: undefined };
+
+    p.playerid = undefined;
 
     p.setServer = (socket) => {
         p.server.socket = socket;
@@ -54,7 +57,16 @@ const playSketch = (p) => {
         }
         if (p.key === 'r') {
             // test reload scene from server
-            console.log(p.scene._get_sync_members_synchronous());
+            // console.log(p.scene._get_sync_members_synchronous());
+            console.log(p.scene._get_client_owned_members_synchronous(p.playerid));
+        }
+        if (p.key === '1') {
+            console.log("playing as player 1")
+            p.playerid = 1;
+        }
+        if (p.key === '2') {
+            console.log("playing as player 2")
+            p.playerid = 2;
         }
     };
 
@@ -64,7 +76,6 @@ const playSketch = (p) => {
         }
 
         p.processServerUpdates();
-
 
         let inputs = [];
 
@@ -83,8 +94,9 @@ const playSketch = (p) => {
             inputs.push("move_down");
         }
 
-
-        p.scene._update(p.deltaTime, inputs);
+        const input = [];
+        input.push({playerid: p.playerid, inputs: inputs});
+        p.scene._update(p.deltaTime, input);
         let collision_context = {
             mat: math.identity(3, 3)
         }
@@ -95,7 +107,12 @@ const playSketch = (p) => {
         p.scene._draw(p);
 
         if (p.server.connected) {
-            p.server.socket.emit('inputs', inputs);
+
+            const update_packet = {
+                playerid: p.playerid,
+                objects: p.scene._get_client_owned_members_synchronous(p.playerid)
+            }
+            p.server.socket.emit('client_update', update_packet);
         }
 
 
@@ -108,6 +125,9 @@ const playSketch = (p) => {
         //     p.text("Click To Focus", 500, 400);
         // }
 
+        if (p.playerid === undefined) {
+            draw_seat_selection(p);
+        }
 
     };
 
@@ -115,10 +135,13 @@ const playSketch = (p) => {
         if (!p.focused) {
             p.focused = true;
         }
+        if (p.playerid === undefined) {
+            test_seat_selection(p, [p.mouseX, p.mouseY]);
+        }
     }
 
     p.processServerUpdates = () => {
-        p.scene._process_server_updates(p.updates);
+        p.scene._process_server_updates(p.updates, p.playerid);
         p.updates.length = 0;
     }
 

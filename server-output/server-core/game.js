@@ -2,6 +2,7 @@ import {loadScene} from "./scene-operations.js";
 import { json_exclude_members } from "#static/utility/json_exclusion.js";
 import * as math from "mathjs";
 
+
 export const GameState = Object.freeze({
     EDIT: 'edit',
     PLAY: 'play'
@@ -12,12 +13,14 @@ export class Game {
         state = GameState.EDIT;
         active_scene = "testscene2.scene";
         players = []; // maybe switch to set or map
+        players_seat = new Map();
         socket;
         constructor(io) {
             this.socket = io;
         }
 
-        client_updates = [];
+        // maps playerid to most recent update
+        client_updates = new Map();
 
         lastTime = Date.now();
 
@@ -82,7 +85,6 @@ export class Game {
             }
         }
 
-        timer = 0;
 }
 
 function update_loop(game) {
@@ -94,31 +96,27 @@ function update_loop(game) {
         game.timer += dt;
 
 
-        let inputs = game.client_updates.pop();
-        if (inputs == undefined) {
-            inputs = [];
-        }
+//         let inputs = game.client_updates.pop();
+//         if (inputs == undefined) {
+//             inputs = [];
+//         }
 
+        game.scene._update_from_clients(game.client_updates);
+        game.client_updates.clear();
 
-        game.scene._update(dt, inputs.inputs);
+        let input = []
+        game.scene._update(dt, input);
         let collision_context = {
             mat: math.identity(3, 3)
         }
         game.scene._test_collisions(collision_context);
 
 
+        const allobjects = game.scene._get_sync_members_synchronous();
+        //console.log(allobjects);
 
-        if (game.timer > 3000) {
-            console.log('tick: (clients updated)');
-            
-
-            const allobjects = game.scene._get_sync_members_synchronous();
-            //console.log(allobjects);
-            
-            game.updatePlayers({objlist: allobjects});
-            // console.log(game.scene);
-            game.timer = 0;
-        }
+        game.updatePlayers({objlist: allobjects});
+        // console.log(game.scene);
     }
 
     if (game.running) {

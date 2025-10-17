@@ -5,6 +5,7 @@ import * as math from "mathjs";
 class Scene {
     _objects = [];
 
+    players_max = 0;
 
     constructor(srcObj) {
         srcObj && Object.assign(this,srcObj);
@@ -80,12 +81,14 @@ class Scene {
         }
     }
 
-    _process_server_updates(update_list) {
+    _process_server_updates(update_list, owner = -1) {
         for (const update of update_list) {
             for (const obj of update.objlist) {
                 if (obj != null) {
                     const target = this._s_index.get(obj._id);
-                    Object.assign(target, obj); // copies all data from obj into target and overwrites same-named members
+                    if (obj._owner === undefined || obj._owner !== owner) {
+                        Object.assign(target, obj); // copies all data from obj into target and overwrites same-named members
+                    }
                 }
             }
         }
@@ -105,6 +108,27 @@ class Scene {
             list.push(...obj._get_sync_members())
         }
         return list;
+    }
+    _get_client_owned_members_synchronous(playerid) {
+        let list = [];
+        for (const obj of this._objects) {
+            list.push(...obj._get_owned_members(playerid));
+        }
+        return list;
+    }
+    _update_from_clients(clientmap) {
+//         for (const update_list of clientmap) {
+//             if (update_list.playerid !== undefined) {
+//                 for (const obj of update_list) {
+//                     const target = this._s_index.get(obj._id);
+//                     Object.assign(target, obj); // copies all data from obj into target and overwrites same-named members
+//                 }
+//             }
+//         }
+        //console.log(clientmap);
+        for (const obj of this._objects) {
+            obj._update_from_clients(clientmap);
+        }
     }
 
 }

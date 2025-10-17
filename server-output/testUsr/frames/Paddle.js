@@ -1,9 +1,9 @@
 
 
-import { Frame } from "#static/core/frame/frame.js";
+import { PlayerFrame } from "#static/core/frame/PlayerFrame.js";
 
 
-export class Paddle extends Frame {
+export class Paddle extends PlayerFrame {
 
     velocity = {x:0, y:0, z:0};
 

@@ -2,7 +2,8 @@ import { Frame } from "#static/core/frame/frame.js"
 
 export class Ball extends Frame {
 
-    velocity = {x:0, y:0, z:0};
+    velocity = {x:.7, y: 0, z:0};
+    _pos = {x:500,y:500,z:0};
 
     handle_input(inputs) {
 
@@ -37,7 +38,7 @@ export class Ball extends Frame {
         this.bouncetimer = 0;
         if (axis === 'x') {
             this.velocity.x = -this.velocity.x;
-            this.velocity.y = this.velocity.y  ;
+              this.velocity.y = 1 * Math.random();
         } else {
             this.velocity.y = -this.velocity.y;
             this.velocity.x = this.velocity.x  ;

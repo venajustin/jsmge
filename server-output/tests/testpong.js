@@ -28,17 +28,21 @@ export async function testpong() {
 
     // creating scene draft
     const nscene = new Scene();
+    nscene.players_max = 2;
 
     const player1 =  new Paddle();
+    player1._owner = 1;
     const player2 = new Paddle();
+    player2._owner = 2;
     player1._pos = {x:100,y:500,z:0};
+
 
 
     player2._pos = {x:800,y:500,z:0};
     const ball = new Ball();
-    ball._pos = {x:500,y:500,z:0};
+    // ball._pos = {x:500,y:500,z:0};
 
-    ball.velocity = {x:.1, y: 0, z:0};
+    // ball.velocity = {x:.1, y: 0, z:0};
 
     const wall_top = new Walls();
     wall_top._pos = {x:500,y:0,z:0};
