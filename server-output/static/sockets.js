@@ -15,6 +15,7 @@ socket.on('game_status', (msg) => {
         setSession(editSketch);
         // document.getElementById('edit-message').style.display = 'block';
     } else if (msg === 'play') {
+        setSession(undefined);
         setSession(playSketch);
         active_session.setServer(socket);
         // document.getElementById('edit-message').style.display = 'none';

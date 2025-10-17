@@ -2,15 +2,26 @@
 // attached to before being instantiated in the scene as objects
 import * as math from "mathjs";
 
-const excluded_members = [
-    "_parent",
-    "_children",
-    "_animated_sprites",
-    "_colliders"
-]
-    
+// function sync(fn) {
+//     return (...params) => {
+//
+//         fn(...params);
+//         server.call(fn.toString());
+//     }
+// }
 
 export class Frame {
+
+//     takedamage = sync((damage) => {
+//
+//     });
+
+    static excluded_members = [
+        "_parent",
+        "_children",
+        "_animated_sprites",
+        "_colliders"
+    ]
 
     _id;
 
@@ -22,6 +33,8 @@ export class Frame {
 
     _animated_sprites = [];
     _colliders = [];
+
+    _owner = undefined;
 
     _apply_transforms(p) {
         p.translate(this._pos.x,this._pos.y,this._pos.z);
@@ -100,12 +113,18 @@ export class Frame {
 
     }
     _update(dtime, inputs) {
-        this.handle_input(inputs);
+        // this.handle_input(inputs); only called in PlayerFrame
         this.process_physics(dtime);
 
 
         this._children.forEach((o) => {
-            o._update(p, inputs);
+            o._update(dtime, inputs);
+        });
+    }
+    _update_from_clients(clientmap) {
+
+        this._children.forEach((o) => {
+            o._update_from_clients(clientmap);
         });
     }
     _collision(other) {
@@ -275,7 +294,7 @@ export class Frame {
         let output = {};
         let list = [];
         for (const property in this) {
-            if (excluded_members.indexOf(property) == -1) {
+            if (Frame.excluded_members.indexOf(property) === -1) {
                 output[property] = this[property];
             }
         }
@@ -287,6 +306,14 @@ export class Frame {
            
     }
 
+    _get_owned_members(playerid) {
+        let list = [];
+        for (const  child in this._children) {
+            list.push(...child._get_owned_members(playerid));
+        }
+        return list;
+
+    }
 }
 
 

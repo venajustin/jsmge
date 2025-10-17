@@ -5,6 +5,7 @@ import * as math from "mathjs";
 class Scene {
     _objects = [];
 
+    players_max = 0;
 
     constructor(srcObj) {
         srcObj && Object.assign(this,srcObj);
@@ -105,6 +106,18 @@ class Scene {
             list.push(...obj._get_sync_members())
         }
         return list;
+    }
+    _get_client_owned_members_synchronous(playerid) {
+        let list = [];
+        for (const obj of this._objects) {
+            list.push(...obj._get_owned_members(playerid));
+        }
+        return list;
+    }
+    _update_from_clients(clientmap) {
+        for (const obj of this._objects) {
+            obj._update_from_clients(clientmap);
+        }
     }
 
 }
