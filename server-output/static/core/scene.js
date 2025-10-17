@@ -1,5 +1,6 @@
 import {collide} from "#static/core/collision-shapes/collision-shape.js";
 
+import * as math from "mathjs";
 
 class Scene {
     _objects = [];
@@ -25,10 +26,11 @@ class Scene {
         this._objects.push(obj);
     }
 
-    _edit_drag_intersect(p, point, editState) {
+    _edit_drag_intersect(point, editState) {
+        editState.mat = math.identity(3,3);
         let output = [];
         this._objects.forEach((o) => {
-           output.push(...o._edit_drag_intersect(p, point, editState));
+           output.push(...o._edit_drag_intersect(point, editState));
         });
         return output;
     }

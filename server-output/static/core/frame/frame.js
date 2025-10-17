@@ -171,19 +171,20 @@ export class Frame {
         p.pop();
     }
 
-    _edit_drag_intersect(p, point, editState) {
-        p.push();
-        p.translate(this._pos.x,this._pos.y,this._pos.z);
-
+    _edit_drag_intersect(point, editState) {
+        const mat = this._get_matrix();
+        const inv = math.inv(mat);
+        editState.mat = math.multiply(editState.mat, mat) 
 
         let output = [];
 
-        // intersect with self
-        const globalCoord = p.drawingContext.getTransform().transformPoint(new DOMPoint(0,0,0));
+        // intersect in global space
+        const globalCoord = [editState.mat._data[0][2],editState.mat._data[1][2]];
+        // const globalCoord = p.drawingContext.getTransform().transformPoint(new DOMPoint(0,0));
 
-        const a = point.x - globalCoord.x;
+        const a = point.x - globalCoord[0];
 
-        const b =  point.y - globalCoord.y;
+        const b =  point.y - globalCoord[1];
 
 
        // perform the actual intersection in local space (replace with collision code for each object)
@@ -222,9 +223,9 @@ export class Frame {
 
 
         this._children.forEach((o) => {
-            output.push(...o._edit_drag_intersect(p, point, editState));
+            output.push(...o._edit_drag_intersect(point, editState));
         });
-        p.pop();
+        editState.mat = math.multiply(editState.mat, inv) 
         return output;
 
 
