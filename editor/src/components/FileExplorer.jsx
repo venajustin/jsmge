@@ -349,7 +349,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
 
       const formData = new FormData();
       formData.append("file", file);
-    }
+    
     fetch(SERVER_URL + "/resources", {
       method: "POST",
       body: formData,
@@ -365,8 +365,9 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
       })
       .catch((error) => console.error("Error uploading resource:", error));
 
-      input.click();
-    
+      
+    }
+    input.click();
   }
 
   const handleNewFolder = () => {

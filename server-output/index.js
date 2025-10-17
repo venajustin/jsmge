@@ -244,7 +244,14 @@ app.post("/frames/*", (req,res) => {
 })
 
 const upload = multer ({
-  dest: path.join(user_code_dir, "resources"),
+  storage: multer.diskStorage({
+    destination: function (req,file,cb) {
+      cb(null,path.join(user_code_dir, "resources"));
+    },
+    filename: function (req,file,cb) {
+      cb (null, file.originalname);
+    }
+  })
 })
 app.post("/resources", upload.single("file"), (req,res) => {
   let file = req.file;
