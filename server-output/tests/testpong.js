@@ -9,6 +9,10 @@ import { Paddle } from "#files/frames/Paddle.js";
 import { Ball } from "#files/frames/Ball.js";
 import { AnimatedSprite } from "#static/core/frame/animated-sprite.js";
 import  ESSerializer from 'esserializer';
+import { Collider } from "#static/core/frame/collider.js";
+import { CollisionRect } from "#static/core/collision-shapes/collision-rect.js";
+import { Walls } from "#files/frames/Walls.js";
+
 
 export async function testpong() {
 
@@ -34,7 +38,31 @@ export async function testpong() {
     const ball = new Ball();
     ball._pos = {x:500,y:500,z:0};
 
-    ball.velocity = {x:1, y: 0, z:0};
+    ball.velocity = {x:.1, y: 0, z:0};
+
+    const wall_top = new Walls();
+    wall_top._pos = {x:500,y:0,z:0};
+    const wall_bottom = new Walls();
+    wall_bottom._pos = {x:500,y:750,z:0};
+
+
+    const wallsprite = new AnimatedSprite();
+    wallsprite._add_image_source('/files/resources/button_square_wide.png', 256, 128, 1);
+    wallsprite._pos = {x:-600, y:0,z:0};
+    wallsprite.add_animation([0]);
+    wallsprite._selected_animation = 0;
+    wallsprite._sca = {x:5,y:.1,z:1};
+
+
+    const wallcol = new Collider();
+    wallcol._shape = new CollisionRect();
+    wallcol._shape.width = 1024;
+    wallcol._shape.height = 15;
+    wall_top._colliders.push(wallcol);
+    wall_top._animated_sprites.push(wallsprite);
+    wall_bottom._colliders.push(wallcol);
+    wall_bottom._animated_sprites.push(wallsprite);
+
 
 
     const paddleSprite = new AnimatedSprite();
@@ -57,12 +85,55 @@ export async function testpong() {
     player1._animated_sprites.push(paddleSprite);
     player2._animated_sprites.push(paddleSprite);
 
-    
-    //work on a right click that will add a frame object to a scene when doing this make an animated sprite with no image source
+    const p1Col = new Collider();
+    p1Col._shape = new CollisionRect();
+    p1Col._shape.width = 64;
+    p1Col._shape.height = 256;
+    player1._colliders.push(p1Col);
+
+    const p2Col = new Collider();
+    p2Col._shape = new CollisionRect();
+    p2Col._shape.width = 64;
+    p2Col._shape.height = 256;
+    player2._colliders.push(p2Col);
+
+    const ballCol = new Collider();
+    ballCol._shape = new CollisionRect();
+    ballCol._shape.width = 25;
+    ballCol._shape.height = 25;
+    ball._colliders.push(ballCol);
+
     nscene._addObject(player1);
     nscene._addObject(player2);
     nscene._addObject(ball);
-    
+    nscene._addObject(wall_top);
+    nscene._addObject(wall_bottom);
+
+
+    // assigning incremented id to every object
+    let objlist = [];
+    for (const obj of nscene._objects) {
+        objlist.push(obj);
+    }
+    let nextlist = [];
+    let newid = 0;
+    while (objlist.length > 0) {
+        for (const obj of objlist) {
+            for (const child of obj._children) {
+                nextlist.push(child);
+            }
+            for (const child of obj._animated_sprites) {
+                nextlist.push(child);
+            }
+            for (const child of obj._colliders) {
+                nextlist.push(child);
+            }
+            obj._id = newid;
+            newid++;
+        }
+        objlist = nextlist;
+        nextlist = [];
+    }
 
     const serialScene = ESSerializer.serialize(nscene);
 

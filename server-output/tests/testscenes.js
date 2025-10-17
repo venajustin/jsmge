@@ -57,6 +57,31 @@ export async function testScenes() {
     nscene._addObject(horse);
 
 
+    // assigning incremented id to every object
+    let objlist = [];
+    for (const obj of nscene._objects) {
+        objlist.push(obj);
+    }
+    let nextlist = [];
+    let newid = 0;
+    while (objlist.length > 0) {
+        for (const obj of objlist) {
+            for (const child of obj._children) {
+                nextlist.push(child);
+            }
+            for (const child of obj._animated_sprites) {
+                nextlist.push(child);
+            }
+            for (const child of obj._colliders) {
+                nextlist.push(child);
+            }
+            obj._id = newid;
+            newid++;
+        }
+        objlist = nextlist;
+        nextlist = [];
+    }
+
 
     // getting all classes
 

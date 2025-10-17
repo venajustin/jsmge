@@ -10,7 +10,7 @@ export function edit_mouse_press(p, editState) {
     editState.lockX = false;
     editState.lockY = false;
     const point = {x:p.mouseX, y:p.mouseY};
-    editState.selected = p.scene._edit_drag_intersect(p, point, editState);
+    editState.selected = p.scene._edit_drag_intersect(point, editState);
     editState.dragLast = point;
 }
 
