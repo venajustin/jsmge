@@ -3,6 +3,7 @@ import '../css/editor.css';
 import CodeEditor from "../components/codeEditor";
 import FileExplorer from "../components/FileExplorer.jsx";
 import GamePreview from "../components/GamePreview.jsx";
+import PropertiesMenu from "../components/PropertiesMenu.jsx";
 
 
 const Editor = ({appid}) => {
@@ -92,11 +93,11 @@ const [editorContent, setEditorContent] = useState("");
                       </div>
 
                       <div className="properties-container">
-                         <div style={{background_color: 'red'}}>
-                             properties here
-                         </div>
+                        <div className="properties-container">
+                          <PropertiesMenu/>
+                        </div>
                       </div>
-                 </div>
+                </div>
 
             </div>
 
