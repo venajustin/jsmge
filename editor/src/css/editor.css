@@ -72,12 +72,16 @@ html {
   align-content: space-between;
   width:100%;
   flex:1;
+  height: 0;
 }
 
 .file-browser-container {
-
-  flex-grow:1;
+  background: #242322;
+  flex-grow: 1;
+  overflow-y: auto;
+  border-radius: 10px;
 }
+
 .properties-container {
   width: 30%;
 
