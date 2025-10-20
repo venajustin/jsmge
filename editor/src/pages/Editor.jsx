@@ -93,9 +93,7 @@ const [editorContent, setEditorContent] = useState("");
                       </div>
 
                       <div className="properties-container">
-                        <div className="properties-container">
-                          <PropertiesMenu/>
-                        </div>
+                        <PropertiesMenu/>
                       </div>
                 </div>
 
