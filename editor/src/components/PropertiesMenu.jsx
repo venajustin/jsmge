@@ -5,27 +5,29 @@ import * as Tweakpane from "tweakpane";
 const PropertiesMenu = () => {
   const containerRef = useRef(null);
   const paneRef = useRef(null);
-  const [objectData, setObjectData] = useState(null);
+  // Holds scene data and sets selected object to index 0
+  const [sceneData, setSceneData] = useState(null);
+  const [selectedObjectIndex, setSelectedObjectIndex] = useState(0);
 
   useEffect(() => {
     // Fetch the hardcoded JSON file from public folder
     fetch('/jsonTestObjects/output.json')
       .then(response => response.json())
       .then(data => {
-        // For now, select the first object in the _objects array as the "selected" object
-        if (data._objects && data._objects.length > 0) {
-          setObjectData(data._objects[0]);
-        }
+        setSceneData(data);
       })
       .catch(error => console.error('Error loading object data:', error));
   }, []);
 
   useEffect(() => {
-    if (!objectData || !containerRef.current) return;
+    if (!sceneData || !sceneData._objects || !containerRef.current) return;
+
+    const currentObject = sceneData._objects[selectedObjectIndex];
+    if (!currentObject) return;
 
     // Create the Tweakpane
     const pane = new Tweakpane.Pane({
-      title: 'Properties',
+      title: `Properties - Object ${selectedObjectIndex + 1}`,
       container: containerRef.current
     });
 
@@ -37,7 +39,7 @@ const PropertiesMenu = () => {
         const value = obj[key];
         const fullPath = path ? `${path}.${key}` : key;
 
-        // Skip arrays
+        // Skip arrays (except _objects which is handled separately)
         if (Array.isArray(value)) {
           return;
         }
@@ -45,6 +47,7 @@ const PropertiesMenu = () => {
         // Handle special underscore properties
         if (key === '_pos' || key === '_rot' || key === '_sca') {
           // Create a folder for these vector properties
+          // Can add customization for each field if necessary
           const folder = paneInstance.addFolder({ title: key.slice(1).toUpperCase() });
           folder.addBinding(value, 'x', { min: -1000, max: 1000, step: 1 });
           folder.addBinding(value, 'y', { min: -1000, max: 1000, step: 1 });
@@ -91,12 +94,12 @@ const PropertiesMenu = () => {
     };
 
     // Process the object
-    processObject(objectData, pane);
+    processObject(currentObject, pane);
 
     // Listen for changes (for future POST/PUT implementation)
     pane.on('change', (event) => {
       console.log('Property changed:', event);
-      console.log('Updated object:', objectData);
+      console.log('Updated object:', currentObject);
       // TODO: Send PUT/POST request to backend here
     });
 
@@ -104,10 +107,30 @@ const PropertiesMenu = () => {
     return () => {
       pane.dispose();
     };
-  }, [objectData]);
+  }, [sceneData, selectedObjectIndex]);
+
+  if (!sceneData || !sceneData._objects) {
+    return <div ref={containerRef} className="properties-menu">Loading...</div>;
+  }
 
   return (
-    <div ref={containerRef} className="properties-menu"></div>
+    <div className="properties-menu-wrapper">
+      {/* Tab Navigation */}
+      <div className="object-tabs">
+        {sceneData._objects.map((obj, index) => (
+          <button
+            key={index}
+            className={`object-tab ${selectedObjectIndex === index ? 'active' : ''}`}
+            onClick={() => setSelectedObjectIndex(index)}
+          >
+            {obj.ess_cn || `Object ${index + 1}`}
+          </button>
+        ))}
+      </div>
+
+      {/* Tweakpane Container */}
+      <div ref={containerRef} className="properties-menu"></div>
+    </div>
   );
 };
 

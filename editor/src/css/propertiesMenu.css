@@ -1,0 +1,42 @@
+.properties-menu-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #28292e;
+}
+
+.object-tabs {
+  display: flex;
+  gap: 2px;
+  background-color: #242322;
+  padding: 4px;
+  border-bottom: 1px solid #444;
+  overflow-x: auto;
+}
+
+.object-tab {
+  padding: 8px 16px;
+  background-color: #3a3a3a;
+  color: #ccc;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.object-tab:hover {
+  background-color: #4a4a4a;
+}
+
+.object-tab.active {
+  background-color: #0079ca;
+  color: #fff;
+  font-weight: bold;
+}
+
+.properties-menu {
+  flex: 1;
+  overflow-y: auto;
+}
