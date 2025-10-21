@@ -1,0 +1,19 @@
+
+
+\c jsmge;
+SET ROLE jsmgeadm;
+
+CREATE TABLE test_tab (uid INTEGER PRIMARY KEY);
+
+INSERT INTO test_tab VALUES (5);
+INSERT INTO test_tab VALUES (10);
+INSERT INTO test_tab VALUES (15);
+INSERT INTO test_tab VALUES (20);
+INSERT INTO test_tab VALUES (25);
+INSERT INTO test_tab VALUES (30);
+COMMIT;
+
+
+
+
+

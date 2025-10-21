@@ -72,15 +72,18 @@ html {
   align-content: space-between;
   width:100%;
   flex:1;
+  height: 0;
 }
 
 .file-browser-container {
-
-  flex-grow:1;
+  background: #242322;
+  flex-grow: 1;
+  overflow-y: auto;
+  border-radius: 10px;
 }
-.properties-container {
-  width: 30%;
 
+.properties-container {
+  width: 50%;
 }
 .game-controls-and-preview {
   width: 100%;
@@ -101,6 +104,7 @@ html {
   width: 100%;
   aspect-ratio: 1.3333;
 
+
 }
 
 #drag-overlay {
@@ -112,4 +116,12 @@ html {
   z-index: 9999;
   cursor: ew-resize;
   background: transparent;
+}
+
+.drag-over {
+  background-color: rgba(124, 180, 184, 0.3) !important;
+}
+
+.dragging {
+  opacity: 0.5 !important;
 }

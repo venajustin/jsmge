@@ -3,9 +3,25 @@ import '../css/editor.css';
 import CodeEditor from "../components/codeEditor";
 import FileExplorer from "../components/FileExplorer.jsx";
 import GamePreview from "../components/GamePreview.jsx";
+import PropertiesMenu from "../components/PropertiesMenu.jsx";
 
 
-const Editor = () => {
+const Editor = ({appid}) => {
+
+
+    let SERVER;
+
+    // TODO: remove this feature, used for testing on local machine
+    if (appid == 9999999) {
+        console.log("APP_ID:" + appid); 
+        SERVER = `http://127.0.0.1:3000`.trim()
+    } else {
+
+        //TODO make this const when you remove the conditional
+        SERVER = `http://127.0.0.1/app/${appid}`.trim()
+    }
+
+
 
     let code_width = useState(400)
 
@@ -49,6 +65,7 @@ const [editorContent, setEditorContent] = useState("");
                     setActiveFile={setActiveFile}
                     editorContent={editorContent}
                     setEditorContent={setEditorContent}
+                    SERVER_URL={SERVER}
                 />
             </div>
         </div>
@@ -62,22 +79,23 @@ const [editorContent, setEditorContent] = useState("");
             <div className={"vertical-auto-container"}>
 
 
-                <GamePreview/>
+                <GamePreview
+                SERVER_URL={SERVER}
+                />
 
                 <div className="lower-right-container">
                       <div className="file-browser-container">
                           <FileExplorer
                              setActiveFile={setActiveFile}
                              setEditorContent={setEditorContent}
+                             SERVER_URL={SERVER}
                           />
                       </div>
 
                       <div className="properties-container">
-                         <div style={{background_color: 'red'}}>
-                             properties here
-                         </div>
+                        <PropertiesMenu/>
                       </div>
-                 </div>
+                </div>
 
             </div>
 

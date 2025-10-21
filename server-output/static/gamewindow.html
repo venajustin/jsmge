@@ -5,46 +5,56 @@
     <title>Game</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="gamewindow.css">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/canvas.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "#static/": "/",
+                "#files/": "/files/",
+                "mathjs": "/libraries/math.js"
+            }
+        }
+    </script>
+
+    <!-- p5 library -->
+    <script src="/libraries/p5.min.js"></script>
+    <script src="/libraries/esserializer.js"></script>
+<!--    <script src="https://unpkg.com/mathjs/lib/browser/math.js"></script>-->
+
+    <!--    <script type="module" src="/core/frame/frame.js"></script> -->
+    <!--    <script type="module" src="/core/scene.js"></script> -->
+    <!--    <script type="module" src="/core/input/edit_input.js"></script> -->
+    <!--    <script type="module" src="/core/frame/animated-sprite.js"></script> -->
+    <!--    <script type="module" src="/core/frame/collider.js"></script> -->
+    <!--    <script type="module" src="/core/collision-shapes/collision-sphere.js"></script> -->
+    <!--    <script type="module" src="/core/collision-shapes/collision-rect.js"></script> -->
+
+
+    <script type="module" src="socket.io/socket.io.js"></script>
+    <script type="module" src="sockets.js"></script>
+    
+    <!-- <script src="/canvas.js"></script> -->
+   <script type = "module" src="./game.js"></script>
+
 
 </head>
 <body>
-    <canvas id="display-canvas" width="1600" height="1200" style="background-color:#ffffff">
+    
+    <!-- <canvas id="display-canvas" width="1600" height="1200" style="background-color:#ffffff"> -->
 
-    </canvas>
+    <!-- </canvas> --> <!--
+    <h1 id="edit-message" style="position:absolute; top:50px; left:50px; z-index: 999; display: none" >
+        Game is paused, please start the game or edit through the editor
+    </h1> -->
 
-    <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+
+<!--        chat room test-->
+<!--    <form id="form" action="">-->
+<!--        <input id="input" autocomplete="off" /><button>Send</button>-->
+<!--    </form>-->
 
 </body>
+<!-- <script src="/run_client.js"></script> -->
 
-
-<script>
-    setupCanvas();
-
-    const socket = io();
-    const form = document.getElementById('form');
-    const input = document.getElementById('input');
-    let messages = [];
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (input.value) {
-            socket.emit('chat message', input.value);
-            input.value = '';
-        }
-    });
-
-    socket.on('chat message', (msg) => {
-        const item = document.createElement('li');
-        item.textContent = msg;
-        messages.push(msg);
-    });
-
-
-    update();
-</script>
 
 </html>

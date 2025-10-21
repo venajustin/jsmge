@@ -1,0 +1,221 @@
+{
+    "_objects": [
+        {
+            "_pos": {
+                "x": 100,
+                "y": 500,
+                "z": 0
+            },
+            "_rot": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "_sca": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            },
+            "_parent": {
+                "ess_cn": "UD"
+            },
+            "_children": [],
+            "_animated_sprites": [
+                {
+                    "_pos": {
+                        "x": 30,
+                        "y": -130,
+                        "z": 0
+                    },
+                    "_rot": {
+                        "x": 1.57075,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "_sca": {
+                        "x": 1,
+                        "y": 0.5,
+                        "z": 1
+                    },
+                    "_parent": {
+                        "ess_cn": "UD"
+                    },
+                    "_children": [],
+                    "_animated_sprites": [],
+                    "_colliders": [],
+                    "_image_sources": [
+                        {
+                            "img": "/files/resources/button_square_wide.png",
+                            "w": 256,
+                            "h": 128,
+                            "count": 1
+                        }
+                    ],
+                    "_frames": [],
+                    "_index": 0,
+                    "_animations": [
+                        [
+                            0
+                        ]
+                    ],
+                    "_playing": false,
+                    "_selected_animation": 0,
+                    "_speed": 0.15,
+                    "ess_cn": "AnimatedSprite"
+                }
+            ],
+            "_colliders": [],
+            "velocity": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "ess_cn": "Paddle"
+        },
+        {
+            "_pos": {
+                "x": 800,
+                "y": 500,
+                "z": 0
+            },
+            "_rot": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "_sca": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            },
+            "_parent": {
+                "ess_cn": "UD"
+            },
+            "_children": [],
+            "_animated_sprites": [
+                {
+                    "_pos": {
+                        "x": 30,
+                        "y": -130,
+                        "z": 0
+                    },
+                    "_rot": {
+                        "x": 1.57075,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "_sca": {
+                        "x": 1,
+                        "y": 0.5,
+                        "z": 1
+                    },
+                    "_parent": {
+                        "ess_cn": "UD"
+                    },
+                    "_children": [],
+                    "_animated_sprites": [],
+                    "_colliders": [],
+                    "_image_sources": [
+                        {
+                            "img": "/files/resources/button_square_wide.png",
+                            "w": 256,
+                            "h": 128,
+                            "count": 1
+                        }
+                    ],
+                    "_frames": [],
+                    "_index": 0,
+                    "_animations": [
+                        [
+                            0
+                        ]
+                    ],
+                    "_playing": false,
+                    "_selected_animation": 0,
+                    "_speed": 0.15,
+                    "ess_cn": "AnimatedSprite"
+                }
+            ],
+            "_colliders": [],
+            "velocity": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "ess_cn": "Paddle"
+        },
+        {
+            "_pos": {
+                "x": 500,
+                "y": 500,
+                "z": 0
+            },
+            "_rot": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "_sca": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            },
+            "_parent": {
+                "ess_cn": "UD"
+            },
+            "_children": [],
+            "_animated_sprites": [
+                {
+                    "_pos": {
+                        "x": -10,
+                        "y": -10,
+                        "z": 0
+                    },
+                    "_rot": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "_sca": {
+                        "x": 0.1,
+                        "y": 0.1,
+                        "z": 1
+                    },
+                    "_parent": {
+                        "ess_cn": "UD"
+                    },
+                    "_children": [],
+                    "_animated_sprites": [],
+                    "_colliders": [],
+                    "_image_sources": [
+                        {
+                            "img": "/files/resources/joystick_circle_pad_d.png",
+                            "w": 256,
+                            "h": 256,
+                            "count": 1
+                        }
+                    ],
+                    "_frames": [],
+                    "_index": 0,
+                    "_animations": [
+                        [
+                            0
+                        ]
+                    ],
+                    "_playing": false,
+                    "_selected_animation": 0,
+                    "_speed": 0.15,
+                    "ess_cn": "AnimatedSprite"
+                }
+            ],
+            "_colliders": [],
+            "velocity": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "ess_cn": "Ball"
+        }
+    ],
+    "ess_cn": "Scene"
+}

@@ -16,12 +16,13 @@ function setupCanvas() {
 function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // chat example:
         // draw loop
-        let i = 0;
-        messages.forEach((message) => {
-                ctx.fillText(message, 10, 50 + (i * 10));
-                i++;
-        })
+        // let i = 0;
+        // messages.forEach((message) => {
+        //         ctx.fillText(message, 10, 50 + (i * 10));
+        //         i++;
+        // })
 
 
 

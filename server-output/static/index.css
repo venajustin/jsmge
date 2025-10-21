@@ -19,8 +19,10 @@ iframe {
      aspect-ratio: 4/3;
     max-width:1024px;
     max-height:768px;
-    height: 100vh;
+    /*height: 100vh;*/
+    height: auto;
     width: 100vw;
     /*border:none;*/
     display: block;
+    /*overflow: hidden;*/
 }
