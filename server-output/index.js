@@ -4,10 +4,12 @@ import * as fs from 'node:fs';
 import multer from "multer";
 
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
-let user_code_dir = "/usrcode";
+let user_dir_name = "./usercode";
+let user_code_dir = "." + user_dir_name;
 if (process.env.IS_DOCKER_CONTAINER !== "true") {
-        
-        user_code_dir = path.resolve("./testUsr");
+       
+        user_dir_name = "./testUsr";
+        user_code_dir = path.resolve(user_dir_name);
         console.log("this is the path resolve" + user_code_dir);
 
 
@@ -218,7 +220,7 @@ app.get("/files", (req, res) => {
   };
 
   try {
-    const files = getFilesFlat(user_code_dir); // Get all files as a flat list
+    const files = getFilesFlat(user_dir_name); // Get all files as a flat list
     res.json(files); // Return the flat list of file paths
   } catch (error) {
     console.error("Error reading folder:", error);
