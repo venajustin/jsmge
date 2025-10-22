@@ -14,6 +14,7 @@ import random as r
 
 try:
     client = docker.from_env()
+
 except:
     print("ERROR getting docker environtment. Ensure docker is installed and running.")
     exit()
