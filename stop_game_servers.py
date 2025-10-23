@@ -1,6 +1,4 @@
-from engine.docker.start_postgres.py import getdocker
-from engine.docker.dockersetup.py import *
-d = getdocker()
+from engine.docker.dockersetup import *
 
 clear_node()
 

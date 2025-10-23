@@ -173,9 +173,7 @@ def clear_database():
 
 def setup():
     img = create_node_image()
-    return 
 
-## Bypassing this stuff
     clear_containers()
     stop_network()
     network = start_network()

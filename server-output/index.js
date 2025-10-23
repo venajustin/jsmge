@@ -4,19 +4,16 @@ import * as fs from 'node:fs';
 import multer from "multer";
 
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
-let user_dir_name = "./usercode";
-let user_code_dir = "." + user_dir_name;
+let user_dir_name = "/usrcode";
+let user_code_dir = user_dir_name;
 if (process.env.IS_DOCKER_CONTAINER !== "true") {
-       
-        user_dir_name = "./testUsr";
-        user_code_dir = path.resolve(user_dir_name);
-        console.log("this is the path resolve" + user_code_dir);
-
-
+    user_dir_name = "./testUsr";
+    user_code_dir = path.resolve(user_dir_name);
+    console.log("this is the path resolve" + user_code_dir);
 } 
 
 import { createServer } from "node:http";
-import  { Server } from "socket.io";
+import { Server } from "socket.io";
 
 import crypto from "crypto";
 import session from "express-session";
@@ -86,7 +83,7 @@ io.engine.use(sessionMiddleware);
 
 const game = new Game(io);
 //this is temporary fix for testing development
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: "http://localhost" }));
 //app.use(cors({ origin: "http://localhost" }));
 
 const verifyToken = async (req, res, next) => {
