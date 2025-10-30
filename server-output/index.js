@@ -67,7 +67,7 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
-//app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: "http://localhost:5173" }));
 
 const server = createServer(app);
 const io = new Server(server,
@@ -83,7 +83,7 @@ io.engine.use(sessionMiddleware);
 
 const game = new Game(io);
 //this is temporary fix for testing development
-app.use(cors({ origin: "http://localhost" }));
+//app.use(cors({ origin: "http://localhost" }));
 //app.use(cors({ origin: "http://localhost" }));
 
 const verifyToken = async (req, res, next) => {
