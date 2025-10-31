@@ -11,7 +11,6 @@ export const GameState = Object.freeze({
 
 export class Game {
         state = GameState.EDIT;
-        active_scene = "testscene2.scene";
         players = []; // maybe switch to set or map
         players_seat = new Map();
         socket;
@@ -57,7 +56,7 @@ export class Game {
 
             // Loading scene every time
             //if (this.scene === undefined) {
-                loadScene("./testUsr/scenes/testscene2.scene").then((scene) => {
+                loadScene("./testUsr/scenes/testscene3.scene").then((scene) => {
                     this.scene = scene;
                     this.ready = true;
                 });

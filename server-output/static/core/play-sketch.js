@@ -24,7 +24,7 @@ const playSketch = (p) => {
         p.createCanvas(1600, 1200, p.P2D);
 
 
-        p.setScene("/files/scenes/testscene2.scene");
+        p.setScene("/files/scenes/testscene3.scene");
         p.mode = 'play'
         // const response = await fetch("./files/scenes/testscene2.scene", {method:'GET'});
         // const scene_json = await response.text();
