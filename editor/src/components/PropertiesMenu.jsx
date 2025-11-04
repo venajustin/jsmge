@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import "../css/propertiesMenu.css";
 import * as Tweakpane from "tweakpane";
 import io from "socket.io-client";
-//import { serialize } from "../../../server-output/static/libraries/esserializer.js";
 
 const PropertiesMenu = ({ SERVER_URL }) => {
   const containerRef = useRef(null);
@@ -121,6 +120,47 @@ const PropertiesMenu = ({ SERVER_URL }) => {
       
   }, []);
 
+
+  useEffect(() => {
+
+    const socket = io(server_url_ref.current,
+      {
+        query: {
+          clientType: "react-editor"
+        }
+
+      }
+    );
+    const handleSelected = (obj) => {
+      console.log("PropertiesMenu received edit:selected", obj);
+      //handle the object that was sent and put it into the editor
+      //setSceneData(obj);
+
+      const normalized = {
+        _objects: [
+          {
+            _id: obj?.id ?? null,
+            _pos: obj?.pos ?? { x: 0, y: 0, z: 0 },
+            _rot: obj?.rot ?? { x: 0, y: 0, z: 0 },
+            _sca: obj?.sca ?? { x: 1, y: 1, z: 1 },
+            ess_cn: obj?.name ?? obj?.ess_cn ?? "Object",
+            // include any other simple props you want visible (velocity, etc.)
+          },
+        ],
+        ess_cn: "Scene"
+      };
+
+      setSceneData(normalized)
+      setSelectedObjectIndex(0);
+
+    };
+    socket.on("edit:selected", handleSelected);
+
+    return () => {
+      socket.off("edit:selected", handleSelected);
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     if (!sceneData || !sceneData._objects || !containerRef.current) return;
