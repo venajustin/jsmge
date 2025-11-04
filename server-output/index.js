@@ -1,16 +1,16 @@
 import express from "express";
 import path from "path";
-import * as fs from 'node:fs';
+import * as fs from "node:fs";
 import multer from "multer";
 
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
 let user_dir_name = "/usrcode";
 let user_code_dir = user_dir_name;
 if (process.env.IS_DOCKER_CONTAINER !== "true") {
-    user_dir_name = "./testUsr";
-    user_code_dir = path.resolve(user_dir_name);
-    console.log("this is the path resolve" + user_code_dir);
-} 
+  user_dir_name = "./testUsr";
+  user_code_dir = path.resolve(user_dir_name);
+  console.log("this is the path resolve" + user_code_dir);
+}
 
 import { createServer } from "node:http";
 import { Server } from "socket.io";
@@ -18,51 +18,48 @@ import { Server } from "socket.io";
 import crypto from "crypto";
 import session from "express-session";
 
-import {getStatus, testfn} from '../usrcode/test.js';
+import { getStatus, testfn } from "../usrcode/test.js";
 
-import cors from "cors"
+import cors from "cors";
 
 //import {setupCanvas} from './server/canvas.js';
-import {get_client} from "./server/database/connect-db.js";
-import {debug_set_env, get_source_paths} from "./server/util.js";
+import { get_client } from "./server/database/connect-db.js";
+import { debug_set_env, get_source_paths } from "./server/util.js";
 
-
-import {Game, GameState} from './server-core/game.js';
+import { Game, GameState } from "./server-core/game.js";
 
 // used for saving/loading scenes
 import ESSerializer from "esserializer";
 
-
+//for emitting to sockets in other files so we need to set io
+//import { registerSocketEvents } from "./server-core/socketEvents.js";
 
 // import {} from '../usrcode/test.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-const code = "testUsr" // temp will need to change this to /usrcode
-
+const code = "testUsr"; // temp will need to change this to /usrcode
 
 debug_set_env();
 
-
 // const flask = "http://127.0.0.1/app/2/"
-
 
 // import {fork} from 'node:child_process';
 // const server_process = fork('./server-core/server.js');
 
 const editors = [];
 
-app.use(express.static('static'));
+app.use(express.static("static"));
 app.use("/static", express.static("static"));
 //app.use("/user-static", express.static(user_code_dir + "/resources"));
 
-app.use(express.json()) // This allows to parse json requests
+app.use(express.json()); // This allows to parse json requests
 
 const sessionMiddleware = session({
-    secret: crypto.randomBytes(64).toString('hex'),
-    resave: true,
-    saveUninitialized: true
+  secret: crypto.randomBytes(64).toString("hex"),
+  resave: true,
+  saveUninitialized: true,
 });
 
 app.use(sessionMiddleware);
@@ -70,15 +67,15 @@ app.use(sessionMiddleware);
 app.use(cors({ origin: "http://localhost:5173" }));
 
 const server = createServer(app);
-const io = new Server(server,
-    {
-        cors: {
-            origin: ["http://localhost:5173", "https://"],
-            methods: ["GET", "POST"],
-            credentials: true
-        }
-    });
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:5173", "https://"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
+//registerSocketEvents(io);
 io.engine.use(sessionMiddleware);
 
 const game = new Game(io);
@@ -89,71 +86,74 @@ const game = new Game(io);
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if(!authHeader) {
-    return res.status(401).json({message: "Token is missing"})
+  if (!authHeader) {
+    return res.status(401).json({ message: "Token is missing" });
   }
 
   const token = authHeader.split(" ")[1];
 
-  try{
+  try {
     const response = await fetch("http://127.0.0.1:5000/protected", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    if(response.ok){
+    if (response.ok) {
       const data = await response.json();
       req.user = data;
       next();
-    }else {
+    } else {
       const errorData = await response.json();
-      return res.status(401).json({message: errorData.message});
+      return res.status(401).json({ message: errorData.message });
     }
-  }catch (error){
+  } catch (error) {
     console.error("Error verifying token:", error.message);
-    return res.status(500).json({message: "Internal server error"});
+    return res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 // watch files in the user's code directory to update editor
-fs.watch(user_code_dir, {recursive: true}, () => {
-    sendFilesToSockets();
+fs.watch(user_code_dir, { recursive: true }, () => {
+  sendFilesToSockets();
 });
 
 function sendFilesToSockets() {
+  const getFilesFlat = (dirPath) => {
+    const items = fs.readdirSync(dirPath, { withFileTypes: true });
+    let files = [];
+    items.forEach((item) => {
+      const itemPath = path.join(dirPath, item.name);
+      if (item.isDirectory()) {
+        files = files.concat(getFilesFlat(itemPath)); // Recursively add files
+      } else {
+        files.push(itemPath); // Add file path
+      }
+    });
+    return files;
+  };
 
+  try {
+    const files = getFilesFlat(code); // Get all files as a flat list
 
-    const getFilesFlat = (dirPath) => {
-        const items = fs.readdirSync(dirPath, { withFileTypes: true });
-        let files = [];
-        items.forEach((item) => {
-            const itemPath = path.join(dirPath, item.name);
-            if (item.isDirectory()) {
-                files = files.concat(getFilesFlat(itemPath)); // Recursively add files
-            } else {
-                files.push(itemPath); // Add file path
-            }
-        });
-        return files;
-    };
-
-    try {
-        const files = getFilesFlat(code); // Get all files as a flat list
-
-        // update all connected editors
-        editors.forEach((editor) => {
-
-            io.to(editor).emit('files_update', files);
-        });
-
-    } catch (error) {
-        console.error("Error reading folder:", error);
-    }
-
-
+    // update all connected editors
+    editors.forEach((editor) => {
+      io.to(editor).emit("files_update", files);
+    });
+  } catch (error) {
+    console.error("Error reading folder:", error);
+  }
 }
 
+import { testScenes } from "./tests/testscenes.js";
+import { testpong } from "./tests/testpong.js";
+app.get("/tests/", (req, res) => {
+  testScenes();
+  testpong();
+  // for (const player of game.players) {
+  //     console.log("testing set scene")
+  //     io.to(player).emit('set_scene', "./files/scenes/testscene2.scene");
+  // }
 
 import {basicscene} from './tests/basicscene.js';
 import {testpong} from './tests/testpong.js';
@@ -174,34 +174,40 @@ app.get('/tests/', (req,res) => {
 });
 
 app.get("/old-root", (req, res) => {
-    let testhtml = "";
-    try {
-      testhtml = fs.readFileSync('./test.html', 'utf8'); // Text content of the file
-    } catch (err) {
-      console.error("An error occurred:", err);
-      res.send("error");
-      return;
-    }
+  let testhtml = "";
+  try {
+    testhtml = fs.readFileSync("./test.html", "utf8"); // Text content of the file
+  } catch (err) {
+    console.error("An error occurred:", err);
+    res.send("error");
+    return;
+  }
 
-    const userjs = getStatus.toString();
-    let msg = testfn();
-    let script = setupCanvas.toString() + "\nsetupCanvas();";
+  const userjs = getStatus.toString();
+  let msg = testfn();
+  let script = setupCanvas.toString() + "\nsetupCanvas();";
 
-    testhtml = testhtml.replace("{{ msg }}", testfn());
-    testhtml = testhtml.replace("{{ script }}", script);
+  testhtml = testhtml.replace("{{ msg }}", testfn());
+  testhtml = testhtml.replace("{{ script }}", script);
 
-    res.send(testhtml);
+  res.send(testhtml);
 });
 
 app.get("/test/:inputnum", (req, res) => {
-    let msg = testfn();
-    res.send("hello from container, " + msg + " <br> param: " + req.params.inputnum + " <br> query: " + req.query.inputnum );
+  let msg = testfn();
+  res.send(
+    "hello from container, " +
+      msg +
+      " <br> param: " +
+      req.params.inputnum +
+      " <br> query: " +
+      req.query.inputnum
+  );
 });
 //This would need to verify token in future but for now it is fine
 app.get("/status", (req, res) => {
-    res.send(game.state);
+  res.send(game.state);
 });
-
 
 app.get("/files", (req, res) => {
   const getFilesFlat = (dirPath) => {
@@ -227,49 +233,48 @@ app.get("/files", (req, res) => {
   }
 });
 
-app.get("/testConnection", (req,res) => {
-  console.log("Someone is trying to connect to this")
-  res.send("You are connected")
+app.get("/testConnection", (req, res) => {
+  console.log("Someone is trying to connect to this");
+  res.send("You are connected");
   return "You are connected";
-})
+});
 
-app.post("/frames/*", (req,res) => {
+app.post("/frames/*", (req, res) => {
   let frame = req.params[0];
   frame += ".js";
-  if(!frame){
-    return res.status(400).send("Frame name is needed")
+  if (!frame) {
+    return res.status(400).send("Frame name is needed");
   }
-  let contentPath = path.resolve("static/core/frame/FrameTemplate.js")
+  let contentPath = path.resolve("static/core/frame/FrameTemplate.js");
   console.log("content Path : " + contentPath);
-  let content = fs.readFileSync(contentPath)
+  let content = fs.readFileSync(contentPath);
   let filePath = path.join(user_code_dir, "frames", frame);
   try {
     fs.writeFileSync(filePath, content);
     res.send("Frame was created");
-  }
-  catch (error){
+  } catch (error) {
     console.error("Error creating frame", error);
   }
-})
+});
 
-const upload = multer ({
+const upload = multer({
   storage: multer.diskStorage({
-    destination: function (req,file,cb) {
-      cb(null,path.join(user_code_dir, "resources"));
+    destination: function (req, file, cb) {
+      cb(null, path.join(user_code_dir, "resources"));
     },
-    filename: function (req,file,cb) {
-      cb (null, file.originalname);
-    }
-  })
-})
-app.post("/resources", upload.single("file"), (req,res) => {
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    },
+  }),
+});
+app.post("/resources", upload.single("file"), (req, res) => {
   let file = req.file;
-  if(!file){
+  if (!file) {
     return res.status(400).send("No file uploaded");
   }
 
   res.status(200).send(`File ${file.originalname} uploaded successfully.`);
-})
+});
 
 app.post("/files/*", (req, res) => {
   //console.log(req.headers);
@@ -278,38 +283,34 @@ app.post("/files/*", (req, res) => {
   const filename = req.params[0];
   const { content } = req.body;
 
-  if(!filename){
+  if (!filename) {
     return res.status(400).send("Filename is required.");
   }
   const filePath = path.join(user_code_dir, filename);
   try {
     fs.writeFileSync(filePath, content || "");
     res.send(`File ${filename} created`);
-  }
-  catch (error){
+  } catch (error) {
     console.error("Error creating file", error);
   }
 });
 
 //This delete is currently done by a query which could be still used in the future alongside a proj id and user account
 app.delete("/files/*", (req, res) => {
+  const filename = req.params[0];
 
-    const filename = req.params[0];
-
-    if (!filename) {
+  if (!filename) {
     return res.status(400).send("Filename is required.");
   }
   const filePath = path.join(code, filename);
-  try{
-    if(fs.existsSync(filePath)){
+  try {
+    if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      console.log(`${filename} deleted successfully`)
+      console.log(`${filename} deleted successfully`);
+    } else {
+      console.log(`${filename} not found`);
     }
-    else{
-      console.log(`${filename} not found`)
-    }
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error deleting file:", error);
   }
 });
@@ -321,26 +322,24 @@ app.get("/files/*", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  let filePath = path.join(user_code_dir , filename);
-  
-  if (process.env.IS_DOCKER_CONTAINER == "true") {
-        
-        filePath =  "/" + filePath
+  let filePath = path.join(user_code_dir, filename);
 
-  } 
-  console.log("filepath: " + filePath)
+  if (process.env.IS_DOCKER_CONTAINER == "true") {
+    filePath = "/" + filePath;
+  }
+  console.log("filepath: " + filePath);
   try {
-    if (!fs.existsSync( filePath)) {
-      console.log("file path doesnt exist " + filePath)
+    if (!fs.existsSync(filePath)) {
+      console.log("file path doesnt exist " + filePath);
       return res.status(404).send("File not found.");
     }
     console.log("trying to grab file from this path: " + filePath);
     //res.sendFile(path.resolve(filePath));
     res.sendFile(filePath);
-    console.log("file found")
-//    const content = fs.readFileSync(filePath, "utf8");
- //   res.contentType(path.basename(filePath));
-  //  res.send(content);
+    console.log("file found");
+    //    const content = fs.readFileSync(filePath, "utf8");
+    //   res.contentType(path.basename(filePath));
+    //  res.send(content);
     //res.json({ filename, content });
   } catch (error) {
     console.error("Error reading file:", error);
@@ -364,8 +363,8 @@ app.post("/save", (req, res) => {
 });
 
 app.post("/folder", (req, res) => {
-  console.log("Recieved folder message")
-  const {foldername } = req.body;
+  console.log("Recieved folder message");
+  const { foldername } = req.body;
   if (!foldername) {
     return res.status(400).send("Folder name is required.");
   }
@@ -437,7 +436,6 @@ app.put("/files/move", (req, res) => {
 
     console.log(`File moved from ${oldPath} to ${newPath}`);
     res.send(`File moved from ${oldPath} to ${newPath}`);
-
   } catch (error) {
     console.error("Error moving file:", error);
     res.status(500).send("Error moving file.");
@@ -467,8 +465,10 @@ app.put("/folder/move", (req, res) => {
     }
 
     // Prevent moving a folder into itself or its subdirectories
-    if (newPath.startsWith(oldPath + '/') || newPath === oldPath) {
-      return res.status(400).send("Cannot move folder into itself or its subdirectories.");
+    if (newPath.startsWith(oldPath + "/") || newPath === oldPath) {
+      return res
+        .status(400)
+        .send("Cannot move folder into itself or its subdirectories.");
     }
 
     // Check if destination parent directory exists, create if it doesn't
@@ -487,45 +487,91 @@ app.put("/folder/move", (req, res) => {
 
     console.log(`Folder moved from ${oldPath} to ${newPath}`);
     res.send(`Folder moved from ${oldPath} to ${newPath}`);
-
   } catch (error) {
     console.error("Error moving folder:", error);
     res.status(500).send("Error moving folder.");
   }
 });
 
-app.get('/favicon.ico', (req, res) => {
-    res.sendFile( process.cwd() + "/favicon.ico");
+app.get("/favicon.ico", (req, res) => {
+  res.sendFile(process.cwd() + "/favicon.ico");
 });
 
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
+  const sessionId = socket.request.session.id;
+  socket.join(sessionId);
 
-    const sessionId = socket.request.session.id;
-    socket.join(sessionId);
+  console.log("session: " + sessionId);
 
-    console.log("session: " + sessionId);
+  const clientType = socket.handshake.query.clientType;
+  if (clientType === "react-editor") {
+    console.log("Editor connected: " + sessionId);
+    editors.push(sessionId);
 
-    const clientType = socket.handshake.query.clientType;
-    if (clientType === "react-editor") {
-        console.log("Editor connected: " + sessionId);
-        editors.push(sessionId);
+    socket.on("disconnect", () => {
+      console.log("Editor disconnect: " + sessionId);
+      editors.splice(editors.indexOf(sessionId), 1);
+    });
+    socket.on("playButtonPress", () => {
+      console.log("editor play button press");
+      sendPlay();
+    });
+    socket.on("editButtonPress", () => {
+      console.log("editor edit button press");
+      sendEdit();
+    });
+   
+   
+   
+   
+   socket.join("editors");
+   socket.on("edit:selected", (payload) => {
+     console.log("[server] edit:selected received:", payload, "from", sessionId);
+     io.to("editors").emit("edit:selected", payload);
+   });
+    
+    //need a new socket.on(propertychange, (changedObject))
+    return;
+  }
 
-        socket.on('disconnect',() => {
-            console.log("Editor disconnect: " + sessionId);
-            editors.splice(editors.indexOf(sessionId),1);
-        });
-        socket.on('playButtonPress', () => {
-            console.log("editor play button press");
-            sendPlay();
-        });
-        socket.on('editButtonPress', () => {
-            console.log("editor edit button press");
-            sendEdit();
-        });
-        //need a new socket.on(propertychange, (changedObject))
-        return;
+  if (game.state === GameState.EDIT) {
+    io.to(sessionId).emit("game_status", "edit");
+  }
+  // io.emit('chat message', "Player " + sessionId + " session established");
+  console.log("Session " + sessionId + " established");
+
+  game.players.push(sessionId);
+
+  socket.on("disconnect", () => {
+    game.players.splice(game.players.indexOf(sessionId), 1);
+    console.log("Session " + sessionId + " disconnected");
+    console.log("Active Sessions: " + game.players.length);
+  });
+
+  socket.on("edit:selected", (payload) => {
+      console.log(
+        "[server] edit:selected received:",
+        payload,
+        "from",
+        sessionId
+      );
+      io.to("editors").emit("edit:selected", payload);
+    });
+
+  // probably gettting rid of this
+  socket.on("inputs", (inputlist) => {
+    game.client_updates.push({ type: "input", inputs: inputlist });
+  });
+  socket.on("client_update", (packet) => {
+    game.client_updates.set(packet.playerid, packet.objects);
+  });
+  socket.on("select_seat", (seat) => {
+    if (seat > 0 && seat <= game.scene.players_max) {
+      game.players_seat.set(sessionId, seat);
     }
+  });
 
+  //make a socket funciton for sending the selected object for the properties menu
 
     if (game.state === GameState.EDIT) {
         io.to(sessionId).emit('game_status', "edit");
@@ -568,71 +614,65 @@ io.on('connection', (socket) => {
     // });
 });
 
-
-
 async function test_db(res) {
-    let client = get_client();
-    await client.connect();
+  let client = get_client();
+  await client.connect();
 
-    const result = await client.query('SELECT * FROM test_tab');
-    let output_str = "Result: ";
-    result.rows.forEach(row => {
-        output_str = output_str + row.uid + " ";
-    })
-    res.send(output_str);
+  const result = await client.query("SELECT * FROM test_tab");
+  let output_str = "Result: ";
+  result.rows.forEach((row) => {
+    output_str = output_str + row.uid + " ";
+  });
+  res.send(output_str);
 
-    await client.end();
+  await client.end();
 }
 
-app.get('/test-db', (req, res) => {
-   test_db(res);
+app.get("/test-db", (req, res) => {
+  test_db(res);
 });
 
-app.get('/set-scene', (req, res) => {
-
-});
+app.get("/set-scene", (req, res) => {});
 
 function sendEdit() {
-    // server_process.send("stop_game");
-    game.stopGame();
-    let count = 0;
-    for (const playerid of game.players) {
-        io.to(playerid).emit('game_status', "edit");
-        count++;
-    }
-    return count;
+  // server_process.send("stop_game");
+  game.stopGame();
+  let count = 0;
+  for (const playerid of game.players) {
+    io.to(playerid).emit("game_status", "edit");
+    count++;
+  }
+  return count;
 }
 
 function sendPlay() {
-    let count = 0;
-    // server_process.send("start_game");
-    game.start();
-    for (const playerid of game.players) {
-        io.to(playerid).emit('game_status', "play");
-        count++;
-    }
-    return count;
+  let count = 0;
+  // server_process.send("start_game");
+  game.start();
+  for (const playerid of game.players) {
+    io.to(playerid).emit("game_status", "play");
+    count++;
+  }
+  return count;
 }
 
-app.post('/test-edit', (req, res) => {
-    const count = sendEdit();
-    res.send(`Edit mode set for ${count} players`);
+app.post("/test-edit", (req, res) => {
+  const count = sendEdit();
+  res.send(`Edit mode set for ${count} players`);
 });
-app.post('/test-play', (req, res) => {
-    const count = sendPlay();
-    res.send(`Edit mode set for ${count} players`);
+app.post("/test-play", (req, res) => {
+  const count = sendPlay();
+  res.send(`Edit mode set for ${count} players`);
 });
 
 server.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-})
+  console.log(`Server listening on port ${port}`);
+});
 
-
-app.get('/get-source-paths/', (req, res) => {
-
-    get_source_paths(user_code_dir).then((paths) => {
-        res.send({
-            paths: paths
-        });
+app.get("/get-source-paths/", (req, res) => {
+  get_source_paths(user_code_dir).then((paths) => {
+    res.send({
+      paths: paths,
     });
+  });
 });

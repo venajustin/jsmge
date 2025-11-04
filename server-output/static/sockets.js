@@ -3,7 +3,7 @@ import { editSketch } from "./core/edit-sketch.js";
 import { playSketch } from "./core/play-sketch.js";
 import { setSession, active_session} from "./core/session.js";
 
-const socket = io();
+const socket = io({ query: { clientType: "react-editor" } });
 
 socket.on('chat message', (msg) => {
     console.log("message recieved: " + msg);
@@ -30,6 +30,15 @@ socket.on('update_scene', (msg) => {
     active_session.updates.push(JSON.parse(msg));
 });
 
+
+export function emitSelectedToServer(data) {
+  socket.emit("edit:selected", data);
+  console.log("emit occurred");
+}
+
+socket.on("edit:selected", (obj) => {
+  console.log("selection broadcast:", obj);
+});
 
 // Chat room test:
 // const form = document.getElementById('form');
