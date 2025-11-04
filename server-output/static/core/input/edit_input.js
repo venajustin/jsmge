@@ -1,32 +1,17 @@
-<<<<<<< HEAD
 import * as math from "mathjs";
-=======
 import { emitSelectedToServer } from "#static/sockets.js";
 
->>>>>>> e6059a9 (Sending Object info from game Preview temp working)
 export function process_edit_input(p, editState) {
   // function to check on key states
   // there are also keys mapped out as callbacks
 }
 
 export function edit_mouse_press(p, editState) {
-<<<<<<< HEAD
-    editState.lockX = false;
-    editState.lockY = false;
+  editState.lockX = false;
+  editState.lockY = false;
     let point = {x:p.mouseX, y:p.mouseY};
     point = {x: point.x / p.editCamera.zoom, y: point.y / p.editCamera.zoom};
     point = {x: point.x + p.editCamera.pos[0], y: point.y  + p.editCamera.pos[1]};
-
-    editState.currently_holding = false;
-    editState.selected = p.scene._edit_drag_intersect(point, editState);
-    if (editState.selected.length > 0) {
-        editState.currently_holding = true;
-    }
-    editState.dragLast = point;
-=======
-  editState.lockX = false;
-  editState.lockY = false;
-  const point = { x: p.mouseX, y: p.mouseY };
   editState.currently_holding = false;
   editState.selected = p.scene._edit_drag_intersect(point, editState);
   if (editState.selected.length > 0) {
@@ -35,7 +20,6 @@ export function edit_mouse_press(p, editState) {
     const sel = editState.selected[last];
     //console.log(sel); // This should console.log the selected object
     // const test = ESSerializer.serialize(sel);
->>>>>>> e6059a9 (Sending Object info from game Preview temp working)
 
     // console.log("test: " + test);
 
@@ -49,6 +33,7 @@ export function edit_mouse_press(p, editState) {
 
     //     emitToEditors('select', safeObj);
 
+    
     emitSelectedToServer({
       id: sel._id,
       pos: sel._pos,
@@ -65,26 +50,15 @@ export function edit_mouse_press(p, editState) {
 }
 
 export function edit_mouse_drag(p, editState) {
-<<<<<<< HEAD
-    let point = {x:p.mouseX, y:p.mouseY};
-    point = {x: point.x / p.editCamera.zoom, y: point.y / p.editCamera.zoom};
-    point = {x: point.x + p.editCamera.pos[0], y: point.y  + p.editCamera.pos[1]};
-
-    const dx = point.x - editState.dragLast.x;
-    const dy = point.y - editState.dragLast.y;
-    if (editState.currently_holding) {
-        // TODO: clean up this functionality
-        // I want it to only move one object, but i want that object to be the lowest in the chain of ownership
-        // That way when objects overlap you can seperate them
-=======
-  const point = { x: p.mouseX, y: p.mouseY };
+  let point = {x:p.mouseX, y:p.mouseY};
+  point = {x: point.x / p.editCamera.zoom, y: point.y / p.editCamera.zoom};
+  point = {x: point.x + p.editCamera.pos[0], y: point.y  + p.editCamera.pos[1]};
   const dx = point.x - editState.dragLast.x;
   const dy = point.y - editState.dragLast.y;
   if (editState.currently_holding) {
     // TODO: clean up this functionality
     // I want it to only move one object, but i want that object to be the lowest in the chain of ownership
     // That way when objects overlap you can seperate them
->>>>>>> e6059a9 (Sending Object info from game Preview temp working)
 
     const last = editState.selected.length - 1;
     if (!editState.lockX) {
@@ -108,6 +82,22 @@ export function edit_mouse_drag(p, editState) {
   //     obj.pos.x += dx;
   //     o._pos.y += dy;
   // }
+  if (editState.selected.length > 0) {
+    editState.currently_holding = true;
+    const last = editState.selected.length - 1;
+    const sel = editState.selected[last];
+    
+
+    emitSelectedToServer({
+      id: sel._id,
+      pos: sel._pos,
+      rot: sel._rot,
+      sca: sel._sca,
+      name: sel.ess_cn || sel.name,
+    });
+
+  }
+
 
   editState.dragLast = point;
 }
