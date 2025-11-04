@@ -36,9 +36,9 @@ export function emitSelectedToServer(data) {
   console.log("emit occurred");
 }
 
-socket.on("edit:selected", (obj) => {
-  console.log("selection broadcast:", obj);
-});
+// socket.on("edit:selected", (obj) => {
+//   console.log("selection broadcast:", obj);
+// });
 
 // Chat room test:
 // const form = document.getElementById('form');

@@ -93,7 +93,9 @@ const [editorContent, setEditorContent] = useState("");
                       </div>
 
                       <div className="properties-container">
-                        <PropertiesMenu/>
+                        <PropertiesMenu
+                        SERVER_URL={SERVER}
+                        />
                       </div>
                 </div>
 
