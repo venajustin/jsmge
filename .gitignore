@@ -5,3 +5,4 @@ __pycache__/
 applications/*
 node_modules
 .env
+.vscode
