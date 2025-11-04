@@ -17,7 +17,39 @@ const PropertiesMenu = () => {
         setSceneData(data);
       })
       .catch(error => console.error('Error loading object data:', error));
+
+      
   }, []);
+
+  // useEffect(() => {
+  //   // establish socket connection to server 
+  //   const socket = io(server_url_ref.current,
+  //       {
+  //           query: {
+  //               clientType: "react-editor"
+  //           }
+
+  //       }
+  //   );
+
+  //   // TODO: remove this, and call it on socket responce
+  //   // Set up an interval to call fetchFiles every second
+  //   // const intervalId = setInterval(fetchFiles, 250);
+
+  //   // setup socket callbacks for filesystem
+  //   socket.on("edit:selected", (obj) => {
+  //     console.log("selection broadcast:", obj);
+  //   });
+
+  //   // Cleanup the interval when the component unmounts
+  //   // return () => clearInterval(intervalId);
+  //   return () => {
+  //       // clearInterval(intervalId);
+  //       socket.off('edit:selected', obj);
+  //       socket.disconnect();
+  //   };
+
+  // }, []);
 
   useEffect(() => {
     if (!sceneData || !sceneData._objects || !containerRef.current) return;
