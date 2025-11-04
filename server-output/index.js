@@ -154,6 +154,82 @@ function sendFilesToSockets() {
   }
 }
 
+import { testScenes } from "./tests/testscenes.js";
+import { testpong } from "./tests/testpong.js";
+app.get("/tests/", (req, res) => {
+  testScenes();
+  testpong();
+  // for (const player of game.players) {
+  //     console.log("testing set scene")
+  //     io.to(player).emit('set_scene', "./files/scenes/testscene2.scene");
+  // }
+
+  res.send("Tests complete");
+});
+
+app.get("/old-root", (req, res) => {
+  let testhtml = "";
+  try {
+    testhtml = fs.readFileSync("./test.html", "utf8"); // Text content of the file
+  } catch (err) {
+    console.error("An error occurred:", err);
+    res.send("error");
+    return;
+  }
+
+  const userjs = getStatus.toString();
+  let msg = testfn();
+  let script = setupCanvas.toString() + "\nsetupCanvas();";
+
+  testhtml = testhtml.replace("{{ msg }}", testfn());
+  testhtml = testhtml.replace("{{ script }}", script);
+
+  res.send(testhtml);
+});
+
+app.get("/test/:inputnum", (req, res) => {
+  let msg = testfn();
+  res.send(
+    "hello from container, " +
+      msg +
+      " <br> param: " +
+      req.params.inputnum +
+      " <br> query: " +
+      req.query.inputnum
+  );
+});
+//This would need to verify token in future but for now it is fine
+app.get("/status", (req, res) => {
+  res.send(game.state);
+});
+
+app.get("/files", (req, res) => {
+  const getFilesFlat = (dirPath) => {
+    const items = fs.readdirSync(dirPath, { withFileTypes: true });
+    let files = [];
+    items.forEach((item) => {
+      const itemPath = path.join(dirPath, item.name);
+      if (item.isDirectory()) {
+        files = files.concat(getFilesFlat(itemPath)); // Recursively add files
+      } else {
+        files.push(itemPath); // Add file path
+      }
+    });
+    return files;
+  };
+
+  try {
+    const files = getFilesFlat(code); // Get all files as a flat list
+
+    // update all connected editors
+    editors.forEach((editor) => {
+      io.to(editor).emit("files_update", files);
+    });
+  } catch (error) {
+    console.error("Error reading folder:", error);
+  }
+}
+
 async function loadSceneFromGame(game) {
   try {
     console.log("game.active_scene: ", game.active_scene);
@@ -336,7 +412,7 @@ app.post("/files/*", (req, res) => {
         console.error("Error creating file", error);
       }
   } else {
-      const filePath = user_code_dir + filename;
+      const filePath = path.join(user_code_dir, filename);
       try {
         fs.writeFileSync(filePath, content || "");
         res.send(`File ${filename} created`);
@@ -746,6 +822,95 @@ io.on("connection", (socket) => {
     //     io.to(sessionId).emit('chat message', "you just sent this ^ ");
     //     console.log(msg);
     // });
+io.on("connection", (socket) => {
+  const sessionId = socket.request.session.id;
+  socket.join(sessionId);
+
+  console.log("session: " + sessionId);
+
+  const clientType = socket.handshake.query.clientType;
+  if (clientType === "react-editor") {
+    console.log("Editor connected: " + sessionId);
+    editors.push(sessionId);
+
+    socket.on("disconnect", () => {
+      console.log("Editor disconnect: " + sessionId);
+      editors.splice(editors.indexOf(sessionId), 1);
+    });
+    socket.on("playButtonPress", () => {
+      console.log("editor play button press");
+      sendPlay();
+    });
+    socket.on("editButtonPress", () => {
+      console.log("editor edit button press");
+      sendEdit();
+    });
+   
+   
+   
+   
+   socket.join("editors");
+   socket.on("edit:selected", (payload) => {
+     console.log("[server] edit:selected received:", payload, "from", sessionId);
+     io.to("editors").emit("edit:selected", payload);
+   });
+    
+    //need a new socket.on(propertychange, (changedObject))
+    return;
+  }
+
+  if (game.state === GameState.EDIT) {
+    io.to(sessionId).emit("game_status", "edit");
+  }
+  // io.emit('chat message', "Player " + sessionId + " session established");
+  console.log("Session " + sessionId + " established");
+
+  game.players.push(sessionId);
+
+  socket.on("disconnect", () => {
+    game.players.splice(game.players.indexOf(sessionId), 1);
+    console.log("Session " + sessionId + " disconnected");
+    console.log("Active Sessions: " + game.players.length);
+  });
+
+  socket.on("edit:selected", (payload) => {
+      console.log(
+        "[server] edit:selected received:",
+        payload,
+        "from",
+        sessionId
+      );
+      io.to("editors").emit("edit:selected", payload);
+    });
+
+  // probably gettting rid of this
+  socket.on("inputs", (inputlist) => {
+    game.client_updates.push({ type: "input", inputs: inputlist });
+  });
+  socket.on("client_update", (packet) => {
+    game.client_updates.set(packet.playerid, packet.objects);
+  });
+  socket.on("select_seat", (seat) => {
+    if (seat > 0 && seat <= game.scene.players_max) {
+      game.players_seat.set(sessionId, seat);
+    }
+  });
+
+  //make a socket funciton for sending the selected object for the properties menu
+
+  // chat room test:
+  // socket.on('chat message', (msg) => {
+  //     io.emit('chat message', msg);
+  //     io.to(sessionId).emit('chat message', "you just sent this ^ ");
+  //     console.log(msg);
+  // });
+  // chat room test:
+  // socket.on('chat message', (msg) => {
+  //     io.emit('chat message', msg);
+  //     io.to(sessionId).emit('chat message', "you just sent this ^ ");
+  //     console.log(msg);
+  // });
+>>>>>>> e6059a9 (Sending Object info from game Preview temp working)
 });
 
 async function test_db(res) {

@@ -118,7 +118,9 @@ const PropertiesMenu = ({ SERVER_URL }) => {
       socket.off("edit:selected", handleSelected);
       socket.disconnect();
     };
+      
   }, []);
+
 
   useEffect(() => {
     if (!sceneData || !sceneData._objects || !containerRef.current) return;

@@ -83,23 +83,6 @@ export function edit_mouse_drag(p, editState) {
   //     obj.pos.x += dx;
   //     o._pos.y += dy;
   // }
-  // if (editState.selected.length > 0) {
-  //   editState.currently_holding = true;
-  //   const last = editState.selected.length - 1;
-  //   const sel = editState.selected[last];
-    
-
-  //   emitSelectedToServer({
-  //     id: sel._id,
-  //     pos: sel._pos,
-  //     rot: sel._rot,
-  //     sca: sel._sca,
-  //     name: sel.ess_cn || sel.name,
-  //   });
-
-  // }
-
-
   editState.dragLast = point;
 }
 
