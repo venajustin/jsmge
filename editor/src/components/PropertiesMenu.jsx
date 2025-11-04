@@ -5,9 +5,9 @@ import * as Tweakpane from "tweakpane";
 const PropertiesMenu = () => {
   const containerRef = useRef(null);
   const paneRef = useRef(null);
-  // Holds scene data and sets selected object to index 0
   const [sceneData, setSceneData] = useState(null);
   const [selectedObjectIndex, setSelectedObjectIndex] = useState(0);
+  const [imageSources, setImageSources] = useState([]); // Changed from useRef to useState
 
   useEffect(() => {
     // Fetch the hardcoded JSON file from public folder
@@ -24,6 +24,15 @@ const PropertiesMenu = () => {
 
     const currentObject = sceneData._objects[selectedObjectIndex];
     if (!currentObject) return;
+
+    // Extract image sources from animated_sprites (if exists)
+    let sources = [];
+    if (currentObject._animated_sprites &&
+        currentObject._animated_sprites.length > 0 &&
+        currentObject._animated_sprites[0]._image_sources) {
+      sources = currentObject._animated_sprites[0]._image_sources.map(src => src.img);
+    }
+    setImageSources(sources); // Update state to trigger re-render
 
     // Create the Tweakpane
     const pane = new Tweakpane.Pane({
@@ -46,8 +55,6 @@ const PropertiesMenu = () => {
 
         // Handle special underscore properties
         if (key === '_pos' || key === '_rot' || key === '_sca') {
-          // Create a folder for these vector properties
-          // Can add customization for each field if necessary
           const folder = paneInstance.addFolder({ title: key.slice(1).toUpperCase() });
           folder.addBinding(value, 'x', { min: -1000, max: 1000, step: 1 });
           folder.addBinding(value, 'y', { min: -1000, max: 1000, step: 1 });
@@ -109,6 +116,84 @@ const PropertiesMenu = () => {
     };
   }, [sceneData, selectedObjectIndex]);
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.add('drag-over');
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('drag-over');
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('drag-over');
+
+    // Get the dragged file path from the file explorer
+    const imagePath = e.dataTransfer.getData('text/plain');
+
+    if (imagePath && !imageSources.includes(imagePath)) {
+      const newSources = [...imageSources, imagePath];
+      setImageSources(newSources);
+
+      // Update the scene data
+      updateAnimatedSprite(newSources);
+    }
+  };
+
+  const handleDeleteImage = (index) => {
+    const newSources = imageSources.filter((_, i) => i !== index);
+    setImageSources(newSources);
+    updateAnimatedSprite(newSources);
+  };
+
+  const updateAnimatedSprite = (sources) => {
+    if (!sceneData) return;
+
+    const currentObject = sceneData._objects[selectedObjectIndex];
+
+    // Initialize _animated_sprites if it doesn't exist
+    if (!currentObject._animated_sprites) {
+      currentObject._animated_sprites = [];
+    }
+
+    // Create or update the first animated sprite
+    if (currentObject._animated_sprites.length === 0) {
+      currentObject._animated_sprites.push({
+        _pos: { x: 0, y: 0, z: 0 },
+        _rot: { x: 0, y: 0, z: 0 },
+        _sca: { x: 1, y: 1, z: 1 },
+        _parent: { ess_cn: "UD" },
+        _children: [],
+        _animated_sprites: [],
+        _colliders: [],
+        _image_sources: [],
+        _frames: [],
+        _index: 0,
+        _animations: [[]],
+        _playing: false,
+        _selected_animation: 0,
+        _speed: 0.15,
+        ess_cn: "AnimatedSprite"
+      });
+    }
+
+    // Update image sources
+    currentObject._animated_sprites[0]._image_sources = sources.map(img => ({
+      img: img,
+      w: 256,
+      h: 256,
+      count: 1
+    }));
+
+    console.log('Updated animated sprite:', currentObject._animated_sprites[0]);
+    // TODO: Send PUT/POST request to backend here
+  };
+
   if (!sceneData || !sceneData._objects) {
     return <div ref={containerRef} className="properties-menu">Loading...</div>;
   }
@@ -126,6 +211,36 @@ const PropertiesMenu = () => {
             {obj.ess_cn || `Object ${index + 1}`}
           </button>
         ))}
+      </div>
+
+      {/* Image Sources Section */}
+      <div className="image-sources-section">
+        <h3>Image Sources</h3>
+        <div
+          className="image-drop-zone"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          {imageSources.length === 0 ? (
+            <p className="drop-zone-placeholder">Drag and drop images here</p>
+          ) : (
+            <ul className="image-list">
+              {imageSources.map((imgPath, index) => (
+                <li key={index} className="image-item">
+                  <span className="image-path">{imgPath}</span>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteImage(index)}
+                    title="Delete image"
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
 
       {/* Tweakpane Container */}
