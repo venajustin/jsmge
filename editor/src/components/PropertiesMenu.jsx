@@ -186,6 +186,9 @@ const PropertiesMenu = ({ SERVER_URL }) => {
       // TODO: Send PUT/POST request to backend here
     });
 
+
+    // this is where i would need to emit from the socket the update
+
     // Cleanup
     return () => {
       pane.dispose();
