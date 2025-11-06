@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import "../css/propertiesMenu.css";
 import * as Tweakpane from "tweakpane";
 import io from "socket.io-client";
+//import { serialize } from "../../../server-output/static/libraries/esserializer.js";
 
 const PropertiesMenu = ({ SERVER_URL }) => {
   const containerRef = useRef(null);
   const paneRef = useRef(null);
   const server_url_ref = useRef(SERVER_URL);
+  let sockRef = useRef(null);
   // Holds scene data and sets selected object to index 0
   const [sceneData, setSceneData] = useState(null);
   const [selectedObjectIndex, setSelectedObjectIndex] = useState(0);
@@ -56,7 +58,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
   useEffect(() => {
 
-    const socket = io(server_url_ref.current,
+    sockRef.current = io(server_url_ref.current,
       {
         query: {
           clientType: "react-editor"
@@ -64,6 +66,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
       }
     );
+    const socket = sockRef.current;
     const handleSelected = (obj) => {
       console.log("PropertiesMenu received edit:selected", obj);
       //handle the object that was sent and put it into the editor
@@ -176,6 +179,49 @@ const PropertiesMenu = ({ SERVER_URL }) => {
       });
     };
 
+  //   const buildSafeObject= (obj) => {
+
+  //     try{
+  //       if (typeof serialize === "function") {
+  //   const serialized = serialize(obj);
+  //   if (typeof serialized === "string") {
+  //     try {
+  //       return JSON.parse(serialized);
+  //     } catch {
+  //       return { __serialized: serialized };
+  //     }
+  //   }
+  //   if (serialized && obj && obj._id !== undefined) serialized._id = obj._id;
+  //   return serialized;
+  // }
+
+  //     }
+  //     catch (e){
+  //       console.warn("esserializer failed: ", e);
+  //     }
+
+  //   }
+
+
+  const buildSafeObject = (obj) => {
+      try {
+        const seen = new WeakSet();
+        const cloned = JSON.parse(JSON.stringify(obj, (k, v) => {
+          if (typeof v === "function") return undefined;
+          if (typeof v === "object" && v !== null) {
+            if (seen.has(v)) return undefined;
+            seen.add(v);
+          }
+          return v;
+        }));
+        // ensure id is present
+        if (obj && obj._id !== undefined) cloned._id = obj._id;
+        return cloned;
+      } catch (e) {
+        console.warn("buildSafeObject failed:", e);
+        return { _id: obj?._id ?? null };
+      }
+    };
     // Process the object
     processObject(currentObject, pane);
 
@@ -187,8 +233,13 @@ const PropertiesMenu = ({ SERVER_URL }) => {
     });
 
 
-    // this is where i would need to emit from the socket the update
+    // this is where i would need to emit from the socket the update because should be sent on change
+    if(sockRef.current){
 
+       const safe = buildSafeObject(currentObject);
+      console.log(safe);
+
+    }
     // Cleanup
     return () => {
       pane.dispose();
