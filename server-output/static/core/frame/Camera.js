@@ -7,6 +7,8 @@ export class Camera extends Frame {
         // does nothing, seperate cam_draw() method handles transforming the view of the owning player
     }
 
+
+
     _camera_transform(p) {
         p.translate(-this._pos.x - 1600/2,-this._pos.y - 1200/2,-this._pos.z);
         p.rotate(-this._rot.x,-this._rot.y,-this._rot.z);

@@ -14,7 +14,7 @@ export class AnimatedSprite extends Frame {
     _animations = [];
     _playing = false;
     _selected_animation = 0;
-    _speed = .15;
+    _speed = .001;
 
 
     _draw(p) {
@@ -23,7 +23,7 @@ export class AnimatedSprite extends Frame {
         p.translate(this._pos.x,this._pos.y,this._pos.z);
         p.rotate(this._rot.x,this._rot.y,this._rot.z);
         p.scale(this._sca.x,this._sca.y,this._sca.z);
-        const index = Math.floor(this._index);
+        const index = this._animations[this._selected_animation][Math.floor(this._index)];
 
         if (this._frames[index]) {
             p.noSmooth();
@@ -66,14 +66,15 @@ export class AnimatedSprite extends Frame {
 
         this.play_animation(0);
     }
-    _update(inputs) {
-        this._animate();
+    _update(dt, inputs) {
+        this._animate(dt);
         super._update(inputs);
     }
 
-    _animate() {
+    _animate(dt) {
         if (this._playing) {
-            this._index += this._speed;
+            // this._index += this._speed * dt;
+             this._index += this._speed;
 
             // float modulus so index is always less than selected animation length
             while (this._index > this._animations[this._selected_animation].length) {

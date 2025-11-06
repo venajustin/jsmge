@@ -120,6 +120,9 @@ export class Frame {
         this._children.forEach((o) => {
             o._update(dtime, inputs);
         });
+         this._animated_sprites.forEach((o) => {
+             o._update(dtime, inputs);
+         });
     }
     _update_from_clients(clientmap) {
 
@@ -132,8 +135,16 @@ export class Frame {
 
     }
 
+    start() {
+
+    }
+    setup() {
+        // user code to be called on server side when adding to scene
+    }
+
     async _setup(scene) {
         scene._s_index.set(this._id, this);
+        this.start(); // user code to be called on all nodes at start of game
         for (const o of this._animated_sprites) {
             await o._setup(scene);
             o._parent = this;

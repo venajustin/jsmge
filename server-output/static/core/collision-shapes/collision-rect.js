@@ -72,7 +72,7 @@ export class CollisionRect extends CollisionShape {
 
     _draw(p) {
         p.fill(0,0,0,0);
-        p.stroke(255,255,255,255);
+        p.stroke(100,255,255,255);
         p.rect(-1 * this.width / 2,-1 * this.height / 2,this.width, this.height);
     }
 

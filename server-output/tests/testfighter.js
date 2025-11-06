@@ -14,6 +14,7 @@ import { Collider } from "#static/core/frame/collider.js";
 import { CollisionRect } from "#static/core/collision-shapes/collision-rect.js";
 import { Walls } from "#files/frames/Walls.js";
 import {Camera } from "#static/core/frame/Camera.js";
+import {Fighter } from "#files/frames/Fighter.js";
 
 
 export async function testfighter() {
@@ -119,6 +120,10 @@ export async function testfighter() {
     cam._pos = {x:500,y: 460,z:0};
     nscene._addObject(cam);
 
+    const p1 = new Fighter();
+
+    nscene._addObject(p1);
+    p1.setup();
 
     // assigning incremented id to every object
     let objlist = [];
