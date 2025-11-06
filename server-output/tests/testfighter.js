@@ -13,6 +13,7 @@ import  ESSerializer from 'esserializer';
 import { Collider } from "#static/core/frame/collider.js";
 import { CollisionRect } from "#static/core/collision-shapes/collision-rect.js";
 import { Walls } from "#files/frames/Walls.js";
+import {Camera } from "#static/core/frame/Camera.js";
 
 
 export async function testfighter() {
@@ -29,7 +30,7 @@ export async function testfighter() {
 
     // creating scene draft
     const nscene = new Scene();
-    nscene.players_max = 2;
+    nscene.players_max = 4;
 
     const player1 =  new Paddle();
     player1._owner = 1;
@@ -113,6 +114,10 @@ export async function testfighter() {
     nscene._addObject(ball);
     nscene._addObject(wall_top);
     nscene._addObject(wall_bottom);
+
+    const cam = new Camera();
+    cam._pos = {x:500,y: 460,z:0};
+    nscene._addObject(cam);
 
 
     // assigning incremented id to every object
