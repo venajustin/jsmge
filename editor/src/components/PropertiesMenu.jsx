@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "../css/propertiesMenu.css";
 import * as Tweakpane from "tweakpane";
 import io from "socket.io-client";
+//import { serialize } from "../../../server-output/static/libraries/esserializer.js";
 
 const PropertiesMenu = ({ SERVER_URL }) => {
   const containerRef = useRef(null);
@@ -123,7 +124,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
   useEffect(() => {
 
-    const socket = io(server_url_ref.current,
+    sockRef.current = io(server_url_ref.current,
       {
         query: {
           clientType: "react-editor"
@@ -131,6 +132,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
       }
     );
+    const socket = sockRef.current;
     const handleSelected = (obj) => {
       console.log("PropertiesMenu received edit:selected", obj);
       //handle the object that was sent and put it into the editor
@@ -304,12 +306,12 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
 
     // this is where i would need to emit from the socket the update because should be sent on change
-    // if(sockRef.current){
+    if(sockRef.current){
 
-    //   const safe = buildSafeObject(currentObject);
-    //   console.log("Sending object to server");
-    //   sockRef.current.emit('update_sceneTest',safe);
-    // }
+       const safe = buildSafeObject(currentObject);
+      console.log(safe);
+
+    }
     // Cleanup
     return () => {
       pane.dispose();
