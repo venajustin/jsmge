@@ -30,7 +30,7 @@ export class Fighter extends PlayerFrame {
     }
 
     start() {
-        // this.swordchild = this.get_child("Sword");
+        this.swordchild = this.get_child("Sword");
     }
 
     handle_input(inputs) {
