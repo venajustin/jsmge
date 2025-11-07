@@ -14,7 +14,7 @@ export class AnimatedSprite extends Frame {
     _animations = [];
     _playing = false;
     _selected_animation = 0;
-    _speed = .001;
+    _speed = .005;
 
 
     _draw(p) {
@@ -74,12 +74,13 @@ export class AnimatedSprite extends Frame {
     _animate(dt) {
         if (this._playing) {
             // this._index += this._speed * dt;
-             this._index += this._speed;
+             this._index += this._speed * dt;
 
             // float modulus so index is always less than selected animation length
             while (this._index > this._animations[this._selected_animation].length) {
                 this._index = this._index - this._animations[this._selected_animation].length;
             }
+
         }
     }
 

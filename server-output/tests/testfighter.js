@@ -15,6 +15,7 @@ import { CollisionRect } from "#static/core/collision-shapes/collision-rect.js";
 import { Walls } from "#files/frames/Walls.js";
 import {Camera } from "#static/core/frame/Camera.js";
 import {Fighter } from "#files/frames/Fighter.js";
+import { Platform } from "#files/frames/Platform.js";
 
 
 export async function testfighter() {
@@ -92,6 +93,25 @@ export async function testfighter() {
     player1._animated_sprites.push(paddleSprite);
     player2._animated_sprites.push(paddleSprite);
 
+    const floor = new Platform();
+//     const plat1 = new Platform();
+//     const plat2 = new Platform();
+    nscene._addObject(floor);
+//     nscene._addObject(plat1);
+//     nscene._addObject(plat2);
+    floor.setup();
+//     plat1.setup();
+//     plat2.setup();
+//     plat1._pos = {x: 400, y: 500, z: 0};
+//     plat1._animated_sprites[0]._sca = {x: 2, y: .1, z: 1};
+//     plat1._colliders[0].width = 409;
+//     plat1._colliders[0].height = 6;
+//     plat2._pos = {x: 800, y: 450, z: 0};
+//     plat2._animated_sprites[0]._sca = {x: 2, y: .1, z: 1};
+//     plat2._colliders[0].width = 409;
+//     plat2._colliders[0].height = 6;
+
+
     const p1Col = new Collider();
     p1Col._shape = new CollisionRect();
     p1Col._shape.width = 64;
@@ -110,10 +130,7 @@ export async function testfighter() {
     ballCol._shape.height = 25;
     ball._colliders.push(ballCol);
 
-    nscene._addObject(player1);
     // nscene._addObject(player2);
-    nscene._addObject(ball);
-    nscene._addObject(wall_top);
     nscene._addObject(wall_bottom);
 
     const cam = new Camera();
@@ -121,9 +138,13 @@ export async function testfighter() {
     nscene._addObject(cam);
 
     const p1 = new Fighter();
+    const p2 = new Fighter();
 
     nscene._addObject(p1);
     p1.setup();
+    nscene._addObject(p2);
+    p2.setup();
+    p2._owner = 2;
 
     // assigning incremented id to every object
     let objlist = [];
