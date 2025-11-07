@@ -145,7 +145,7 @@ export class Frame {
     get_child(name) {
         for (const o of this._children) {
             if (o.constructor.name === name) {
-                return o;
+                return create_reference(o);
             }
         }
     }
@@ -333,6 +333,28 @@ export class Frame {
         return list;
 
     }
+}
+
+function decorate(target, overrides = {}) {
+    return new Proxy(target, {
+        get(obj, prop, receiver) {
+            if (prop in overrides) {
+                const fn = overrides[prop];
+                return typeof fn === 'function' ? fn.bind(receiver) : fn;
+            }
+            return Reflect.get(obj, prop, receiver);
+        }
+    });
+}
+
+function create_reference(object) {
+    return decorate(object, {
+        toJSON() {
+            return {
+                ref: this._id
+            }
+        }
+    })
 }
 
 

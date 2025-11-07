@@ -12,8 +12,8 @@ export class Sword extends Frame {
 
         const scribble_platformer_sprites = new AnimatedSprite();
         scribble_platformer_sprites._add_image_source('./files/resources/scribble_platformer.png', 64, 64, 121);
-        scribble_platformer_sprites._pos = {x:-32, y:-32,z:0};
-        scribble_platformer_sprites.add_animation([8]);
+        scribble_platformer_sprites._pos = {x:-32, y:-48,z:0};
+        scribble_platformer_sprites.add_animation([7]);
         scribble_platformer_sprites._sca = {x:1,y:1,z:1};
         scribble_platformer_sprites._rot = {x:0,y:0,z:0};
         this._animated_sprites.push(scribble_platformer_sprites);
@@ -40,7 +40,7 @@ export class Sword extends Frame {
         if (this.swinging > 2 * 3.1415) {
             this.swinging = 0;
         }
-        this._rot.x = this.swinging;
+        this._rot.x = this.swinging + (3.1415 / 4);
     }
 
 }

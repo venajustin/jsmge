@@ -96,6 +96,9 @@ const playSketch = (p) => {
         if (p.keyIsDown(32)) {
             inputs.push("jump");
         }
+        if (p.keyIsDown(13)) {
+            inputs.push("attack");
+        }
 
         const input = [];
         input.push({playerid: p.playerid, inputs: inputs});

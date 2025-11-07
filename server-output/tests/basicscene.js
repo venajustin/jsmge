@@ -7,7 +7,7 @@ import { getClassList } from '#static/utility/class-list.js';
 import { Scene } from "#static/core/scene.js";
 import  ESSerializer from 'esserializer';
 
-export async function testScenes() {
+export async function basicscene() {
 
     const cl = await getClassList();
     console.log("classes:");

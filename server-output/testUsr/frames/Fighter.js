@@ -30,6 +30,7 @@ export class Fighter extends PlayerFrame {
     }
 
     start() {
+        // this.swordchild = this.get_child("Sword");
     }
 
     handle_input(inputs) {
@@ -49,6 +50,9 @@ export class Fighter extends PlayerFrame {
         }
         if (inputs.includes("jump") && this.onground) {
             this.velocity.y = -.5;
+        }
+        if (inputs.includes("attack")) {
+            //this.swordchild.swing();
         }
 
         // if (inputs.contains("move_left") || inputs.contains("move_right")) {
