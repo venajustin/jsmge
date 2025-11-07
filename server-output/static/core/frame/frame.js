@@ -142,6 +142,14 @@ export class Frame {
         // user code to be called on server side when adding to scene
     }
 
+    get_child(name) {
+        for (const o of this._children) {
+            if (o.constructor.name === name) {
+                return o;
+            }
+        }
+    }
+
     async _setup(scene) {
         scene._s_index.set(this._id, this);
         this.start(); // user code to be called on all nodes at start of game
@@ -291,7 +299,7 @@ export class Frame {
         }
 
         for (const obj of this._children) {
-            arr.push(obj._get_colliders());
+            arr.push(...obj._get_colliders(context));
         }
 
 
@@ -310,7 +318,7 @@ export class Frame {
             }
         }
         list.push(output);
-        for (const  child in this._children) {
+        for (const child of this._children) {
             list.push(...child._get_sync_members());
         }
         return list;

@@ -16,6 +16,7 @@ import { Walls } from "#files/frames/Walls.js";
 import {Camera } from "#static/core/frame/Camera.js";
 import {Fighter } from "#files/frames/Fighter.js";
 import { Platform } from "#files/frames/Platform.js";
+import { Sword } from "#files/frames/Sword.js";
 
 
 export async function testfighter() {
@@ -145,6 +146,13 @@ export async function testfighter() {
     nscene._addObject(p2);
     p2.setup();
     p2._owner = 2;
+
+    const sword1 = new Sword();
+    p1._children.push(sword1);
+    sword1.setup();
+    const sword2 = new Sword();
+    p1._children.push(sword2);
+    sword2.setup();
 
     // assigning incremented id to every object
     let objlist = [];
