@@ -547,6 +547,7 @@ io.on('connection', (socket) => {
     });
     socket.on('client_update', (packet) => {
         game.client_updates.set(packet.playerid, packet.objects);
+        game.client_function_calls.push(...packet.calls);
     });
     socket.on('select_seat', (seat) => {
         if (seat > 0 && seat <= game.scene.players_max) {

@@ -116,7 +116,8 @@ const playSketch = (p) => {
 
             const update_packet = {
                 playerid: p.playerid,
-                objects: p.scene._get_client_owned_members_synchronous(p.playerid)
+                objects: p.scene._get_client_owned_members_synchronous(p.playerid),
+                calls: p.scene._get_function_calls()
             }
             p.server.socket.emit('client_update', update_packet);
         }

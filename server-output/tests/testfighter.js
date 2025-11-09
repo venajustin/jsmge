@@ -140,19 +140,26 @@ export async function testfighter() {
 
     const p1 = new Fighter();
     const p2 = new Fighter();
+    const p3 = new Fighter();
 
     nscene._addObject(p1);
     p1.setup();
     nscene._addObject(p2);
     p2.setup();
+    nscene._addObject(p3);
+    p3.setup();
     p2._owner = 2;
+    p3._owner = 3;
 
     const sword1 = new Sword();
     p1._children.push(sword1);
     sword1.setup();
     const sword2 = new Sword();
-    p1._children.push(sword2);
+    p2._children.push(sword2);
     sword2.setup();
+    const sword3 = new Sword();
+    p3._children.push(sword3);
+    sword3.setup();
 
     // assigning incremented id to every object
     let objlist = [];

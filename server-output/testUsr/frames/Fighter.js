@@ -17,6 +17,7 @@ export class Fighter extends PlayerFrame {
         // scribble_platformer_sprites.add_animation([20, 31]);
         scribble_platformer_sprites.add_animation([20]);
         scribble_platformer_sprites.add_animation([31]);
+        scribble_platformer_sprites.add_animation([42]);
         scribble_platformer_sprites._sca = {x:1,y:1,z:1};
         scribble_platformer_sprites._rot = {x:0,y:0,z:0};
         this._animated_sprites.push(scribble_platformer_sprites);
@@ -52,7 +53,7 @@ export class Fighter extends PlayerFrame {
             this.velocity.y = -.5;
         }
         if (inputs.includes("attack")) {
-            //this.swordchild.swing();
+            this.swordchild.swing();
         }
 
         // if (inputs.contains("move_left") || inputs.contains("move_right")) {
@@ -74,8 +75,10 @@ export class Fighter extends PlayerFrame {
     process_physics(deltaTime) {
         if (this._owner === 1) {
             this._animated_sprites[0].play_animation(0);
-        } else {
+        } else if (this._owner === 2) {
             this._animated_sprites[0].play_animation(1);
+        } else {
+            this._animated_sprites[0].play_animation(2);
         }
         if (this._pos.y + 32 > this.floorheight) {
             this.onground = true;

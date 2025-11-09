@@ -1,6 +1,7 @@
 // Represents the class-like structures that code and resources are 
 // attached to before being instantiated in the scene as objects
 import * as math from "mathjs";
+import { create_reference } from '#static/utility/references.js';
 
 // function sync(fn) {
 //     return (...params) => {
@@ -35,6 +36,8 @@ export class Frame {
     _colliders = [];
 
     _owner = undefined;
+
+    _pending_functions = [];
 
     _apply_transforms(p) {
         p.translate(this._pos.x,this._pos.y,this._pos.z);
@@ -335,26 +338,5 @@ export class Frame {
     }
 }
 
-function decorate(target, overrides = {}) {
-    return new Proxy(target, {
-        get(obj, prop, receiver) {
-            if (prop in overrides) {
-                const fn = overrides[prop];
-                return typeof fn === 'function' ? fn.bind(receiver) : fn;
-            }
-            return Reflect.get(obj, prop, receiver);
-        }
-    });
-}
-
-function create_reference(object) {
-    return decorate(object, {
-        toJSON() {
-            return {
-                ref: this._id
-            }
-        }
-    })
-}
 
 

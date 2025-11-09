@@ -1,4 +1,5 @@
 import {collide} from "#static/core/collision-shapes/collision-shape.js";
+import { create_reference } from '#static/utility/references.js';
 
 import * as math from "mathjs";
 
@@ -88,11 +89,35 @@ class Scene {
                     const target = this._s_index.get(obj._id);
                     if (obj._owner === undefined || obj._owner !== owner) {
                         Object.assign(target, obj); // copies all data from obj into target and overwrites same-named members
+
+                        for (const prop in target) {
+                            if (typeof target[prop] === "object" && target[prop].hasOwnProperty("_ref")) {
+                                target[prop] = create_reference(this._s_index.get(target[prop]._ref));
+                            }
+                        }
                     }
                 }
             }
         }
     }
+
+    _get_function_calls() {
+        const members = this._get_sync_members_synchronous();
+        let output = [];
+        for (const member of members) {
+            if (member.hasOwnProperty("_pending_functions") && member._pending_functions.length > 0) {
+                for (const fn of member._pending_functions) {
+                    output.push({
+                        id: member._id,
+                        function: fn
+                    });
+                }
+                member._pending_functions.length = 0;
+            }
+        }
+        return output;
+    }
+
 
     // Gets all objects in the scene, but only their members that are 
     // synced between clients & server
@@ -129,6 +154,25 @@ class Scene {
         for (const obj of this._objects) {
             obj._update_from_clients(clientmap);
         }
+    }
+    _call_remote_functions(function_calls) {
+//         for (const update_list of clientmap) {
+//             if (update_list.playerid !== undefined) {
+//                 for (const obj of update_list) {
+//                     const target = this._s_index.get(obj._id);
+//                     Object.assign(target, obj); // copies all data from obj into target and overwrites same-named members
+//                 }
+//             }
+//         }
+        //console.log(clientmap);
+
+        for (const call of function_calls) {
+            const target = this._s_index.get(call.id);
+            const fn = Reflect.get(target, call.function); // TODO: add parameters
+            fn.bind(target)();/// calls the function with the correct scope
+        }
+
+        function_calls.length = 0;
     }
 
 }

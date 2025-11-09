@@ -20,6 +20,7 @@ export class Game {
 
         // maps playerid to most recent update
         client_updates = new Map();
+        client_function_calls = [];
 
         lastTime = Date.now();
 
@@ -101,6 +102,7 @@ function update_loop(game) {
 //         }
 
         game.scene._update_from_clients(game.client_updates);
+        game.scene._call_remote_functions(game.client_function_calls);
         game.client_updates.clear();
 
         let input = []
