@@ -8,11 +8,15 @@ export function decorate(target, overrides = {}) {
             }
 
             // wrap all existing function calls
+            const original = Reflect.get(obj, prop, receiver);
             if (typeof Reflect.get(obj, prop, receiver) === 'function') {
-                obj._pending_functions.push(prop);
+                return function (...args) {
+                    obj._pending_functions.push({name: prop, parameters: args});
+                    return original.apply(this, args);
+                }
             }
 
-            return Reflect.get(obj, prop, receiver);
+            return original;
         }
     });
 }

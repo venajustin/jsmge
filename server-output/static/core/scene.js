@@ -109,7 +109,8 @@ class Scene {
                 for (const fn of member._pending_functions) {
                     output.push({
                         id: member._id,
-                        function: fn
+                        function: fn.name,
+                        parameters: fn.parameters
                     });
                 }
                 member._pending_functions.length = 0;
@@ -169,7 +170,7 @@ class Scene {
         for (const call of function_calls) {
             const target = this._s_index.get(call.id);
             const fn = Reflect.get(target, call.function); // TODO: add parameters
-            fn.bind(target)();/// calls the function with the correct scope
+            fn.bind(target)(...call.parameters);/// calls the function with the correct scope
         }
 
         function_calls.length = 0;

@@ -29,18 +29,19 @@ export class Sword extends Frame {
     }
 
     swinging = 0;
+    swing_speed = 0.05;
     swing() {
         this.swinging = 0.1;
     }
 
     process_physics(deltaTime) {
         if (this.swinging > 0) {
-            this.swinging += 0.001 * deltaTime;
+            this.swinging += this.swing_speed * deltaTime;
         }
         if (this.swinging > 2 * 3.1415) {
             this.swinging = 0;
         }
-        this._rot.x = this.swinging + (3.1415 / 4);
+        this._rot.x = (this.swinging) + (3.1415 / 4);
     }
 
 }
