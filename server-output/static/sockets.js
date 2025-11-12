@@ -30,6 +30,9 @@ socket.on('update_scene', (msg) => {
     active_session.updates.push(JSON.parse(msg));
 });
 
+socket.on('update_sceneTest', (msg) => {
+    console.log(msg);
+});
 
 export function emitSelectedToServer(data) {
   socket.emit("edit:selected", data);
