@@ -505,16 +505,22 @@ io.on("connection", (socket) => {
       console.log("editor edit button press");
       sendEdit();
     });
-   
-   
-   
-   
-   socket.join("editors");
-   socket.on("edit:selected", (payload) => {
-     console.log("[server] edit:selected received:", payload, "from", sessionId);
-     io.to("editors").emit("edit:selected", payload);
-   });
-    
+
+    socket.join("editors");
+    socket.on("edit:selected", (payload) => {
+      console.log(
+        "[server] edit:selected received:",
+        payload,
+        "from",
+        sessionId
+      );
+      io.to("editors").emit("edit:selected", payload);
+    });
+
+    socket.on("update_sceneTest", (msg) => {
+      console.log(msg);
+    });
+
     //need a new socket.on(propertychange, (changedObject))
     return;
   }
@@ -532,16 +538,6 @@ io.on("connection", (socket) => {
     console.log("Session " + sessionId + " disconnected");
     console.log("Active Sessions: " + game.players.length);
   });
-
-  socket.on("edit:selected", (payload) => {
-      console.log(
-        "[server] edit:selected received:",
-        payload,
-        "from",
-        sessionId
-      );
-      io.to("editors").emit("edit:selected", payload);
-    });
 
   // probably gettting rid of this
   socket.on("inputs", (inputlist) => {

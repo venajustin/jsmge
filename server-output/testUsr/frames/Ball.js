@@ -5,6 +5,8 @@ export class Ball extends Frame {
     velocity = {x:.7, y: 0, z:0};
     _pos = {x:500,y:500,z:0};
 
+
+    //jeremy is bum 
     handle_input(inputs) {
 
     }

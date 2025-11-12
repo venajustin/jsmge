@@ -228,9 +228,9 @@ const PropertiesMenu = ({ SERVER_URL }) => {
     // this is where i would need to emit from the socket the update because should be sent on change
     if(sockRef.current){
 
-       const safe = buildSafeObject(currentObject);
-      console.log(safe);
-
+      const safe = buildSafeObject(currentObject);
+      console.log("Sending object to server");
+      sockRef.current.emit('update_sceneTest',safe);
     }
     // Cleanup
     return () => {
