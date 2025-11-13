@@ -53,7 +53,10 @@ export class Fighter extends PlayerFrame {
             this.velocity.y = -.5;
         }
         if (inputs.includes("attack")) {
-            this.swordchild.swing();
+            if (this.lastswing > 120) {
+                this.lastswing = 0;
+                this.swordchild.swing();
+            }
         }
 
         // if (inputs.contains("move_left") || inputs.contains("move_right")) {
@@ -71,6 +74,7 @@ export class Fighter extends PlayerFrame {
         }
     }
     onground = false;
+    lastswing = 0;
     velocity = {x:0,y:0};
     process_physics(deltaTime) {
         if (this._owner === 1) {
@@ -93,6 +97,7 @@ export class Fighter extends PlayerFrame {
             }
         }
         this._pos.y += this.velocity.y * deltaTime;
+        this.lastswing += deltaTime;
     }
 
 }

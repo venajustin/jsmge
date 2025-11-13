@@ -39,6 +39,14 @@ export class Frame {
 
     _pending_functions = [];
 
+    hidden = false;
+    show() {
+        this.hidden = false;
+    }
+    hide() {
+        this.hidden = true;
+    }
+
     _apply_transforms(p) {
         p.translate(this._pos.x,this._pos.y,this._pos.z);
         p.rotate(this._rot.x,this._rot.y,this._rot.z);
@@ -92,13 +100,15 @@ export class Frame {
         p.push();
         this._apply_transforms(p);
 
-        this._animated_sprites.forEach((child) => {
-            child._draw(p);
-        });
+        if (!this.hidden){
+            this._animated_sprites.forEach((child) => {
+                child._draw(p);
+            });
 
-        this._children.forEach((child) => {
-            child._draw(p);
-        });
+            this._children.forEach((child) => {
+                child._draw(p);
+            });
+        }
         p.pop();
     }
 
@@ -134,7 +144,7 @@ export class Frame {
         });
     }
     _collision(other) {
-        this.handle_collision(other);
+        this.handle_collision(create_reference(other));
 
     }
 
