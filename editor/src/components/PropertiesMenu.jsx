@@ -117,33 +117,72 @@ const PropertiesMenu = () => {
   }, [sceneData, selectedObjectIndex]);
 
   const handleDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.currentTarget.classList.add('drag-over');
-  };
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.add('drag-over');
+};
 
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.currentTarget.classList.remove('drag-over');
-  };
+const handleDragLeave = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('drag-over');
+};
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.currentTarget.classList.remove('drag-over');
+// Helper function to add an image source to the list
+const addImageSource = (imagePath) => {
+  // Check: Does the path exist? Is it not already in our list?
+  if (imagePath && !imageSources.includes(imagePath)) {
 
-    // Get the dragged file path from the file explorer
-    const imagePath = e.dataTransfer.getData('text/plain');
+    // Create a new array with existing sources + the new path (immutability)
+    const newSources = [...imageSources, imagePath];
+    setImageSources(newSources);
 
-    if (imagePath && !imageSources.includes(imagePath)) {
-      const newSources = [...imageSources, imagePath];
-      setImageSources(newSources);
+    // Update the scene data JSON
+    updateAnimatedSprite(newSources);
+    console.log('Image added to sources:', imagePath);
+    console.log('All sources:', newSources);
+  }
+};
 
-      // Update the scene data
-      updateAnimatedSprite(newSources);
-    }
-  };
+const handleDrop = (e) => {
+  // Prevent Default Browser Behavior
+  // Stop the browser from opening/downloading the dropped file
+  e.preventDefault();
+  // Stop the event from bubbling up to parent elements
+  e.stopPropagation();
+  // Remove the visual highlight from the drop zone
+  e.currentTarget.classList.remove('drag-over');
+
+  console.log('Drop event triggered');
+
+  // Check if  Local Computer File(s)
+  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+
+    // Get first file from the dropped files
+    const file = e.dataTransfer.files[0];
+
+    // Extract the filename
+    const fileName = file.name;
+
+    // Log file information for debugging and backend team reference
+    console.log('Local file dropped:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
+
+    // Add the filename to image sources
+    addImageSource(fileName);
+    return;
+  }
+
+  // Handle Internal Directory FileExplorer Drag
+  const imagePath = e.dataTransfer.getData('text/plain');
+  console.log('Data transfer text:', imagePath);
+
+  // Add the FileExplorer path to image sources
+  addImageSource(imagePath);
+};
 
   const handleDeleteImage = (index) => {
     const newSources = imageSources.filter((_, i) => i !== index);
