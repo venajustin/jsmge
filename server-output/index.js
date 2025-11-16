@@ -154,6 +154,20 @@ function sendFilesToSockets() {
   }
 }
 
+
+async function loadSceneFromGame(game){
+  try{
+    console.log("game.active_scene: ", game.active_scene);
+    const fullPath = path.join(user_code_dir,"scenes", game.active_scene)
+    const scene = await loadScene(fullPath)
+    return scene
+  }
+  catch (error){
+    console.error("error loading scene", error)
+    return null
+  }
+}
+
 import { testScenes } from "./tests/testscenes.js";
 import { testpong } from "./tests/testpong.js";
 app.get("/tests/", (req, res) => {
@@ -633,35 +647,33 @@ function scheduleSceneFileWrite() {
   if (sceneUpdateTimer) {
     clearTimeout(sceneUpdateTimer);
   }
-
+  
   sceneUpdateTimer = setTimeout(async () => {
     if (pendingSceneUpdates.size === 0) return;
+    
     try {
       const scenePath = path.join(user_code_dir, "scenes", game.active_scene);
       const sceneFileContent = fs.readFileSync(scenePath, "utf8");
       const sceneJson = JSON.parse(sceneFileContent);
-
+      
       // Apply all pending updates
       for (const [objId, updateData] of pendingSceneUpdates.entries()) {
-        const objIndex = sceneJson._objects.findIndex(
-          (obj) => obj._id === objId
-        );
+        const objIndex = sceneJson._objects.findIndex(obj => obj._id === objId);
         if (objIndex !== -1) {
           sceneJson._objects[objIndex]._pos = updateData._pos;
           sceneJson._objects[objIndex]._rot = updateData._rot;
           sceneJson._objects[objIndex]._sca = updateData._sca;
         }
       }
-
+      
       fs.writeFileSync(scenePath, JSON.stringify(sceneJson, null, 2), "utf8");
-      //console.log(`Scene file batch updated with ${pendingSceneUpdates.size} object(s)`);
+      console.log(`✅ Scene file batch updated with ${pendingSceneUpdates.size} object(s)`);
       pendingSceneUpdates.clear();
     } catch (error) {
       console.error("Error writing scene file:", error);
     }
   }, 500); // Write to file 500ms after last update
 }
-
 io.on("connection", (socket) => {
   const sessionId = socket.request.session.id;
   socket.join(sessionId);
@@ -698,42 +710,43 @@ io.on("connection", (socket) => {
     });
 
     socket.on("update_sceneTest", async (msg) => {
-      try {
+      try{
         console.log("msg: " , msg);
-        
+        if (!game.scene || typeof game.scene === 'string') {
           game.scene = await loadSceneFromGame(game);
+          
           if (game.scene && game.scene._setup) {
             await game.scene._setup();
             console.log("Scene setup completed");
           }
+        }
         
-
         if (!game.scene || !game.scene._update_from_editor) {
           console.warn("Scene not loaded or invalid");
           return;
         }
-        // game.scene = await loadSceneFromGame(game);
-        // console.log("game update: ", game.active_scene);
         const success = game.scene._update_from_editor(msg);
-
+        
         if (!success) {
           console.error("Failed to update object in scene");
           return;
         }
-
+        
         console.log(`Object ${msg._id} queued for file update`);
-
+        
         // Store update in memory and schedule batched file write
         pendingSceneUpdates.set(msg._id, msg);
         scheduleSceneFileWrite();
         // Immediately emit to all clients for real-time preview
-        io.emit("object_property_update", msg);
-
+        io.emit('object_property_update', msg);
+        
         console.log("Emitted object_property_update to all clients");
-      } catch (error) {
+      }
+      catch (error){
         console.error("Error updating scene object:", error);
       }
     });
+
 
     //     socket.on("edit:selected", (payload) => {
     //   console.log(
@@ -744,118 +757,56 @@ io.on("connection", (socket) => {
     //   );
     //   // Broadcast to other editors
     //   io.to("editors").emit("edit:selected", payload);
-
+      
     //   // Also update the scene file
     //   updateSceneFile(payload);
     // });
 
-    return;
-  }
-
-  if (game.state === GameState.EDIT) {
-    io.to(sessionId).emit("game_status", "edit");
-  } else {
-      io.to(sessionId).emit("game_status", "play");
-  }
-  // io.emit('chat message', "Player " + sessionId + " session established");
-  console.log("Session " + sessionId + " established");
-
-  game.players.push(sessionId);
-
-  socket.on("disconnect", () => {
-    game.players.splice(game.players.indexOf(sessionId), 1);
-    console.log("Session " + sessionId + " disconnected");
-    console.log("Active Sessions: " + game.players.length);
-  });
-
-  // probably gettting rid of this
-  socket.on("inputs", (inputlist) => {
-    game.client_updates.push({ type: "input", inputs: inputlist });
-  });
-  socket.on("client_update", (packet) => {
-    game.client_updates.set(packet.playerid, packet.objects);
-  });
-  socket.on("select_seat", (seat) => {
-    if (seat > 0 && seat <= game.scene.players_max) {
-      game.players_seat.set(sessionId, seat);
-    }
-  });
-
-  //make a socket funciton for sending the selected object for the properties menu
-
-    if (game.state === GameState.EDIT) {
-        io.to(sessionId).emit('game_status', "edit");
-    }
-    // io.emit('chat message', "Player " + sessionId + " session established");
-    console.log("Session " + sessionId + " established");
-
-    game.players.push(sessionId);
-
-    socket.on('disconnect',() => {
-       game.players.splice(game.players.indexOf(sessionId),1);
-       console.log("Session " + sessionId + " disconnected");
-       console.log("Active Sessions: " + game.players.length);
-    });
-
-    // probably gettting rid of this
-    socket.on('inputs',(inputlist) => {
-        game.client_updates.push({type:'input', inputs: inputlist});
-    });
-    socket.on('client_update', (packet) => {
-        game.client_updates.set(packet.playerid, packet.objects);
-        game.client_function_calls.push(...packet.calls);
-    });
-    socket.on('select_seat', (seat) => {
-        if (seat > 0 && seat <= game.scene.players_max) {
-            game.players_seat.set(sessionId, seat);
+    async function updateSceneFile(msg) {
+      try {
+        if (!game.scene || typeof game.scene === 'string') {
+          game.scene = await loadSceneFromGame(game);
+          
+          if (game.scene && game.scene._setup) {
+            await game.scene._setup();
+            console.log("Scene setup completed");
+          }
         }
-    });
-    // chat room test:
-    // socket.on('chat message', (msg) => {
-    //     io.emit('chat message', msg);
-    //     io.to(sessionId).emit('chat message', "you just sent this ^ ");
-    //     console.log(msg);
-    // });
-    // chat room test:
-    // socket.on('chat message', (msg) => {
-    //     io.emit('chat message', msg);
-    //     io.to(sessionId).emit('chat message', "you just sent this ^ ");
-    //     console.log(msg);
-    // });
-io.on("connection", (socket) => {
-  const sessionId = socket.request.session.id;
-  socket.join(sessionId);
+        
+        if (!game.scene || !game.scene._update_from_editor) {
+          console.warn("Scene not loaded or invalid");
+          return;
+        }
+        
+        // Convert edit:selected format to update format
+        const updateData = {
+          _id: msg.id,
+          _pos: msg.pos,
+          _rot: msg.rot,
+          _sca: msg.sca,
+          ess_cn: msg.name
+        };
+        
+        const success = game.scene._update_from_editor(updateData);
+        
+        if (!success) {
+          console.error("Failed to update object in scene");
+          return;
+        }
 
-  console.log("session: " + sessionId);
+        console.log(`Object ${updateData._id} queued for file update`);
+        
+        // Store update in memory and schedule batched file write
+        pendingSceneUpdates.set(updateData._id, updateData);
+        scheduleSceneFileWrite();
+        
+        // Immediately emit to all clients for real-time preview (no lag)
+        io.emit('object_property_update', updateData);
+      } catch (error) {
+        console.error("Error updating scene file from drag:", error);
+      }
+    }
 
-  const clientType = socket.handshake.query.clientType;
-  if (clientType === "react-editor") {
-    console.log("Editor connected: " + sessionId);
-    editors.push(sessionId);
-
-    socket.on("disconnect", () => {
-      console.log("Editor disconnect: " + sessionId);
-      editors.splice(editors.indexOf(sessionId), 1);
-    });
-    socket.on("playButtonPress", () => {
-      console.log("editor play button press");
-      sendPlay();
-    });
-    socket.on("editButtonPress", () => {
-      console.log("editor edit button press");
-      sendEdit();
-    });
-   
-   
-   
-   
-   socket.join("editors");
-   socket.on("edit:selected", (payload) => {
-     console.log("[server] edit:selected received:", payload, "from", sessionId);
-     io.to("editors").emit("edit:selected", payload);
-   });
-    
-    //need a new socket.on(propertychange, (changedObject))
     return;
   }
 
@@ -910,7 +861,6 @@ io.on("connection", (socket) => {
   //     io.to(sessionId).emit('chat message', "you just sent this ^ ");
   //     console.log(msg);
   // });
->>>>>>> e6059a9 (Sending Object info from game Preview temp working)
 });
 
 async function test_db(res) {

@@ -15,39 +15,7 @@ const socket = io(
 socket.on("connect_error", err => console.error("connect_error:", err));
 socket.on("connect", () => console.log("connected", socket.id));
 
-// if (typeof window !== 'undefined' && typeof io !== 'undefined') {
-
-
-export function emitSelectedToServer(data) {
-  socket.emit("edit:selected", data);
-  console.log("emit occurred");
-}
-
-// socket.on("edit:selected", (obj) => {
-//   console.log("selection broadcast:", obj);
-// });
-
-// Chat room test:
-// const form = document.getElementById('form');
-// const input = document.getElementById('input');
-// let messages = [];
-//
-// form.addEventListener('submit', (e) => {
-//     e.preventDefault();
-//     if (input.value) {
-//         socket.emit('chat message', input.value);
-//         input.value = '';
-//     }
-// });
-//
-// socket.on('chat message', (msg) => {
-//     const item = document.createElement('li');
-//     item.textContent = msg;
-//     messages.push(msg);
-// });
-
-console.log(" using path: " + get_app_socket_route());
-//console.log("starting socket on " + get_app_socket_addr());
+socket = io({ query: { clientType: "react-editor" } });
 
 socket.on('chat message', (msg) => {
     console.log("message recieved: " + msg);
@@ -93,7 +61,6 @@ socket.on('object_property_update', (updateData) => {
         active_session.updateObjectProperties(updateData);
     }
 });
-
 
 export function emitSelectedToServer(data) {
     if (socket && socket.connected) {
