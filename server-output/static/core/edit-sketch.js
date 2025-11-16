@@ -139,8 +139,74 @@ const editSketch = (p) => {
     p.mouseWheel = (event) => {
         mouse_zoom(p, p.editCamera ,event.delta);
     }
-    
 
+
+
+    p.reloadScene = async (sceneRoute) => {
+        console.log("Reloading scene from:", sceneRoute);
+        p.started = false;
+        
+        try {
+            const response = await fetch(sceneRoute, {method:'GET'});
+            const scene_json = await response.text();
+            p.scene = await loadScene(scene_json);
+            await p.scene._load(p);
+            
+            console.log("Scene reloaded successfully");
+            p.started = true;
+        } catch (error) {
+            console.error("Error reloading scene:", error);
+            p.started = true; // Resume even if reload fails
+        }
+    };
+
+    // Helper function to find object by ID recursively
+    p.findObjectById = (obj, id) => {
+        if (obj._id === id) return obj;
+        if (obj._objects && Array.isArray(obj._objects)) {
+            for (let child of obj._objects) {
+                const found = p.findObjectById(child, id);
+                if (found) return found;
+            }
+        }
+        return null;
+    };
+    p.updateObjectProperties = (updateData) => {
+        if (!p.scene || !updateData || updateData._id === undefined) {
+            console.warn("Invalid update data or scene not ready");
+            return;
+        }
+        
+        const obj = p.findObjectById(p.scene, updateData._id);
+        if (!obj) {
+            console.warn(`Object with ID ${updateData._id} not found`);
+            return;
+        }
+        
+        // Apply updates to the object
+        if (updateData._pos) {
+            obj._pos.x = updateData._pos.x;
+            obj._pos.y = updateData._pos.y;
+            obj._pos.z = updateData._pos.z;
+        }
+        if (updateData._rot) {
+            obj._rot.x = updateData._rot.x;
+            obj._rot.y = updateData._rot.y;
+            obj._rot.z = updateData._rot.z;
+        }
+        if (updateData._sca) {
+            obj._sca.x = updateData._sca.x;
+            obj._sca.y = updateData._sca.y;
+            obj._sca.z = updateData._sca.z;
+        }
+        if (updateData._speed !== undefined) {
+            obj._speed = updateData._speed;
+        }
+        if (updateData.velocity) {
+            obj.velocity = updateData.velocity;
+        }
+        console.log("✅ Object properties updated seamlessly:", obj);
+    };
     
 
 

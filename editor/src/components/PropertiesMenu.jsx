@@ -75,7 +75,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
       const normalized = {
         _objects: [
           {
-            _id: obj?.id ?? null,
+            _id: obj?.id ?? obj?._id ?? 0,
             _pos: obj?.pos ?? { x: 0, y: 0, z: 0 },
             _rot: obj?.rot ?? { x: 0, y: 0, z: 0 },
             _sca: obj?.sca ?? { x: 1, y: 1, z: 1 },
@@ -88,6 +88,17 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
       setSceneData(normalized)
       setSelectedObjectIndex(0);
+      // Emit update_sceneTest with the received data
+    const updateData = {
+      _id: obj?.id ?? obj?._id ?? 0,
+      _pos: obj?.pos ?? { x: 0, y: 0, z: 0 },
+      _rot: obj?.rot ?? { x: 0, y: 0, z: 0 },
+      _sca: obj?.sca ?? { x: 1, y: 1, z: 1 },
+      ess_cn: obj?.name ?? obj?.ess_cn ?? "Object",
+    };
+    
+    console.log("Emitting update_sceneTest from edit:selected", updateData);
+    socket.emit('update_sceneTest', updateData);
 
     };
     socket.on("edit:selected", handleSelected);
@@ -229,17 +240,23 @@ const PropertiesMenu = ({ SERVER_URL }) => {
     pane.on('change', (event) => {
       console.log('Property changed:', event);
       console.log('Updated object:', currentObject);
-      // TODO: Send PUT/POST request to backend here
-    });
-
-
-    // this is where i would need to emit from the socket the update because should be sent on change
-    if(sockRef.current){
+      if(sockRef.current){
 
       const safe = buildSafeObject(currentObject);
       console.log("Sending object to server");
       sockRef.current.emit('update_sceneTest',safe);
     }
+      // TODO: Send PUT/POST request to backend here
+    });
+
+
+    // this is where i would need to emit from the socket the update because should be sent on change
+    // if(sockRef.current){
+
+    //   const safe = buildSafeObject(currentObject);
+    //   console.log("Sending object to server");
+    //   sockRef.current.emit('update_sceneTest',safe);
+    // }
     // Cleanup
     return () => {
       pane.dispose();
