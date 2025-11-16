@@ -48,6 +48,7 @@ export function edit_mouse_drag(p, editState) {
     if (!editState.lockY) {
       editState.selected[last]._pos.y += dy;
     }
+    editState.hasDragged = true;
   }
   // editState.selected.forEach((o) => {
   //    if (!editState.lockX) {
@@ -63,21 +64,21 @@ export function edit_mouse_drag(p, editState) {
   //     obj.pos.x += dx;
   //     o._pos.y += dy;
   // }
-  if (editState.selected.length > 0) {
-    editState.currently_holding = true;
-    const last = editState.selected.length - 1;
-    const sel = editState.selected[last];
+  // if (editState.selected.length > 0) {
+  //   editState.currently_holding = true;
+  //   const last = editState.selected.length - 1;
+  //   const sel = editState.selected[last];
     
 
-    emitSelectedToServer({
-      id: sel._id,
-      pos: sel._pos,
-      rot: sel._rot,
-      sca: sel._sca,
-      name: sel.ess_cn || sel.name,
-    });
+  //   emitSelectedToServer({
+  //     id: sel._id,
+  //     pos: sel._pos,
+  //     rot: sel._rot,
+  //     sca: sel._sca,
+  //     name: sel.ess_cn || sel.name,
+  //   });
 
-  }
+  // }
 
 
   editState.dragLast = point;
@@ -85,5 +86,21 @@ export function edit_mouse_drag(p, editState) {
 
 export function edit_mouse_click(p, editState) {
   // editState.selected = undefined; //will remove this line to put like .isSelected = false
+  // editState.currently_holding = false;
+  if (editState.hasDragged && editState.selected.length > 0) {
+    const last = editState.selected.length - 1;
+    const sel = editState.selected[last];
+    
+    console.log("Emitting final position after drag");
+    emitSelectedToServer({
+      id: sel._id,
+      pos: sel._pos,
+      rot: sel._rot,
+      sca: sel._sca,
+      name: sel.ess_cn || sel.name,
+    });
+  }
+  
   editState.currently_holding = false;
+  editState.hasDragged = false;
 }
