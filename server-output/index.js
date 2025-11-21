@@ -278,6 +278,24 @@ app.post("/frames/*", (req, res) => {
   }
 });
 
+app.post("/scenes/*", (req, res) => {
+  let scene = req.params[0];
+  scene += ".scene";
+  if (!scene) {
+    return res.status(400).send("Scene name is needed");
+  }
+  let contentPath = path.resolve("static/core/sceneTemplate.scene");
+  console.log("content Path : " + contentPath);
+  let content = fs.readFileSync(contentPath);
+  let filePath = path.join(user_code_dir, "scenes", scene);
+  try {
+    fs.writeFileSync(filePath, content);
+    res.send("Scene was created");
+  } catch (error) {
+    console.error("Error creating scene", error);
+  }
+});
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
