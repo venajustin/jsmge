@@ -345,6 +345,27 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
 
   }
 
+  const handleNewScene = () => {
+    const sceneName = window.prompt("Enter your new Scene name");
+    if(!sceneName) return;
+
+    fetch(SERVER_URL + "/scenes/" + sceneName,{
+      method: "POST",
+    })
+    .then((res)=>{
+      if(res.ok){
+        console.log("created new scene")
+        fetchFiles();
+      }
+    })
+    .catch((error) =>{
+      console.error("error creating new scene: ", error)
+    })
+    .finally(()=>
+      setContextMenu({ visible: false, x: 0, y: 0, file: null })
+    )
+  }
+
   const handleNewResource = () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -496,6 +517,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
         onNewFolder={handleNewFolder}
         onNewFrame={handleNewFrame}
         onNewResource={handleNewResource}
+        onNewScene={handleNewScene}
       />
     </div>
   );
