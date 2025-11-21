@@ -21,6 +21,7 @@ db_src_dir = os.getcwd() + '/postgres-config'
 
 
 def create_node_image():
+    print("creating node image")
     image = client.images.build(
             path=container_src_dir,
             tag=img_tags['node'],
@@ -28,6 +29,7 @@ def create_node_image():
     return image
 
 def create_nginx_image():
+    print("creating nginx image")
     image = client.images.build(
             path=nginx_src_dir,
             tag=img_tags['nginx'],
@@ -35,6 +37,7 @@ def create_nginx_image():
     return image
 
 def create_editor_image():
+    print("creating editor image")
     image = client.images.build(
             path=editor_src_dir,
             tag=img_tags['editor'],
@@ -42,6 +45,7 @@ def create_editor_image():
     return image
 
 def create_database_image():
+    print("creating database image")
     image = client.images.build(
             path=database_source_dir,
             tag=img_tags['database'],
@@ -50,6 +54,7 @@ def create_database_image():
     return image
 
 def create_db_image():
+    print("creating database image")
     image = client.images.build(path=db_src_dir, tag="db-img", rm=True)
     return image
 
@@ -122,40 +127,53 @@ def stop_network():
 
 def clear_containers():
     print('clearing containers')
+
+    clear_nginx()
+    try:
+        clear_node()
+      
+        clear_editor()
+    
+        clear_database()
+        
+    except docker.errors.NotFound :
+        print("no container exists, none to delete")
+
+def clear_nginx():
     # remove nginx container
     curr_containers = client.containers.list(all=True, filters={'name': container_names['nginx']})
     for curr_container in curr_containers:
         print(curr_container, "name:", curr_container.name, " exists, deleting...")
         cleanup_node(curr_container)
 
-    try:
-        # remove node container
-        curr_containers = client.containers.list(all=True, filters={'name': container_names['node']})
+def clear_node():
+    # remove node container
+    curr_containers = client.containers.list(all=True, filters={'name': container_names['node']})
 
-        for curr_container in curr_containers:
-            print(curr_container, "name:", curr_container.name, "still exists, deleting...")
-            cleanup_node(curr_container)
-        
-        # remove editor container
-        curr_containers = client.containers.list(all=True, filters={'name': container_names['editor']})
+    for curr_container in curr_containers:
+        print(curr_container, "name:", curr_container.name, "still exists, deleting...")
+        cleanup_node(curr_container)
 
-        for curr_container in curr_containers:
-            print(curr_container, "name:", curr_container.name, " exists, deleting...")
-            cleanup_node(curr_container)
-        # remove database container
-        curr_containers = client.containers.list(all=True, filters={'name': container_names['database']})
+def clear_editor():
+    # remove editor container
+    curr_containers = client.containers.list(all=True, filters={'name': container_names['editor']})
 
-        for curr_container in curr_containers:
-            print(curr_container, "name:", curr_container.name, " exists, deleting...")
-            cleanup_node(curr_container)
+    for curr_container in curr_containers:
+        print(curr_container, "name:", curr_container.name, " exists, deleting...")
+        cleanup_node(curr_container)
 
+def clear_database():
+    # remove database container
+    curr_containers = client.containers.list(all=True, filters={'name': container_names['database']})
 
-    except docker.errors.NotFound :
-        print("no container exists, none to delete")
-
+    for curr_container in curr_containers:
+        print(curr_container, "name:", curr_container.name, " exists, deleting...")
+        cleanup_node(curr_container)
 
 
 def setup():
+    img = create_node_image()
+
     clear_containers()
     stop_network()
     network = start_network()
@@ -164,20 +182,12 @@ def setup():
     create_editor_image()
     create_nginx_image()
 
-
     check_or_create_volume()
 
     pg = start_postgres()
-    img = create_node_image()
     ed = start_editor()
     nx = start_nginx()
     # db = start_db()
-
-
-
-
-
-
 
 
 def shutdown():

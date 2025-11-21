@@ -44,9 +44,15 @@ const folder = {
 */
 
 const buildTree = (paths) => {
-  const root = { name: "testUsr", children: [], path: "" };
+  const root = { name: "", children: [], path: "" };
 
   paths.forEach((filePath) => {
+
+
+    console.log("build path: ");
+    console.log(filePath)
+
+
     const parts = filePath.split(/[\\/]/); // Split path into parts
     console.log(parts)
    // if (parts.length && parts[0] === "usrcode") parts.shift();
@@ -54,7 +60,7 @@ const buildTree = (paths) => {
     let currentPath = ""; // Track relative path
 
     parts.forEach((part, index) => {
-      if (index > 0 && index != 1) {
+      if (index > 0 ) {
         currentPath += (currentPath ? "/" : "") + part;
         
       }
@@ -188,6 +194,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     setDragOverItem(null);
   };
 
+  //This handleDrop is used to drag files onto the play area
   const handleDrop = (event, targetElement, targetIsBranch) => {
     event.preventDefault();
     event.stopPropagation();

@@ -7,7 +7,7 @@ from flask import jsonify
 import jwt
 from functools import wraps
 from flask_cors import CORS
-from engine.docker.dockersetup import setup, shutdown
+from engine.docker.dockersetup import setup, shutdown, create_node_image
 from engine.docker.nodeimages import (
     new_app,
     delete_app,
@@ -31,8 +31,8 @@ example_script = jenv.get_template("example.js").render()
 
 check_and_create_env()
 
-
-setup()
+img = create_node_image()
+# setup()
 # breakpoint()
 SECRET_KEY = "secret_key"
 
