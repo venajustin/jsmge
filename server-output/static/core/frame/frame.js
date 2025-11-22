@@ -91,7 +91,9 @@ export class Frame {
         mat = math.multiply(mat, this._get_m_translate());
         mat = math.multiply(mat, this._get_m_rotate());
         mat = math.multiply(mat, this._get_m_scale());
+
         return mat;
+
     }
 
     _draw(p) {
@@ -155,6 +157,9 @@ export class Frame {
         // user code to be called on server side when adding to scene
     }
 
+    get_parent() {
+        return create_reference(this._parent);
+    }
     get_child(name) {
         for (const o of this._children) {
             if (o.constructor.name === name) {
@@ -302,6 +307,7 @@ export class Frame {
     }
 
     _get_colliders(context) {
+        const matcache = context.mat;
         context.mat = math.multiply(context.mat, this._get_matrix());
 
         const arr = [];
@@ -315,8 +321,8 @@ export class Frame {
             arr.push(...obj._get_colliders(context));
         }
 
-
-        context.mat = math.multiply(context.mat, math.inv(this._get_matrix()));
+        context.mat = matcache;
+        // context.mat = math.multiply(context.mat, math.inv(this._get_matrix()));
 
         return arr;
 

@@ -34,6 +34,15 @@ export class Sword extends Frame {
         this.swinging = 0.1;
     }
 
+    damage_cooldown = 0;
+    handle_collision(other) {
+        if (other.name === "Fighter" && other._id !== this._parent._id && this.swinging > 0 && this.damage_cooldown < .01) {
+            other.take_damage(10, this._sca.x);
+            this.damage_cooldown = 1000;
+
+        }
+    }
+
     process_physics(deltaTime) {
         if (this.swinging > 0) {
             this.swinging += this.swing_speed * deltaTime;
@@ -42,6 +51,9 @@ export class Sword extends Frame {
             this.swinging = 0;
         }
         this._rot.x = (this.swinging) + (3.1415 / 4);
+        if (this.damage_cooldown > 0) {
+            this.damage_cooldown -= deltaTime;
+        }
     }
 
 }

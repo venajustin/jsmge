@@ -17,6 +17,7 @@ import {Camera } from "#static/core/frame/Camera.js";
 import {Fighter } from "#files/frames/Fighter.js";
 import { Platform } from "#files/frames/Platform.js";
 import { Sword } from "#files/frames/Sword.js";
+import { HealthBar } from "#files/frames/HealthBar.js";
 
 
 export async function testfighter() {
@@ -160,6 +161,16 @@ export async function testfighter() {
     const sword3 = new Sword();
     p3._children.push(sword3);
     sword3.setup();
+
+    const hb1 = new HealthBar();
+    p1._children.push(hb1);
+    hb1.setup();
+    const hb2 = new HealthBar();
+    p2._children.push(hb2);
+    hb2.setup();
+    const hb3 = new HealthBar();
+    p3._children.push(hb3);
+    hb3.setup();
 
     // assigning incremented id to every object
     let objlist = [];

@@ -3,6 +3,7 @@ import { PlayerFrame } from "#static/core/frame/PlayerFrame.js";
 import {AnimatedSprite} from "#static/core/frame/animated-sprite.js";
 import {Collider} from "#static/core/frame/collider.js";
 import {CollisionRect} from "#static/core/collision-shapes/collision-rect.js";
+import {HealthBar} from "#files/frames/HealthBar.js";
 
 export class Fighter extends PlayerFrame {
 
@@ -28,10 +29,17 @@ export class Fighter extends PlayerFrame {
         p1Collider._shape.height = 64;
         this._colliders.push(p1Collider);
 
+
+        // this._children.push(new HealthBar());
+
+
     }
+
+    healthbar = null;
 
     start() {
         this.swordchild = this.get_child("Sword");
+        this.healthbar = this.get_child("HealthBar");
     }
 
     handle_input(inputs) {
@@ -65,6 +73,7 @@ export class Fighter extends PlayerFrame {
         //     obj1..animSprite.play_animation(1);
         // }
     }
+    name = "Fighter";
 
     /// hacky implementation of touching, this should be a part of frame in the future
     floorheight = 9999999;
@@ -76,6 +85,17 @@ export class Fighter extends PlayerFrame {
     onground = false;
     lastswing = 0;
     velocity = {x:0,y:0};
+    health = 100;
+    take_damage(damage, knockback_direction) {
+        this.health -= damage;
+        if (this.health <= 0) {
+            this.health = 0;
+        }
+        if (this.healthbar !== null) {
+            this.healthbar.set_w(this.health * 0.001);
+        }
+
+    }
     process_physics(deltaTime) {
         if (this._owner === 1) {
             this._animated_sprites[0].play_animation(0);
