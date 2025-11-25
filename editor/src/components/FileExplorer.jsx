@@ -366,6 +366,37 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     )
   }
 
+
+  const handleSetScene = () => {
+    if(!contextMenu.file.endsWith('.scene')){
+      alert("please select a .scene file")
+      return;
+    }
+    console.log("file sent:", contextMenu.file);
+    
+    fetch(SERVER_URL+`/set-scene/${contextMenu.file}`,{
+      method: "POST"
+    })
+    .then((res) => {
+      if(res.ok){
+        return res.json();
+
+      }
+      else{
+        throw new Error("failed to set scnee")
+      }
+    })
+    .then((data)=> {
+      console.log("Scene set successfully", data);
+    })
+    .catch((error)=>{
+      console.error("error settting scene", error)
+    })
+    .finally(()=> {
+      setContextMenu({visible:false, x:0, y:0, file:null});
+    })
+
+  }
   const handleNewResource = () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -518,6 +549,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
         onNewFrame={handleNewFrame}
         onNewResource={handleNewResource}
         onNewScene={handleNewScene}
+        onSetScene={handleSetScene}
       />
     </div>
   );

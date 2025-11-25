@@ -755,6 +755,49 @@ app.get("/test-db", (req, res) => {
 
 app.get("/set-scene", (req, res) => {});
 
+app.post("/set-scene/*", async (req, res) => {
+
+  try{
+  let scene = req.params[0];
+
+  if(!scene.endsWith('.scene')){
+    return res.status(400).json({ error: "Must be a .scene file" });
+
+  }
+  const sceneFileName = path.basename(scene);
+
+  const fullPath = path.join(user_code_dir, "scenes", sceneFileName);
+  if(!fs.existsSync(fullPath)){
+    return res.status(404).json({error:"Scene file not found"})
+  }
+
+  //this does not change the scene yet needs to be worked on
+  game.active_scene = sceneFileName;
+
+  game.scene = await loadSceneFromGame(game);
+    
+    const sceneRoute = `./files/scenes/${game.active_scene}`;
+    for (const playerid of game.players) {
+      io.to(playerid).emit('set_scene', sceneRoute);
+    }
+    
+    console.log(`Active scene set to: ${game.active_scene}`);
+    res.status(200).json({ 
+      message: "Scene set successfully", 
+      scene: game.active_scene,
+      route: sceneRoute 
+    }); 
+
+
+  //console.log(scene);
+
+}
+catch(error){
+  console.error("Error setting scene:", error);
+  res.status(500).json({error: "Failed to set scene"});
+}
+})
+
 function sendEdit() {
   // server_process.send("stop_game");
   game.stopGame();

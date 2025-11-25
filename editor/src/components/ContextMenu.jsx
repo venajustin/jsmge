@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/fileExplorer.css";
 
-const ContextMenu = ({ x, y, visible, file, isFolder, onDelete, onNewFile, onNewFolder, onNewFrame, onNewResource, onNewScene }) => {
+const ContextMenu = ({ x, y, visible, file, isFolder, onDelete, onNewFile, onNewFolder, onNewFrame, onNewResource, onNewScene, onSetScene}) => {
   if (!visible) return null;
 
   return (
@@ -103,6 +103,19 @@ const ContextMenu = ({ x, y, visible, file, isFolder, onDelete, onNewFile, onNew
       >
         Delete
       </button>
+      <button
+          onClick={onSetScene}
+          style={{
+            background: "none",
+            border: "none",
+            padding: "5px 10px",
+            cursor: "pointer",
+            width: "100%",
+            textAlign: "left",
+          }}
+        >
+            Set Scene
+          </button>
     </div>
   );
 };
