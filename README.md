@@ -10,7 +10,7 @@ Install the following before proceeding
 
 ### Clone this repo
 ```bash
-git clone https://github.com/venajustin/ecmaplayer.git
+git clone https://github.com/venajustin/jsmge.git
 ```
 or, if using ssh auth:
 ```bash

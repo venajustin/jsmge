@@ -3,13 +3,12 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
-  background-color: #28292e;
 }
 
 .object-tabs {
   display: flex;
   gap: 2px;
-  background-color: #242322;
+  background-color: #2a2a2a;
   padding: 4px;
   border-bottom: 1px solid #444;
   overflow-x: auto;
@@ -31,9 +30,98 @@
 }
 
 .object-tab.active {
-  background-color: #0079ca;
+  background-color: #7cb4b8;
   color: #fff;
   font-weight: bold;
+}
+
+/* Image Sources Section */
+.image-sources-section {
+  padding: 12px;
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #444;
+}
+
+.image-sources-section h3 {
+  margin: 0 0 8px 0;
+  color: #ccc;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.image-drop-zone {
+  min-height: 80px;
+  border: 2px dashed #555;
+  border-radius: 4px;
+  background-color: #333;
+  padding: 8px;
+  transition: all 0.2s;
+}
+
+.image-drop-zone.drag-over {
+  border-color: #7cb4b8;
+  background-color: #3a3a3a;
+}
+
+.drop-zone-placeholder {
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+  margin: 24px 0;
+  font-style: italic;
+}
+
+.image-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.image-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background-color: #3a3a3a;
+  border-radius: 3px;
+  margin-bottom: 4px;
+  transition: background-color 0.2s;
+}
+
+.image-item:hover {
+  background-color: #4a4a4a;
+}
+
+.image-path {
+  color: #aaa;
+  font-size: 12px;
+  font-family: monospace;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.delete-btn {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.delete-btn:hover {
+  background-color: #c9302c;
 }
 
 .properties-menu {
