@@ -777,9 +777,11 @@ app.post("/set-scene/*", async (req, res) => {
   game.scene = await loadSceneFromGame(game);
     
     const sceneRoute = `./files/scenes/${game.active_scene}`;
-    for (const playerid of game.players) {
-      io.to(playerid).emit('set_scene', sceneRoute);
-    }
+    // for (const playerid of game.players) {
+    //   io.to(playerid).emit('set_scene', sceneRoute);
+    // }
+
+    io.emit('set_scene', sceneRoute)
     
     console.log(`Active scene set to: ${game.active_scene}`);
     res.status(200).json({ 
