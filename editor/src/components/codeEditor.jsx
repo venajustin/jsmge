@@ -64,39 +64,42 @@ const handleSave = async () => {
   };
   return (
     <>
-        <div style={{ width: "100%", display: "flex", gap: "8px", padding: "8px", backgroundColor: "#1e1e1e" }}>
-      {openFiles.map((file) => (
-        <div key={file} style={{ display: "flex", alignItems: "center" }}>
-    <button
-      onClick={() => handleTabClick(file)}
-      style={{
-        padding: "6px 12px",
-        backgroundColor: activeFile === file ? "#333" : "#555",
-        color: "white",
-        border: "none",
-        cursor: "pointer",
-        borderBottom: activeFile === file ? "2px solid yellow" : "none"
-      }}
-    >
-      {file}
-    </button>
-    <button
-      onClick={() => handleCloseTab(file)}
-      style={{
-        marginLeft: 4,
-        background: "transparent",
-        color: "#ccc",
-        border: "none",
-        cursor: "pointer",
-        fontWeight: "bold"
-      }}
-      title="Close"
-    >
-      ×
-    </button>
-  </div>
-        
-      ))}
+        <div style={{ width: "100%", flexDirection:"horizontal", display: "flex", gap: "8px", padding: "8px", backgroundColor: "#1e1e1e" }}>
+            <div style={{ width: "100%", overflow: "auto", flexDirection:"horizontal", display: "flex", gap: "8px", padding: "8px" }}>
+              {openFiles.map((file) => (
+                <div key={file} style={{ flexShrink: "0", display: "flex", alignItems: "center", width: "auto" }}>
+                    <button
+                      onClick={() => handleTabClick(file)}
+                      style={{
+                        padding: "6px 12px",
+                        backgroundColor: activeFile === file ? "#333" : "#555",
+                        color: "white",
+                        border: "none",
+                        cursor: "pointer",
+                        borderBottom: activeFile === file ? "2px solid yellow" : "none", 
+                        width: "auto"
+                      }}
+                    >
+                      {file}
+                    </button>
+                    <button
+                      onClick={() => handleCloseTab(file)}
+                      style={{
+                        marginLeft: 4,
+                        background: "transparent",
+                        color: "#ccc",
+                        border: "none",
+                        cursor: "pointer",
+                        fontWeight: "bold"
+                      }}
+                      title="Close"
+                    >
+                      ×
+                    </button>
+              </div>
+                
+              ))}
+          </div>
       <button
         onClick={handleSave}
         style={{
