@@ -1,6 +1,7 @@
 // Represents the class-like structures that code and resources are 
 // attached to before being instantiated in the scene as objects
 import * as math from "mathjs";
+import { create_reference } from '#static/utility/references.js';
 
 // function sync(fn) {
 //     return (...params) => {
@@ -35,6 +36,16 @@ export class Frame {
     _colliders = [];
 
     _owner = undefined;
+
+    _pending_functions = [];
+
+    hidden = false;
+    show() {
+        this.hidden = false;
+    }
+    hide() {
+        this.hidden = true;
+    }
 
     _apply_transforms(p) {
         p.translate(this._pos.x,this._pos.y,this._pos.z);
@@ -80,7 +91,9 @@ export class Frame {
         mat = math.multiply(mat, this._get_m_translate());
         mat = math.multiply(mat, this._get_m_rotate());
         mat = math.multiply(mat, this._get_m_scale());
+
         return mat;
+
     }
 
     _draw(p) {
@@ -89,13 +102,15 @@ export class Frame {
         p.push();
         this._apply_transforms(p);
 
-        this._animated_sprites.forEach((child) => {
-            child._draw(p);
-        });
+        if (!this.hidden){
+            this._animated_sprites.forEach((child) => {
+                child._draw(p);
+            });
 
-        this._children.forEach((child) => {
-            child._draw(p);
-        });
+            this._children.forEach((child) => {
+                child._draw(p);
+            });
+        }
         p.pop();
     }
 
@@ -120,6 +135,9 @@ export class Frame {
         this._children.forEach((o) => {
             o._update(dtime, inputs);
         });
+         this._animated_sprites.forEach((o) => {
+             o._update(dtime, inputs);
+         });
     }
     _update_from_clients(clientmap) {
 
@@ -128,12 +146,31 @@ export class Frame {
         });
     }
     _collision(other) {
-        this.handle_collision(other);
+        this.handle_collision(create_reference(other));
 
+    }
+
+    start() {
+
+    }
+    setup() {
+        // user code to be called on server side when adding to scene
+    }
+
+    get_parent() {
+        return create_reference(this._parent);
+    }
+    get_child(name) {
+        for (const o of this._children) {
+            if (o.constructor.name === name) {
+                return create_reference(o);
+            }
+        }
     }
 
     async _setup(scene) {
         scene._s_index.set(this._id, this);
+        this.start(); // user code to be called on all nodes at start of game
         for (const o of this._animated_sprites) {
             await o._setup(scene);
             o._parent = this;
@@ -270,6 +307,7 @@ export class Frame {
     }
 
     _get_colliders(context) {
+        const matcache = context.mat;
         context.mat = math.multiply(context.mat, this._get_matrix());
 
         const arr = [];
@@ -280,11 +318,11 @@ export class Frame {
         }
 
         for (const obj of this._children) {
-            arr.push(obj._get_colliders());
+            arr.push(...obj._get_colliders(context));
         }
 
-
-        context.mat = math.multiply(context.mat, math.inv(this._get_matrix()));
+        context.mat = matcache;
+        // context.mat = math.multiply(context.mat, math.inv(this._get_matrix()));
 
         return arr;
 
@@ -299,7 +337,7 @@ export class Frame {
             }
         }
         list.push(output);
-        for (const  child in this._children) {
+        for (const child of this._children) {
             list.push(...child._get_sync_members());
         }
         return list;
@@ -315,5 +353,6 @@ export class Frame {
 
     }
 }
+
 
 

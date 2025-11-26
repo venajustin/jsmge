@@ -24,7 +24,7 @@ const playSketch = (p) => {
         p.createCanvas(1600, 1200, p.P2D);
 
 
-        p.setScene("/files/scenes/testscene2.scene");
+        p.setScene("/files/scenes/testscene3.scene");
         p.mode = 'play'
         // const response = await fetch("./files/scenes/testscene2.scene", {method:'GET'});
         // const scene_json = await response.text();
@@ -93,6 +93,12 @@ const playSketch = (p) => {
         if (p.keyIsDown(83)) {
             inputs.push("move_down");
         }
+        if (p.keyIsDown(32)) {
+            inputs.push("jump");
+        }
+        if (p.keyIsDown(13)) {
+            inputs.push("attack");
+        }
 
         const input = [];
         input.push({playerid: p.playerid, inputs: inputs});
@@ -110,7 +116,8 @@ const playSketch = (p) => {
 
             const update_packet = {
                 playerid: p.playerid,
-                objects: p.scene._get_client_owned_members_synchronous(p.playerid)
+                objects: p.scene._get_client_owned_members_synchronous(p.playerid),
+                calls: p.scene._get_function_calls()
             }
             p.server.socket.emit('client_update', update_packet);
         }

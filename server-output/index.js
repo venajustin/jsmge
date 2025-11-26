@@ -168,9 +168,11 @@ async function loadSceneFromGame(game){
 
 import { testScenes } from "./tests/testscenes.js";
 import { testpong } from "./tests/testpong.js";
+import {testfighter} from './tests/testfighter.js';
 app.get("/tests/", (req, res) => {
   testScenes();
   testpong();
+    testfighter();
   // for (const player of game.players) {
   //     console.log("testing set scene")
   //     io.to(player).emit('set_scene', "./files/scenes/testscene2.scene");
@@ -579,6 +581,7 @@ io.on("connection", (socket) => {
       console.log("editor edit button press");
       sendEdit();
     });
+
 
     socket.join("editors");
     socket.on("edit:selected", (payload) => {

@@ -42,7 +42,7 @@ export class PlayerFrame extends Frame {
             }
             list.push(output);
         }
-        for (const  child in this._children) {
+        for (const  child of this._children) {
             list.push(...child._get_owned_members(playerid));
         }
         return list;

@@ -194,6 +194,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     setDragOverItem(null);
   };
 
+  //This handleDrop is used to drag files onto the play area
   const handleDrop = (event, targetElement, targetIsBranch) => {
     event.preventDefault();
     event.stopPropagation();

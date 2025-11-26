@@ -4,7 +4,7 @@ import { AnimatedSprite } from "#static/core/frame/animated-sprite.js";
 import { process_edit_input } from "#static/core/input/edit_input.js";
 import { Collider } from "#static/core/frame/collider.js";
 import { CollisionSphere } from "#static/core/collision-shapes/collision-sphere.js";
-import { edit_mouse_click, edit_mouse_press, edit_mouse_drag } from "#static/core/input/edit_input.js";
+import { edit_mouse_click, edit_mouse_press, edit_mouse_drag , edit_mouse_pan_press, edit_mouse_pan_drag, edit_mouse_pan_release, mouse_zoom} from "#static/core/input/edit_input.js";
 import { setSession } from "#static/core/session.js";
 import { playSketch } from "#static/core/play-sketch.js";
 import { loadScene } from "#static/utility/load-scene.js";
@@ -19,11 +19,15 @@ const editSketch = (p) => {
         // p.createCanvas(1600, 1200, p.P2D, document.getElementById('display-canvas'));
         p.createCanvas(1600, 1200, p.P2D);
 
-        const response = await fetch("./files/scenes/testscene2.scene", {method:'GET'});
+        const response = await fetch("./files/scenes/testscene3.scene", {method:'GET'});
         const scene_json = await response.text();
         p.scene = await loadScene(scene_json);
         await p.scene._load(p);
 
+        p.editCamera = {
+            pos: [0,0],
+            zoom: 1.0
+        }
         p.editState = {};
 
         p.mode = 'edit';
@@ -71,7 +75,12 @@ const editSketch = (p) => {
         // p.scene._update(null);
 
         p.textSize(30);
-        
+
+        // translate by camera
+        p.push();
+        p.scale(p.editCamera.zoom, p.editCamera.zoom);
+        p.translate(-p.editCamera.pos[0], -p.editCamera.pos[1]);
+
         // _draw method on all objs
         p.scene._draw(p);
 
@@ -80,6 +89,8 @@ const editSketch = (p) => {
 
         // process dragging sliders
         process_edit_input(p, p.editState);
+
+        p.pop();
 
         // message telling user to focus page
         if (!p.focused) {
@@ -100,19 +111,28 @@ const editSketch = (p) => {
         if (!p.focused) {
             p.focused = true;
         }
-        if (p.mode === 'edit') {
+        if (p.mode === 'edit' && p.mouseButton === p.LEFT ) {
             edit_mouse_press(p, p.editState);
+        }
+        if (p.mouseButton === p.RIGHT) {
+            edit_mouse_pan_press(p, p.editCamera);
         }
     };
 
     p.mouseDragged = () => {
-        if (p.mode === 'edit') {
+        if (p.mode === 'edit' && p.mouseButton === p.LEFT) {
             edit_mouse_drag(p, p.editState);
+        }
+        if (p.mouseButton === p.RIGHT) {
+            edit_mouse_pan_drag(p, p.editCamera);
         }
     };
     p.mouseReleased = () => {
-        if (p.mode === 'edit') {
+        if (p.mode === 'edit' && p.mouseButton === p.LEFT) {
             edit_mouse_click(p, p.editState);
+        }
+        if (p.mouseButton === p.RIGHT) {
+            edit_mouse_pan_release(p, p.editCamera);
         }
     };
 
@@ -184,6 +204,9 @@ const editSketch = (p) => {
         }
         console.log("✅ Object properties updated seamlessly:", obj);
     };
+    p.mouseWheel = (event) => {
+        mouse_zoom(p, p.editCamera ,event.delta);
+    }
     
 
     
