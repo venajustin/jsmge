@@ -166,11 +166,11 @@ async function loadSceneFromGame(game){
   }
 }
 
-import { testScenes } from "./tests/testscenes.js";
+import { basicscene } from "./tests/basicscene.js";
 import { testpong } from "./tests/testpong.js";
 import {testfighter} from './tests/testfighter.js';
 app.get("/tests/", (req, res) => {
-  testScenes();
+  basicscene();
   testpong();
     testfighter();
   // for (const player of game.players) {
