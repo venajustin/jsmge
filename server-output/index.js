@@ -87,6 +87,7 @@ const io = new Server(server, {
 io.engine.use(sessionMiddleware);
 
 const game = new Game(io);
+game.active_scene = "testscene3.scene"; // TODO: remove
 //this is temporary fix for testing development
 //app.use(cors({ origin: "http://localhost" }));
 //app.use(cors({ origin: "http://localhost" }));
