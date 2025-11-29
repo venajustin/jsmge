@@ -429,6 +429,37 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     input.click();
   }
 
+  const handleAddObj = () => {
+    if(!contextMenu.file.startsWith('frames')){
+      alert("please select a frame file")
+      return;
+    }
+    console.log("frame sent:", contextMenu.file);
+    
+    fetch(SERVER_URL+`/add-to-scene/${contextMenu.file}`,{
+      method: "POST"
+    })
+    .then((res) => {
+      if(res.ok){
+        return res.json();
+
+      }
+      else{
+        throw new Error("failed to add to scene")
+      }
+    })
+    .then((data)=> {
+      console.log("Frame added successfully", data);
+    })
+    .catch((error)=>{
+      console.error("error adding to a scene", error)
+    })
+    .finally(()=> {
+      setContextMenu({visible:false, x:0, y:0, file:null});
+    })
+
+
+  }
   const handleNewFolder = () => {
   if (contextMenu.file === undefined || contextMenu.file === null) return;
   const foldername = window.prompt("Enter new folder name:");
@@ -551,6 +582,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
         onNewResource={handleNewResource}
         onNewScene={handleNewScene}
         onSetScene={handleSetScene}
+        addScene={handleAddObj}
       />
     </div>
   );
