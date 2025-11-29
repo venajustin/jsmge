@@ -31,7 +31,7 @@ export async function getClassList() {
 
 }
 
-function getExportedClasses(module) {
+export function getExportedClasses(module) {
 
     return Object.entries(module)
         .filter(([_, value]) => typeof value === "function" && /^class\s/.test(value.toString()))
