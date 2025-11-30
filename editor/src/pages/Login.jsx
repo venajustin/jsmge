@@ -13,6 +13,7 @@ const Login = () => {
             const response = await fetch("http://127.0.0.1:5000/login", {
                 method: "POST",
                 body : formData,
+                credentials: "include"
             });
             const data = await response.json();
             if(response.ok){
@@ -81,9 +82,11 @@ return (
           </div>
         </form>
         <br/>
-        <button className='custom-button'>
-          Register
-        </button>
+        <a href="/register">
+            <button className='other-account-button' >
+              create an account
+            </button>
+        </a>
       </div>
     </div>
   </>

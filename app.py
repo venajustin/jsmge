@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, make_response
 from jinja2 import Environment, FileSystemLoader
 import atexit
 import os
@@ -23,8 +23,11 @@ import bcrypt
 import datetime
 
 app = Flask(__name__)
-#CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
-CORS(app, resources={r"/*": {"origins": "http://localhost"}}) # might get deleted when public
+# CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
+CORS(app, 
+     resources={r"/*": {"origins": "http://localhost"}},
+     supports_credentials=True 
+     ) # might get deleted when public
 jenv = Environment(loader=FileSystemLoader("templates"))
 
 example_script = jenv.get_template("example.js").render()
@@ -184,11 +187,6 @@ def container_interactions():
         return "err"
 
 
-# take this out put in editor/react app
-@app.route("/register")
-def register_page():
-    return jenv.get_template("register.html").render(jsstart="work in progress")
-
 
 @app.route("/register", methods=["POST"])
 def test_register():
@@ -218,13 +216,11 @@ def test_register():
             print(f"{row}")
         return jsonify({"message": "User was created"})
     except Exception as e:
-        return jsonify({"message": str(e)})
+        print("Error: Error creating user - ", str(e))
+        return jsonify({"message": "Error creating user"}), 400
+        # return jsonify({"message": str(e)}) <- unsafe
 
 
-# take this out put in editor/react app
-@app.route("/login")
-def login_page():
-    return jenv.get_template("login.html").render(jsstart="work in progress")
 
 
 @app.route("/protector")
@@ -234,6 +230,10 @@ def prot():
 
 @app.route("/login", methods=["POST"])
 def login():
+    
+    if request.cookies.get("jsmge_account_token"):
+        print(request.cookies.get("jsmge_account_token"))
+
     email = request.form.get("email")
     password = request.form.get("password")
     #print(email, password)
@@ -247,39 +247,35 @@ def login():
 
         cur.execute(
             """
-        SELECT password, uid FROM users where email = %s  
+        SELECT uid FROM users WHERE email = %s AND password = crypt(%s, password)
     """,
-            (email,),
+            (email,password),
         )
 
         row = cur.fetchone()
 
         if row is None:
-            return jsonify({"message": "User was not found with associated email"})
+            return jsonify({"message": "Incorrect username or password"})
         else:
-            hashpw, uid = row
 
-            if bcrypt.checkpw(password.encode("utf-8"), hashpw.encode("utf-8")):
-                # need to include either flask session here or JWT Acess token
-                expire = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-                payload = {"uid": uid, "exp": expire}
-                token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+            uid = row
 
-                cur.execute(
-                    """
-                    INSERT INTO Sessions (uid, token, expire)
-                    VALUES (%s,%s,%s)
-                    """,
-                    (uid, token, expire),
-                )
-                conn.commit()
+            expire = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+            payload = {"uid": uid, "exp": expire}
+            token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
-                return jsonify({"message": "Login successful", "token": token})
-
-            else:
-                return jsonify({"message": "Incorrect password"})
+            resp = make_response(jsonify({"message": "Login successful", "token": token}))
+            resp.set_cookie(
+                    "jsmge_account_token", 
+                    value=token,
+                    httponly=True,
+                    samesite="None",
+                    secure=True
+                    )
+            return resp
     except Exception as e:
-        return jsonify({"message": str(e)})
+        print("Error: ", str(e))
+        return jsonify({"message": "Incorrect username or password"}), 400
 
 
 @app.route("/protected", methods=["GET"])

@@ -74,6 +74,8 @@ h1 {
   font: Jersey 10;
 }
 
+
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -94,6 +96,10 @@ button:focus-visible {
 }
 
 
+.other-account-button {
+  background-color: #1c0221;
+  text-decoration: underline;
+}
 
 .projTitle{
   font-family: "Jersey 10", sans-serif;

@@ -16,6 +16,7 @@ const ProtectedRoute = ({ children }) => {
       try {
         const response = await fetch("http://127.0.0.1:5000/protected", {
           method: "GET",
+          credentials: "include"
           headers: {
             Authorization: `Bearer ${token}`,
           },

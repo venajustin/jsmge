@@ -19,41 +19,42 @@ const Register = () => {
   };
 
   const handleSubmit = async(e) => {
-  e.preventDefault();
+      e.preventDefault();
 
-  const formData = new FormData(e.target);
-  const email = formData.get('email');
-  //const username = formData.get('username');
-  const password = formData.get('password');
+      const formData = new FormData(e.target);
+      const email = formData.get('email');
+      //const username = formData.get('username');
+      const password = formData.get('password');
 
-  // Check if any field is empty
-  if (!email.trim()  || !password.trim()) {
-    setEmailError('All fields are required.');
-    return;
-  }
+      // Check if any field is empty
+      if (!email.trim()  || !password.trim()) {
+        setEmailError('All fields are required.');
+        return;
+      }
 
-  // Validate email format
-  if (!validateEmail(email)) {
-    setEmailError('Please enter a valid email address.');
-    return;
-  }
+      // Validate email format
+      if (!validateEmail(email)) {
+        setEmailError('Please enter a valid email address.');
+        return;
+      }
 
-  // Clear error if validation passes
-  setEmailError('');
+      // Clear error if validation passes
+      setEmailError('');
 
-  // Your registration logic here
-  try{
-    const response = await fetch("http://127.0.0.1:5000/register", {
-      method: "POST",
-      body : formData,
-    });
-    alert("Registration complete");
-    window.location.href = "/";
-  }
-  catch (err) {
-    console.error("error during login:", err);
-    alert("An error occured. Please try again")
-  }
+      // Your registration logic here
+      try{
+        const response = await fetch("api/register", {
+          method: "POST",
+          body : formData,
+          credentials: "include"
+        });
+        alert("Registration complete");
+        window.location.href = "/";
+      }
+      catch (err) {
+        console.error("error during login:", err);
+        alert("An error occured. Please try again")
+      }
   
   
   };
@@ -130,9 +131,11 @@ const Register = () => {
             </div>
           </form>
           <br />
-          <button className='custom-button items-centered'>
-            Login
-          </button>
+            <a href="/login">
+              <button className='other-account-button items-centered'>
+                sign into existing account
+              </button>
+            </a>
         </div>
       </div>
     </>
