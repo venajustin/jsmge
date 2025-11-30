@@ -57,6 +57,7 @@ body {
 }
 
 .game-description {
+  width: 40vw;
   font-weight: normal;
   margin: 0;
   color: #ccc;
@@ -72,6 +73,7 @@ body {
 
 .play-button,
 .edit-button {
+  width: 125px;
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -158,3 +160,41 @@ body {
   align-items: center;
 }
 
+.greyed-out {
+    background-color: #333333;
+}
+.greyed-out:hover {
+    background-color: #222222;
+}
+
+.game-status-and-links {
+    border: 1px solid #ffffff;
+    border-radius:5px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    transition: width 0.05s ease-out;
+}
+.game-status {
+    display: flex;
+    flex-direction:row;
+}
+.game-status > div {
+    margin-right: 5px;
+}
+.game-links > button { 
+    background-color: #007bff;
+    margin: 5px;
+}
+.game-links > button:hover { 
+    background-color: #0056b3;
+}
+
+
+.game-links > button.greyed-out {
+    background-color: #333333;
+}
+.game-links > button.greyed-out:hover {
+    background-color: #222222;
+}

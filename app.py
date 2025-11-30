@@ -400,12 +400,13 @@ def getGames():
         games = []
         for(game_id,) in row:
             cur.execute(
-                "SELECT title, description FROM games where id = %s",
+                "SELECT title, description, id FROM games where id = %s",
                 (game_id,)
             )
             data = cur.fetchone()
             if data:
                 games.append({
+                    "id": data[2],
                     "title": data[0],
                     "description": data[1]
                 })
