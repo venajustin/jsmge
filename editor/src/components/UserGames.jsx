@@ -202,6 +202,10 @@ const UserGames = () => {
           <p style={{ display: "flex", justifyContent: "center" }}>
             Loading...
           </p>
+        ) : !games ? (
+          <p style={{ display: "flex", justifyContent: "center" }}>
+            No games found.
+          </p>
         ) : games.length === 0 ? (
           <p style={{ display: "flex", justifyContent: "center" }}>
             No games found.

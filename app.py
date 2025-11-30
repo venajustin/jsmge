@@ -25,7 +25,7 @@ import datetime
 app = Flask(__name__)
 # CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
 CORS(app, 
-     resources={r"/*": {"origins": "http://localhost"}},
+     resources={r"/*": {"origins": ["http://localhost", "http://localhost:5174"]}},
      supports_credentials=True 
      ) # might get deleted when public
 jenv = Environment(loader=FileSystemLoader("templates"))
@@ -61,13 +61,17 @@ def token_required(f):
                 return jsonify({"message": "Session expired"}), 401
 
             payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            request.uid = payload["uid"]
+            if (len(payload["uid"]) > 0):
+                request.uid = payload["uid"][0]
+            else:
+                return jsonify({"message": "User not logged in"}), 401
         except jwt.ExpiredSignatureError:
             return jsonify({"message": "Token has expired"}), 401
         except jwt.InvalidTokenError:
             return jsonify({"message": "Invalid token"}), 401
         except Exception as e:
-            return jsonify({"message": str(e)}), 401
+            print("Error ", str(e))
+            return jsonify({"message": "User not logged in"}), 401
         return f(*args, **kwargs)
 
     return decorated
@@ -231,9 +235,6 @@ def prot():
 @app.route("/login", methods=["POST"])
 def login():
     
-    if request.cookies.get("jsmge_account_token"):
-        print(request.cookies.get("jsmge_account_token"))
-
     email = request.form.get("email")
     password = request.form.get("password")
     #print(email, password)
@@ -263,6 +264,16 @@ def login():
             expire = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
             payload = {"uid": uid, "exp": expire}
             token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+            # set token in db
+            cur.execute(
+                """
+                INSERT INTO Sessions (uid, token, expire)
+                VALUES (%s,%s,%s)
+                """,
+                (uid, token, expire),
+            )
+            conn.commit()
 
             resp = make_response(jsonify({"message": "Login successful", "token": token}))
             resp.set_cookie(
@@ -335,7 +346,8 @@ def insertNewGame():
             return jsonify({"message": "Game not found after insert"}), 500
         game_id = row[0]
 
-
+    
+        print( "setting game ", game_id, " owner to ", request.uid)
         cur.execute(
             """
                     INSERT INTO Owns (uid, gameID)
@@ -356,11 +368,13 @@ def insertNewGame():
             #os.makedirs(path)
             shutil.copytree(source, path)
         except Exception as e:
-            print("An error occured making game folder", repr(e))
+            print("Error ", str(e))
+            print("An error occured making game folder")
         return "", 201
 
     except Exception as e:
-        return jsonify({"message": str(e)})
+        print("Error ", str(e))
+        return jsonify({"message": "Error creating game"})
 
 #work on this tmmrw
 @app.route("/getGames", methods=["GET"])

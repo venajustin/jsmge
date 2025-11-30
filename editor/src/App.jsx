@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Home from './pages/Home'
 import Editor from './pages/Editor'
-import UserGamesTest from './pages/UserGamesTest'
+import UserPage from './pages/UserPage'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import { useParams } from 'react-router-dom';
@@ -36,7 +36,7 @@ const EditorWrapper = () => {
         {/* <Route path="/editor/:appId/*" element={<ProtectedRoute><EditorWrapper /></ProtectedRoute>} />
         <Route path="/UserGamesTest" element={<ProtectedRoute><UserGamesTest/></ProtectedRoute>} /> */}
         <Route path="/editor/:appId/*" element={<EditorWrapper />} />
-        <Route path="/UserGamesTest" element={<UserGamesTest />} />
+        <Route path="/User" element={<UserPage />} />
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>} />
       </Routes>

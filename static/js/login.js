@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("Token saved:", data.token);
 
 
-                alert("Login successful");
+                // alert("Login successful");
                 window.location.href = "/";
             } else {
                 alert(data.message || "Login failed");

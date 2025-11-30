@@ -1,15 +1,41 @@
 import React from 'react';
+import { useEffect } from 'react';
 import '../index.css';
 import { useParallax } from '../hooks/useParallax';
 
 const Home = () => {
   useParallax();
 
+    useEffect(() => {
+        test_logged();
+
+    }, []);
+
+    const test_logged = async() => {
+        // test if user is logged in and redirect to home page
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            return;
+        }
+        const response = await fetch("http://127.0.0.1:5000/protected", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        if (response.ok) {
+            window.location.href = "/User";
+        }
+    }
+
+
   return (
     <>
-      <head>
+      <>
       <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet"></link>
-      </head>
+      </>
 
         <div className="home-container">
 

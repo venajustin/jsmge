@@ -4,6 +4,7 @@ import CodeEditor from "../components/codeEditor";
 import FileExplorer from "../components/FileExplorer.jsx";
 import GamePreview from "../components/GamePreview.jsx";
 import PropertiesMenu from "../components/PropertiesMenu.jsx";
+import TitleBar from "../components/TitleBar.jsx";
 
 
 const Editor = ({appid}) => {
@@ -59,6 +60,7 @@ const [editorContent, setEditorContent] = useState("");
     <div className="horiz-resize-container">
         <div id={"drag-overlay"} style={{display: 'none'}}></div>
         <div className="pane-first" id={"resize-pane"}>
+            <TitleBar/>
             <div className="editor-container">
                 <CodeEditor
                     activeFile={activeFile}

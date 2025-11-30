@@ -68,9 +68,9 @@ const Register = () => {
 
   return (
     <>
-      <head>
+      <>
         <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet"></link>
-      </head>
+      </>
       <div className="home-container">
         <div className="title-group">
           <h2 className='titleWhite'>Welcome to</h2>
