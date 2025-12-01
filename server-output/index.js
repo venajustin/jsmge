@@ -6,7 +6,7 @@ import multer from "multer";
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
 let user_dir_name = "/usrcode";
 let user_code_dir = user_dir_name;
-if (process.env.IS_DOCKER_CONTAINER !== "true") {
+if (!process.env.IS_DOCKER_CONTAINER) {
   user_dir_name = "./testUsr";
   user_code_dir = path.resolve(user_dir_name);
   console.log("this is the path resolve" + user_code_dir);
@@ -18,7 +18,7 @@ import { Server } from "socket.io";
 import crypto from "crypto";
 import session from "express-session";
 
-import { getStatus, testfn } from "../usrcode/test.js";
+// import { getStatus, testfn } from "../usrcode/test.js";
 
 import cors from "cors";
 
@@ -314,13 +314,24 @@ app.post("/files/*", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  const filePath = path.join(user_code_dir, filename);
-  try {
-    fs.writeFileSync(filePath, content || "");
-    res.send(`File ${filename} created`);
-  } catch (error) {
-    console.error("Error creating file", error);
+  if (process.env.IS_DOCKER_CONTAINER !== "true") {
+      const filePath = path.join(user_code_dir, filename);
+      try {
+        fs.writeFileSync(filePath, content || "");
+        res.send(`File ${filename} created`);
+      } catch (error) {
+        console.error("Error creating file", error);
+      }
+  } else {
+      const filePath = "/"+ filename;
+      try {
+        fs.writeFileSync(filePath, content || "");
+        res.send(`File ${filename} created`);
+      } catch (error) {
+        console.error("Error creating file", error);
+      }
   }
+
 });
 
 //This delete is currently done by a query which could be still used in the future alongside a proj id and user account
@@ -330,7 +341,10 @@ app.delete("/files/*", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  const filePath = path.join(code, filename);
+  let filePath = "/" + filename;
+  if (process.env.IS_DOCKER_CONTAINER !== "true") {
+      filePath = path.join(code, filename);
+  }
   try {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
@@ -352,8 +366,9 @@ app.get("/files/*", (req, res) => {
   }
   let filePath = path.join(user_code_dir, filename);
 
-  if (process.env.IS_DOCKER_CONTAINER == "true") {
-    filePath = "/" + filePath;
+  if (process.env.IS_DOCKER_CONTAINER) {
+    filePath = "/" + filename;
+      console.log("filepath: " + filePath);
   }
   console.log("filepath: " + filePath);
   try {

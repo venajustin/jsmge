@@ -160,11 +160,3 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
-.user-and-title {
-    display:flex;
-    align-items: center;
-}
-.title-display {
-    margin-left: 15px;
-    font-size: 35px;
-}

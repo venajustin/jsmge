@@ -46,15 +46,17 @@ const folder = {
 const buildTree = (paths) => {
   const root = { name: "", children: [], path: "" };
 
+    console.log("paths: ");
+    console.log(paths);
   paths.forEach((filePath) => {
 
 
-    console.log("build path: ");
-    console.log(filePath)
+    // console.log("build path: ");
+    // console.log(filePath)
 
 
     const parts = filePath.split(/[\\/]/); // Split path into parts
-    console.log(parts)
+    // console.log(parts)
    // if (parts.length && parts[0] === "usrcode") parts.shift();
     let current = root;
     let currentPath = ""; // Track relative path

@@ -27,20 +27,22 @@ Mac / Linux
 - `python3 -m venv .venv` 
 - `source .venv/bin/activate` <-- Required each time you use a new terminal session
 
-### Install libraries
 
-On all platforms, after activating environment:
+### Install libraries 
+
+For running the python api in development, on all platforms, after activating environment:
 ```bash
 pip install -r ./requirements.txt
 ```
 
-### Run Server
+
+### Run Server 
 
 Ensure that the docker daemon is running before running the server.
 
 ```bash
-flask run
+python start_all.py
 ```
 
-The first time you may experience delays as docker is installing the required base images. 
-Future compilation will not incur these delays.
+
+
