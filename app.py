@@ -35,7 +35,7 @@ example_script = jenv.get_template("example.js").render()
 
 check_and_create_env()
 
-img = create_node_image()
+#img = create_node_image()
 # setup()
 # breakpoint()
 SECRET_KEY = "secret_key"
