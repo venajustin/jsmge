@@ -9,7 +9,7 @@ editor_src_dir = os.getcwd() + '/editor'
 database_source_dir = os.getcwd() + '/postgres-config'
 
 img_tags = {
-        'node': 'jsmge-server-output',
+        'node': 'jsmge-server-img',
         'node': 'server-img',
         'nginx': 'jsmge-nginx-router-img',
         'editor': 'jsmge-react-editor-img',

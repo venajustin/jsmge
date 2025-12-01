@@ -6,6 +6,7 @@ import time
 # from importlib.metadata import pass_none
 
 import dockerUtil.config as cfg
+from database.connect import get_connection
 
 from dockerUtil.config import *
 # import docker
@@ -43,6 +44,47 @@ def new_app():
     return app
 
 def get_apps():
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        SELECT id, title, description
+        FROM Games
+        """
+    )
+
+    apps = []
+
+    row = cur.fetchone()
+    while row is not None:
+        
+        try:
+            container = client.containers.get(container_names['node'] + "-" + str(row[0]))
+            status = container.status
+        except docker.errors.NotFound:
+            status = "no_container"
+
+        name = "err"
+        creation_date = "err"
+
+        app = {
+            'name': row[1],
+            'creation_date': creation_date,
+            'id': row[0],
+            'status': status
+        }
+        apps.append(app)
+                
+
+
+        row = cur.fetchone()
+
+    return apps
+    
+
+    """
     apps = []
     for file in os.listdir(host_server_js):
 
@@ -72,6 +114,7 @@ def get_apps():
         }
         apps.append(app)
     return apps
+    """
 
 def delete_app(app_id):
     for app in get_apps():

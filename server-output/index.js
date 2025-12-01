@@ -5,7 +5,7 @@ import multer from "multer";
 
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
 let user_dir_name = "/usrcode";
-let user_code_dir = user_dir_name;
+let user_code_dir = user_dir_name + "/" ;
 if (!process.env.IS_DOCKER_CONTAINER) {
   user_dir_name = "./testUsr";
   user_code_dir = path.resolve(user_dir_name);
@@ -220,6 +220,7 @@ app.get("/status", (req, res) => {
 });
 
 app.get("/files", (req, res) => {
+    console.log("[ /files ]: ");
   const getFilesFlat = (dirPath) => {
     const items = fs.readdirSync(dirPath, { withFileTypes: true });
     let files = [];
@@ -235,6 +236,7 @@ app.get("/files", (req, res) => {
   };
 
   try {
+    console.log("getting files from " + user_dir_name);
     const files = getFilesFlat(user_dir_name); // Get all files as a flat list
     res.json(files); // Return the flat list of file paths
   } catch (error) {
@@ -323,7 +325,7 @@ app.post("/files/*", (req, res) => {
         console.error("Error creating file", error);
       }
   } else {
-      const filePath = "/"+ filename;
+      const filePath = user_code_dir + filename;
       try {
         fs.writeFileSync(filePath, content || "");
         res.send(`File ${filename} created`);
@@ -341,7 +343,7 @@ app.delete("/files/*", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  let filePath = "/" + filename;
+  let filePath = user_code_dir + filename;
   if (process.env.IS_DOCKER_CONTAINER !== "true") {
       filePath = path.join(code, filename);
   }
@@ -367,7 +369,7 @@ app.get("/files/*", (req, res) => {
   let filePath = path.join(user_code_dir, filename);
 
   if (process.env.IS_DOCKER_CONTAINER) {
-    filePath = "/" + filename;
+    filePath = user_code_dir + filename;
       console.log("filepath: " + filePath);
   }
   console.log("filepath: " + filePath);

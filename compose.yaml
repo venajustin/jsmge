@@ -1,21 +1,21 @@
 services:
 
-  server-output:
-    build: server-output
-    command: echo "server-output image built, exiting"
-    restart: no
-
+#  server-output:
+#    build: server-output
+#    command: echo "server-output image built, exiting"
+#    restart: no
+#
   flask-app:
     build: mgmtApi
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./mgmtApi/applications/:/home/app/applications:rw
+      # - ./mgmtApi/applications/:/home/app/applications:rw
     networks:
-      - user-apps
+      - jsmge_user-apps
     depends_on:
       - postgres-db
-      - server-output
+      # - server-output
     env_file: .env
     healthcheck:
       test: ["CMD-SHELL", "curl --silent --fail localhost:8000/flask-health-check || exit 1"]
@@ -34,7 +34,7 @@ services:
       - editor
       - flask-app
     networks:
-      - user-apps
+      - jsmge_user-apps
 
   postgres-db:
     build: postgres-config
@@ -42,18 +42,20 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data:rw
     networks:
-      - user-apps
+      - jsmge_user-apps
     env_file: .env
 
   editor:
     build: editor
     restart: always
     networks:
-      - user-apps
+      - jsmge_user-apps
 
 volumes:
   db-data:
 
 networks:
-  user-apps: {}
+  jsmge_user-apps: {
+    external: true
+  }
 

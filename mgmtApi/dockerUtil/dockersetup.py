@@ -17,7 +17,10 @@ except:
 container_src_dir = os.path.realpath(os.path.relpath('../server-output/', os.getcwd()))
 nginx_src_dir = os.path.realpath(os.path.relpath('../nginx-config/', os.getcwd()))
 editor_src_dir = os.path.realpath(os.path.relpath('../editor', os.getcwd()))
-db_src_dir = os.path.realpath(os.path.relpath('../postgres-config', os.getcwd()))
+db_src_dir = os.path.realpath(os.path.relpath('../server-output/', os.getcwd()))
+nginx_src_dir = os.getcwd() + '../nginx-config/'
+editor_src_dir = os.getcwd() + '../editor'
+db_src_dir = os.getcwd() + '../postgres-config'
 
 
 def create_node_image():
@@ -26,6 +29,7 @@ def create_node_image():
             path=container_src_dir,
             tag=img_tags['node'],
             rm=True)
+    console.log("image created: ", image.name)
     return image
 
 def create_nginx_image():
@@ -47,7 +51,7 @@ def create_editor_image():
 def create_database_image():
     print("creating database image")
     image = client.images.build(
-            path=db_src_dir,
+            path=database_source_dir,
             tag=img_tags['database'],
             rm=True
         )
