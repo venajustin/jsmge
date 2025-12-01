@@ -1,0 +1,52 @@
+services:
+
+  flask-app:
+    build: mgmtApi
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - user-apps
+    depends_on:
+      - postgres-db
+    env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:8000/flask-health-check || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    command: gunicorn -w 3 -t 60 -b 0.0.0.0:8000 app:app
+ 
+  routing-server:
+    build: nginx-config
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres-db
+      - editor
+      - flask-app
+    networks:
+      - user-apps
+
+  postgres-db:
+    build: postgres-config
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data:rw
+    networks:
+      - user-apps
+    env_file: .env
+
+  editor:
+    build: editor
+    restart: always
+    networks:
+      - user-apps
+
+volumes:
+  db-data:
+
+networks:
+  user-apps: {}
+

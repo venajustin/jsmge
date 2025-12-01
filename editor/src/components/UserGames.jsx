@@ -3,7 +3,7 @@ import "../css/userGames.css";
 
 
 const SERVER = "http://127.0.0.1";
-const API_SERVER = "http://127.0.0.1:5000";
+const API_SERVER = "/api/";
 
 const UserGames = () => {
   const [games, setGames] = useState([]);
@@ -182,13 +182,13 @@ const UserGames = () => {
       } 
     };
     const getHostURL = (game) => {
-        return `${SERVER}/app/${game.id}/`.trim();
+        return `/app/${game.id}/`.trim();
     };
   const getEditURL = (game) => {
-    return `${SERVER}/editor/${game.id}`.trim();
+    return `/editor/${game.id}`.trim();
   };
     const getAPIURL = (game) => {
-        return `${API_SERVER}/container/${game.id}/`.trim();
+        return `/api/container/${game.id}/`.trim();
     }
 
     const stopHostContainer = async(game) => {
@@ -246,7 +246,7 @@ const UserGames = () => {
   const handleGet = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://127.0.0.1:5000/getGames", {
+      const response = await fetch("/api/getGames", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -288,7 +288,7 @@ const UserGames = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/newGame", {
+      const response = await fetch("/api/newGame", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

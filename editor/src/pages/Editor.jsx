@@ -19,7 +19,7 @@ const Editor = ({appid}) => {
     } else {
 
         //TODO make this const when you remove the conditional
-        SERVER = `http://127.0.0.1/app/${appid}`.trim()
+        SERVER = `http://127.0.0.1/app/${appid}`.trim() //TODO: maybe remove the 127.../ part and just hve /app
     }
 
 

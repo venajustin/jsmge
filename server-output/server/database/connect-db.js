@@ -1,6 +1,6 @@
 import { Client } from "pg";
 
-const db_hostname = process.env.IS_DOCKER_CONTAINER ? 'jsmge-postgres-db' : 'localhost';
+const db_hostname = process.env.IS_DOCKER_CONTAINER ? 'jsmge-postgres-db-1' : 'localhost';
 const db_port = process.env.IS_DOCKER_CONTAINER ? 5432 : 54646;
 
 let client = undefined;

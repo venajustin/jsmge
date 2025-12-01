@@ -26,7 +26,7 @@ import datetime
 app = Flask(__name__)
 # CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
 CORS(app, 
-     resources={r"/*": {"origins": ["http://localhost", "http://127.0.0.1", "http://localhost:5174"]}},
+     resources={r"/*": {"origins": ["localhost", "http://localhost", "http://127.0.0.1", "http://localhost:5174"]}},
      supports_credentials=True 
      ) # might get deleted when public
 jenv = Environment(loader=FileSystemLoader("templates"))

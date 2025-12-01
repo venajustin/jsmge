@@ -8,8 +8,10 @@ def get_connection():
     dbname = "jsmge"
     user = os.getenv('ADMIN_USER_NAME')
     password = os.getenv('ADMIN_USER_PASSWORD')
-    host = "localhost"
-    port = "54646"
+    # host = "localhost"
+    # port = "54646"
+    host = "jsmge-postgres-db-1"
+    port = "5432"
     connection_string = f"host='{host}' port='{port}' dbname='{dbname}' user='{user}' password='{password}'"
     conn = psycopg2.connect(connection_string)
     return conn

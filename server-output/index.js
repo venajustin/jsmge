@@ -101,7 +101,7 @@ const verifyToken = async (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const response = await fetch("http://127.0.0.1:5000/protected", {
+    const response = await fetch("/api/protected", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
