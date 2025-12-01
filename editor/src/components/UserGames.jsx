@@ -182,7 +182,7 @@ const UserGames = () => {
       } 
     };
     const getHostURL = (game) => {
-        return `${SERVER}/app/${game.id}`.trim();
+        return `${SERVER}/app/${game.id}/`.trim();
     };
   const getEditURL = (game) => {
     return `${SERVER}/editor/${game.id}`.trim();
@@ -255,6 +255,11 @@ const UserGames = () => {
       if(response.ok){
         const data = await response.json();
         setGames(data.games);
+        if (data.active_games.length > 0) {
+            setHosting(true);
+            setActiveGame(data.active_games[0]);
+            setStatus("Running");
+        }
         console.log(data.games);
       }
       else{
@@ -374,7 +379,7 @@ const UserGames = () => {
                 </div>
                 ) : "" }
                 <div className="game-buttons">
-                    { editing ? (
+                    { editing || (activeGame && activeGame !== game.id) ? (
                           <button
                             className="play-button greyed-out"
                           >

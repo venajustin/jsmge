@@ -15,6 +15,7 @@ from engine.docker.nodeimages import (
     stop_container,
     refresh_container,
     reset_container,
+    get_running_apps
 )
 from engine.database.connect import get_connection
 from engine.util import check_and_create_env
@@ -25,7 +26,7 @@ import datetime
 app = Flask(__name__)
 # CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
 CORS(app, 
-     resources={r"/*": {"origins": ["http://localhost", "http://localhost:5174"]}},
+     resources={r"/*": {"origins": ["http://localhost", "http://127.0.0.1", "http://localhost:5174"]}},
      supports_credentials=True 
      ) # might get deleted when public
 jenv = Environment(loader=FileSystemLoader("templates"))
@@ -410,8 +411,22 @@ def getGames():
                     "title": data[0],
                     "description": data[1]
                 })
-        print(games)
-        return jsonify({"games": games}),200
+
+        activeGames = []
+        for container in get_running_apps():
+            cid = container.name
+            dashpos = cid.rfind('-')
+            if dashpos == -1:
+                continue
+            cid = cid[dashpos+1:]
+            print("CID ", cid)
+            for game in games:
+                if game['id'] == int(cid):
+                    activeGames.append(game['id'])
+
+        print("GAMES: ", games)
+        print("ACTIVE GAMES: ", activeGames)
+        return jsonify({"games": games, "active_games": activeGames}),200
 
     except Exception as e:
         return jsonify({"message": str(e)})

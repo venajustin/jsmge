@@ -24,6 +24,12 @@ host_server_js = os.getcwd() + '/applications/'
 base_app_start = os.getcwd() + '/usrcode/'
 container_server_js = '/usrcode/'
 
+
+def get_running_apps():
+    curr_containers = client.containers.list(all=True, filters={'name': container_names['node']})
+    return curr_containers
+
+
 def new_app():
     maxid = 0
     for app in get_apps():
