@@ -136,8 +136,11 @@ def setup_app_dir(app_id):
 def start_node(app_id):
     # defines the mounting of server backend code
 
+    vol = client.volumes.create(name="jsmge-app-" + app_id)
     volumes = {
-        host_server_js + str(app_id): {'bind':container_server_js, 'mode': 'rw'} #changed this to readwrite instead of read only
+
+        vol.name: {'bind':container_server_js, 'mode': 'rw'} #changed this to readwrite instead of read only
+        # host_server_js + str(app_id): {'bind':container_server_js, 'mode': 'rw'} #changed this to readwrite instead of read only
     }
 
     name = container_names['node'] + '-' + str(app_id)

@@ -361,17 +361,17 @@ def insertNewGame():
         
         conn.commit()
 
-        folderName = str(game_id)
-        headFolder = "applications"
-        try:
-            path = os.path.join(headFolder, folderName)
-            print(path)
-            source = "usrcode"
-            #os.makedirs(path)
-            shutil.copytree(source, path)
-        except Exception as e:
-            print("Error ", str(e))
-            print("An error occured making game folder")
+#        folderName = str(game_id)
+#        headFolder = "applications"
+#        try:
+#            path = os.path.join(headFolder, folderName)
+#            print(path)
+#            source = "usrcode"
+#            #os.makedirs(path)
+#            shutil.copytree(source, path)
+#        except Exception as e:
+#            print("Error ", str(e))
+#            print("An error occured making game folder")
         return "", 201
 
     except Exception as e:

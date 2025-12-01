@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../css/userGames.css";
 
 
-const SERVER = "http://127.0.0.1";
+const SERVER = "http://127.0.0.1"; // TODO:  delete this when all references r gone
 const API_SERVER = "/api/";
 
 const UserGames = () => {

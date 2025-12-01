@@ -9,7 +9,8 @@ editor_src_dir = os.getcwd() + '/editor'
 database_source_dir = os.getcwd() + '/postgres-config'
 
 img_tags = {
-        'node': 'jsmge-server-img',
+        'node': 'jsmge-server-output',
+        'node': 'server-img',
         'nginx': 'jsmge-nginx-router-img',
         'editor': 'jsmge-react-editor-img',
         'database': 'jsmge-postgres-img'
@@ -26,7 +27,8 @@ volume_names = {
         'database': 'jsmge-postgres-volume'
         }
 
-docker_network_name = 'jsmge-user-apps'
+# docker_network_name = 'jsmge-user-apps'
+docker_network_name = 'jsmge_user-apps'
 
 postgres_env_vars = [
     'POSTGRES_USER',

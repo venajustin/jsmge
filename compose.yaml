@@ -1,14 +1,21 @@
 services:
 
+  server-output:
+    build: server-output
+    command: echo "server-output image built, exiting"
+    restart: no
+
   flask-app:
     build: mgmtApi
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./mgmtApi/applications/:/home/app/applications:rw
     networks:
       - user-apps
     depends_on:
       - postgres-db
+      - server-output
     env_file: .env
     healthcheck:
       test: ["CMD-SHELL", "curl --silent --fail localhost:8000/flask-health-check || exit 1"]

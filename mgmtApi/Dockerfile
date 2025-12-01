@@ -18,7 +18,15 @@ RUN apk add curl
 RUN mkdir /home/app
 RUN mkdir -p /var/log/flask-app && touch /var/log/flask-app/flask-app.err.log && touch /var/log/flask-app/flask-app.out.log
 WORKDIR /home/app
-COPY . .
+COPY ./database ./database
+COPY ./static ./static
+COPY ./templates ./templates
+COPY ./usrcode ./usrcode
+COPY ./dockerUtil ./dockerUtil
+COPY ./app.py ./app.py
+COPY ./util.py ./util.py
+COPY ./requirements.txt ./requirements.txt
+
 
 # venv
 ENV VIRTUAL_ENV=/home/app/venv
