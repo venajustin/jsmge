@@ -3,6 +3,7 @@
 .env
 __pycache__/
 applications/*
+mgmtApi/applications/*
 node_modules
 .env
 .vscode
