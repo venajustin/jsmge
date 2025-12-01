@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import "../css/userGames.css";
 
+
+const SERVER = "http://127.0.0.1";
+const API_SERVER = "http://127.0.0.1:5000";
+
 const UserGames = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -128,8 +132,8 @@ const UserGames = () => {
         },
       ];
 
-      setGames(dummyGames);
-      // handleGet();
+    // setGames(dummyGames);
+      handleGet();
       setLoading(false);
     }, 1000);
   }, []);
@@ -178,51 +182,64 @@ const UserGames = () => {
       } 
     };
     const getHostURL = (game) => {
-        return `http://127.0.0.1/app/${game.id}`.trim();
+        return `${SERVER}/app/${game.id}`.trim();
     };
   const getEditURL = (game) => {
-    return `http://127.0.0.1/editor/${game.id}`.trim();
+    return `${SERVER}/editor/${game.id}`.trim();
   };
+    const getAPIURL = (game) => {
+        return `${API_SERVER}/container/${game.id}/`.trim();
+    }
+
     const stopHostContainer = async(game) => {
         setStatus("Stopping");
     
-        setTimeout(() => {
-
-
+        fetch(getAPIURL(game), {
+            method: "DELETE"
+        }).then(() => {
             setStatus("Stopped");
             setHosting(false);
             setActiveGame(undefined);
-        }, 1000);
+        });
     }
     
     const startHostContainer = async(game) => {
         setStatus("Starting");
 
+        const token = localStorage.getItem("token");
 
-        setTimeout(() => {
+        fetch(getAPIURL(game), {
+            method: "POST",
+            credentials: "include",
+            headers: { 
+                Authorization: `Bearer ${token}`
+            }
+        }).then(() => {
             setStatus("Running");
-        }, 1000);
+        });
 
     }
     const stopEditContainer = async(game) => {
         setStatus("Stopping");
     
-        setTimeout(() => {
-
-
+        fetch(getAPIURL(game), {
+            method: "DELETE"
+        }).then(() => {
             setStatus("Stopped");
             setEditing(false);
             setActiveGame(undefined);
-        }, 1000);
+        });
     }
     
     const startEditContainer = async(game) => {
         setStatus("Starting");
 
 
-        setTimeout(() => {
+        fetch(getAPIURL(game), {
+            method: "POST"
+        }).then(() => {
             setStatus("Running");
-        }, 1000);
+        });
 
     }
     
