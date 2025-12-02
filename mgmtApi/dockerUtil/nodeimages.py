@@ -123,11 +123,38 @@ def delete_app(app_id):
                 # we need to delete the container first
                 container = client.containers.get(container_names['node'] + "-" + str(app_id))
                 cleanup_node(container)
-    shutil.rmtree(host_server_js + str(app_id))
+    client.volumes.remove("jsmge-app-" + str(app_id));
+
+    # commented out because switching to volumes
+    # shutil.rmtree(host_server_js + str(app_id))
     #os.rmdir(host_server_js + str(app_id))
 
+def start_app_edit(app_id):
+    start_node(app_id)
 
-def refresh_container(app_id):
+def start_app_play(app_id):
+    vol = client.volumes.create(name="jsmge-app-" + app_id)
+    volumes = {
+
+        vol.name: {'bind':container_server_js, 'mode': 'rw'} #changed this to readwrite instead of read only
+        # host_server_js + str(app_id): {'bind':container_server_js, 'mode': 'rw'} #changed this to readwrite instead of read only
+    }
+
+    name = container_names['node'] + '-' + str(app_id)
+
+    container = client.containers.run(
+        image=img_tags['node'] + ':latest',
+        detach=True,
+        volumes=volumes,
+        # ports=ports, <-- no ports anymore because nginx manages connections to node containers
+        name = name,
+        environment=cfg.postgres_env_vars + ['GAME_OUTPUT_MODE=play'],
+        network=docker_network_name
+    )
+    print(f"Container '{container.name}' started with volume mounted.")
+    return container
+
+def refresh_container(app_id, mode="edit"):
     try:
         container = client.containers.get(container_names['node'] + "-" + str(app_id))
         try:
@@ -136,11 +163,20 @@ def refresh_container(app_id):
         except docker.errors.APIError:
             return False
     except docker.errors.NotFound:
-        start_node(app_id)
+        if (mode == "edit"):
+            start_app_edit(app_id)
+        else:
+            start_app_play(app_id)
+
 
 def stop_container(app_id):
-    container = client.containers.get(container_names['node'] + "-" + str(app_id))
-    cleanup_node(container)
+    try: 
+        container = client.containers.get(container_names['node'] + "-" + str(app_id))
+        cleanup_node(container)
+    except:
+        print("could not find container")
+        
+
 
 def cleanup_node(container):
     print("cleanup container", container.name)
@@ -194,7 +230,7 @@ def start_node(app_id):
         volumes=volumes,
         # ports=ports, <-- no ports anymore because nginx manages connections to node containers
         name = name,
-        environment=cfg.postgres_env_vars,
+        environment=cfg.postgres_env_vars + ['GAME_OUTPUT_MODE=edit'],
         network=docker_network_name
     )
     print(f"Container '{container.name}' started with volume mounted.")

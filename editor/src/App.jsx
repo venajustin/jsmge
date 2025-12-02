@@ -7,6 +7,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import { useParams } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
+import './css/titleBar.css'; // I have no idea how css works on vite but if i import it here it works :)
 function App() {
   const [count, setCount] = useState(0)
   const [containers, setContainers] = useState([])

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import "../css/userGames.css";
 
 
@@ -13,6 +14,9 @@ const UserGames = () => {
   const [editing, setEditing] = useState(false);
   const [activeGame, setActiveGame] = useState(undefined);
   const [status, setStatus] = useState();
+  const [readyForDeletion, setReadyForDeletion] = useState(undefined);
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     // Simulate API call with setTimeout
@@ -132,8 +136,11 @@ const UserGames = () => {
         },
       ];
 
-    // setGames(dummyGames);
-      handleGet();
+      if (searchParams.get("debug_mode") && searchParams.get("debug_mode") === "true") {
+          setGames(dummyGames);
+      } else {
+          handleGet();
+      }
       setLoading(false);
     }, 1000);
   }, []);
@@ -208,7 +215,7 @@ const UserGames = () => {
 
         const token = localStorage.getItem("token");
 
-        fetch(getAPIURL(game), {
+        fetch(getAPIURL(game) + "play" , {
             method: "POST",
             credentials: "include",
             headers: { 
@@ -235,7 +242,7 @@ const UserGames = () => {
         setStatus("Starting");
 
 
-        fetch(getAPIURL(game), {
+        fetch(getAPIURL(game) + "edit", {
             method: "POST"
         }).then(() => {
             setStatus("Running");
@@ -252,13 +259,34 @@ const UserGames = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if(response.ok){
+      if(response.text){
         const data = await response.json();
         setGames(data.games);
         if (data.active_games.length > 0) {
-            setHosting(true);
             setActiveGame(data.active_games[0]);
             setStatus("Running");
+            
+            try {
+                const res = await fetch ("/app/" + data.active_games[0] + "/server-output-mode",
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                res.text().then((text) => {
+                    console.log("Game server up, in " + text + "mode")
+                    if (text === "edit") {
+                        setEditing(true);
+                    } else {
+                        setHosting(true);
+                    }
+                });
+
+            } catch (e) {
+                console.log(" error: " + e);
+            }
+
         }
         console.log(data.games);
       }
@@ -270,6 +298,14 @@ const UserGames = () => {
     }
   };
 
+  const deleteGame = async (game) => {
+
+        fetch ("/api/container/" + game.id,
+            {method:"DELETE"}).then((text) => {
+                handleGet();
+            });
+
+  };
   const handleCreate = () => {
     console.log("Create button pressed");
     setShowPopup(!showPopup);
@@ -343,6 +379,32 @@ const UserGames = () => {
                   <h3 className="game-title">{game.title}</h3>
                   <p className="game-description">{game.description}</p>
                 </div>
+
+                <div className="delete-game">
+                    <button className="delete-button"
+                        onClick={() => {
+                            if (readyForDeletion !== game.id) {
+                                setReadyForDeletion(game.id);
+                            } else {
+                                setReadyForDeletion(undefined);
+                            }
+                        }}
+                    >
+                      <img height={"auto"} width={"20px"} src={"/trash.png"} alt={"User"}/>
+                    </button>
+                    <div className={"delete-confirm " + (readyForDeletion === game.id ? "" : "hidden")}>
+                        <div>
+                            Are you sure you want to delete this game permanently?
+                        </div>
+                        <div>
+                            <button className="delete-confirm-button"
+                                onClick={() => deleteGame(game) }>
+                                Yes, Delete Permanently
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 { (hosting || editing) && activeGame === game.id ? (
                 <div className="game-status-and-links">
                     <div className="game-status">

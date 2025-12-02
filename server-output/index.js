@@ -238,7 +238,17 @@ app.get("/files", (req, res) => {
   try {
     console.log("getting files from " + user_dir_name);
     const files = getFilesFlat(user_dir_name); // Get all files as a flat list
-    res.json(files); // Return the flat list of file paths
+    if (process.env.IS_DOCKER_CONTAINER) {
+        const removedchar1 = files.map((file) => {
+            return file.substring(1);
+        });
+        res.json(removedchar1); // Return the flat list of file paths
+        console.log(removedchar1);
+    } else {
+
+        res.json(files); // Return the flat list of file paths
+        console.log(files);
+    }
   } catch (error) {
     console.error("Error reading folder:", error);
     res.status(500).send("Error reading folder.");
@@ -667,6 +677,8 @@ io.on("connection", (socket) => {
 
   if (game.state === GameState.EDIT) {
     io.to(sessionId).emit("game_status", "edit");
+  } else {
+      io.to(sessionId).emit("game_status", "play");
   }
   // io.emit('chat message', "Player " + sessionId + " session established");
   console.log("Session " + sessionId + " established");
@@ -793,6 +805,15 @@ app.post("/set-scene/*", async (req, res) => {
     console.error("Error setting scene:", error);
     res.status(500).json({ error: "Failed to set scene" });
   }
+});
+
+app.get("/server-output-mode", async (req, res) => {
+
+    const state = process.env.GAME_OUTPUT_MODE;
+    console.log("[GET /server-output-mode] " + state)
+    res.send(state);
+
+
 });
 
 app.post("/add-to-scene/*", async (req, res) => {

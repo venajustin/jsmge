@@ -29,7 +29,7 @@ def create_node_image():
             path=container_src_dir,
             tag=img_tags['node'],
             rm=True)
-    console.log("image created: ", image.name)
+    print("image created: ", image[0].tags[0])
     return image
 
 def create_nginx_image():

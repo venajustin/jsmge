@@ -2,6 +2,7 @@
 .user-and-title {
     display:flex;
     align-items: center;
+    flex-direction: row;
 }
 .title-display {
     margin-left: 15px;

@@ -142,11 +142,35 @@ def format_container_list():
 
 
 @app.route("/container/<containerid>/", methods=["POST", "DELETE"])
-def start_stop_container(containerid):
+@app.route("/container/<containerid>/<mode>", methods=["POST", "DELETE"])
+def start_stop_container(containerid, mode="edit"):
     if request.method == "POST":
-        refresh_container(containerid)
+        refresh_container(containerid, mode)
+
     if request.method == "DELETE":
         stop_container(containerid)
+        
+        conn = get_connection()
+        cur = conn.cursor()
+
+        cur.execute(
+            """
+            DELETE FROM owns
+            WHERE gameid = %s
+        """,
+            (containerid, ),
+        )
+        cur.execute(
+            """
+            DELETE FROM Games
+            WHERE id = %s
+        """,
+            (containerid,),
+        )
+
+        conn.commit()
+
+        
 
     return format_container_list()
 
@@ -238,6 +262,7 @@ def prot():
 def login():
     
     email = request.form.get("email")
+    display:none;
     password = request.form.get("password")
     #print(email, password)
 

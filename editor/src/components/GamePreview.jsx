@@ -29,7 +29,7 @@ const codeEditor = ({SERVER_URL, socket}) => {
               </span>
           </div>
           <div className="preview-container">
-              <iframe onContextMenu={"return false"}
+              <iframe onContextMenu={(e) => e.preventDefault()}
                   id={"game-iframe"}
                   //src="/app/1/gamewindow.html"
 

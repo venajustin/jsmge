@@ -50,6 +50,45 @@ body {
   flex: 1;
 }
 
+.hidden {
+    display:none;
+}
+.delete-game {
+  flex: 2;
+  display:flex;
+  align-items:center;
+  position: relative;
+  width: 20px;
+}
+.delete-button {
+    background-color: transparent;
+    width: 20px;
+    padding:0px;
+    margin:0px;
+    border: none;
+    border-radius: none;
+}
+.delete-button:hover {
+    border: none;
+}
+.delete-confirm {
+    z-index: 10;
+    position:absolute;
+    top: 40px;
+    left: -150px;
+    width: 320px;
+    text-align: center;
+    border: 3px solid #1c0221;
+    border-radius: 15px;
+    background-color: #3b0b44;
+}
+.delete-confirm-button {
+    transition: background-color 0.2s;
+    margin: 10px;
+}
+.delete-confirm-button:hover {
+    background-color: #d94f48;
+}
 .game-title {
   font-weight: bold;
   margin: 0 0 8px 0;
@@ -120,6 +159,7 @@ body {
   background-color: #0056b3;
 }
 
+    
 
 .popup-overlay {
   position: fixed;
