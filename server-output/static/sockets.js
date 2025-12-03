@@ -1,13 +1,16 @@
 import { editSketch } from "./core/edit-sketch.js";
 import { playSketch } from "./core/play-sketch.js";
 import { setSession, active_session} from "./core/session.js";
+import { get_app_id } from "#static/utility/get_app_id.js";
 
 // Only initialize socket in browser environment
 let socket = null;
 
 if (typeof window !== 'undefined' && typeof io !== 'undefined') {
-    socket = io({ query: { clientType: "react-editor" } });
-
+    const appid = get_app_id();
+    console.log("starting socket on " + appid);
+    socket = io("/app/" + appid,{ query: { clientType: "react-editor" } });
+    
     socket.on('chat message', (msg) => {
         console.log("message recieved: " + msg);
     });

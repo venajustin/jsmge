@@ -2,26 +2,50 @@ import { Frame } from "#static/core/frame/frame.js"
 
 export class Ball extends Frame {
 
-    velocity = {x:0, y:0, z:0};
+    velocity = {x:.7, y: 0, z:0};
+    _pos = {x:500,y:500,z:0};
 
+
+    //jeremy is bum 
     handle_input(inputs) {
-        if (!inputs) {
-            return;
-        }
-        if (inputs.includes("move_right")) {
-            this.bounce();
-        }
+
     }
+
+    bouncetimer = 0; // TODO: make the collision give a normal so we don't need this workaround
 
     process_physics(deltaTime) {
         this._pos.x += this.velocity.x * deltaTime;
         this._pos.y += this.velocity.y * deltaTime;
 
+        this.bouncetimer += deltaTime;
 
     }
 
-    bounce() {
-        this.velocity.x = -this.velocity.x;
+    handle_collision(other) {
+        console.log("Ball collision");
+        if (other.constructor.name === "Walls") {
+            this.bounce("y");
+        } else {
+            this.bounce("x");
+        }
+
+
+    }
+
+    bounce(axis) {
+        if (this.bouncetimer < 50) {
+            console.log("bounce timer hit: " + this.bouncetimer);
+            return;
+        }
+        this.bouncetimer = 0;
+        if (axis === 'x') {
+            this.velocity.x = -this.velocity.x;
+              this.velocity.y = 1 * Math.random();
+        } else {
+            this.velocity.y = -this.velocity.y;
+            this.velocity.x = this.velocity.x  ;
+        }
+
 
     }
 

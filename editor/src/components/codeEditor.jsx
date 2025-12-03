@@ -64,8 +64,15 @@ const handleSave = async () => {
   };
   return (
     <>
-        <div style={{ width: "100%", flexDirection:"horizontal", display: "flex", gap: "8px", padding: "8px", backgroundColor: "#1e1e1e" }}>
-            <div style={{ width: "100%", overflow: "auto", flexDirection:"horizontal", display: "flex", gap: "8px", padding: "8px" }}>
+        <div style={{ 
+            width: "100%", 
+            flexDirection:"horizontal",
+            display: "flex",
+            gap: "8px",
+            padding: "8px",
+            backgroundColor: "#1e1e1e" ,
+        }}>
+            <div style={{ width: "100%", overflow: "hidden", flexDirection:"horizontal", display: "flex", gap: "8px", padding: "8px" }}>
               {openFiles.map((file) => (
                 <div key={file} style={{ flexShrink: "0", display: "flex", alignItems: "center", width: "auto" }}>
                     <button
