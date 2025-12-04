@@ -1,15 +1,40 @@
 import { editSketch } from "./core/edit-sketch.js";
 import { playSketch } from "./core/play-sketch.js";
 import { setSession, active_session} from "./core/session.js";
-import { get_app_id } from "#static/utility/get_app_id.js";
+import { get_app_socket_route, get_app_socket_addr } from "#static/utility/get_app_id.js";
+// import { Manager } from "socket.io-client";
 
 // Only initialize socket in browser environment
 let socket = null;
 
 if (typeof window !== 'undefined' && typeof io !== 'undefined') {
-    const appid = get_app_id();
-    console.log("starting socket on " + appid);
-    socket = io("/app/" + appid,{ query: { clientType: "react-editor" } });
+
+
+//     const manager = new io.Manager(get_app_socket_addr(), {
+//         // path: get_app_socket_route() + "/socket.io",
+//         reconnectionDelayMax: 10000,
+//         query: {
+//             clientType: "react-editor"
+//         },
+//         transports: ["websocket", "polling"],
+//     });
+// 
+//     const socket = manager.socket("/");
+// 
+//     manager.on("error", err => console.error("manager error:", err));
+    socket = io(
+        "http://localhost",
+        { 
+            path: get_app_socket_route() + "/socket.io",
+            transports: ["websocket", "polling"],
+            query: { clientType: "react-editor" } 
+        }
+    );
+    socket.on("connect_error", err => console.error("connect_error:", err));
+    socket.on("connect", () => console.log("connected", socket.id));
+
+    console.log(" using path: " + get_app_socket_route());
+    //console.log("starting socket on " + get_app_socket_addr());
     
     socket.on('chat message', (msg) => {
         console.log("message recieved: " + msg);

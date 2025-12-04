@@ -9,6 +9,7 @@ import { useEffect, useRef } from "react";
 import { useState } from "react";
 import ContextMenu from "./ContextMenu";
 import { io } from "socket.io-client"
+import { get_app_socket_route, get_app_socket_addr } from "#static/utility/get_app_id.js";
 
 
 /*
@@ -116,8 +117,9 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     fetchFiles();
 
     // establish socket connection to server 
-    const socket = io(server_url_ref.current,
+    const socket = io("https://localhost",
         {
+            path: get_app_socket_route() + "/socket.io",
             query: {
                 clientType: "react-editor"
             }

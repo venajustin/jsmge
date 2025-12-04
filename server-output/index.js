@@ -76,9 +76,10 @@ app.use(cors({ origin: "http://localhost:5173" }));
 
 const server = createServer(app);
 const io = new Server(server, {
+    path: "/socket.io",
   cors: {
-    origin: ["http://localhost:5173", "localhost"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    // origin: ["http://localhost:5173", "localhost"],
+    origin: "*", // replace this w a function later
     // credentials: true,
   },
 });
