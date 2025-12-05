@@ -8,7 +8,7 @@ export default defineConfig({
       allowedHosts: ["jsmge-editor-1", "jsmge-editor", "http://localhost", "localhost", "http://localhost:5000","http://127.0.0.1:5000/",  "http://127.0.0.1/", "localhost:3000"],
       proxy: {
           '/api': {
-              target: 'https://localhost:80/api',
+              target: 'http://localhost:80/api',
               changeOrigin: true,
               secure: false,
               ws: true,

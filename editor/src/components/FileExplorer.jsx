@@ -1,15 +1,13 @@
 // File Explorer Component goes here (NOT an entire webpage)
 // Default import from https://dgreene1.github.io/react-accessible-treeview/docs/examples-MultiSelectDirectoryTree
-import React from "react";
-import { DiCss3, DiJavascript, DiNpm } from "react-icons/di";
-import { FaList, FaRegFolder, FaRegFolderOpen } from "react-icons/fa";
-import TreeView, { flattenTree } from "react-accessible-treeview";
+import React, {useEffect, useRef, useState} from "react";
+import {DiCss3, DiJavascript, DiNpm} from "react-icons/di";
+import {FaList, FaRegFolder, FaRegFolderOpen} from "react-icons/fa";
+import TreeView, {flattenTree} from "react-accessible-treeview";
 import "../css/fileExplorer.css";
-import { useEffect, useRef } from "react";
-import { useState } from "react";
 import ContextMenu from "./ContextMenu";
-import { io } from "socket.io-client"
-import { get_app_socket_route, get_app_socket_addr } from "#static/utility/get_app_id.js";
+import {io} from "socket.io-client"
+// import { get_app_socket_route, get_app_socket_addr } from "#static/utility/get_app_id.js";
 
 
 /*
@@ -110,6 +108,12 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
         const transformedFolder = buildTree(data);
         setFolder(transformedFolder);
   };
+  function get_app_socket_route() {
+    const addr = window.location.href;
+    const re = /\/(app\/|editor\/)\d+/;
+    const match = addr.match(re);
+    return match[0];
+  }
 
     const server_url_ref = useRef(SERVER_URL);
   useEffect(() => {
@@ -117,7 +121,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     fetchFiles();
 
     // establish socket connection to server 
-    const socket = io("https://localhost",
+    const socket = io("http://localhost",
         {
             path: get_app_socket_route() + "/socket.io",
             query: {
