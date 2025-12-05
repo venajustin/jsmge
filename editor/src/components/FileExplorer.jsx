@@ -112,7 +112,10 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     const addr = window.location.href;
     const re = /\/(app\/|editor\/)\d+/;
     const match = addr.match(re);
-    return match[0];
+    let output = match[0];
+    output = output.replace("editor", "app");
+    console.log("got socket route: " + output);
+    return output;
   }
 
     const server_url_ref = useRef(SERVER_URL);
@@ -124,12 +127,12 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     const socket = io("http://localhost",
         {
             path: get_app_socket_route() + "/socket.io",
-            query: {
-                clientType: "react-editor"
-            }
+            transports: ["websocket", "polling"],
+            query: { clientType: "react-editor" }
 
         }
     );
+    socket.on("connect", () => console.log("connected", socket.id));
 
     // TODO: remove this, and call it on socket responce
     // Set up an interval to call fetchFiles every second

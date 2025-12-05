@@ -56,16 +56,27 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
   // }, []);
 
+  function get_app_socket_route() {
+    const addr = window.location.href;
+    const re = /\/(app\/|editor\/)\d+/;
+    const match = addr.match(re);
+    let output = match[0];
+    output = output.replace("editor", "app");
+    console.log("got socket route: " + output);
+    return output;
+  }
   useEffect(() => {
 
     sockRef.current = io(server_url_ref.current,
       {
+        path: get_app_socket_route() + "/socket.io",
         query: {
           clientType: "react-editor"
         }
 
       }
     );
+    sockRef.current.on("connect", () => console.log("connected", socket.id));
     const socket = sockRef.current;
     const handleSelected = (obj) => {
       console.log("PropertiesMenu received edit:selected", obj);
