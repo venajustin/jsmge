@@ -4,63 +4,68 @@ import { setSession, active_session} from "./core/session.js";
 import { get_app_socket_route, get_app_socket_addr } from "#static/utility/get_app_id.js";
 // import { Manager } from "socket.io-client";
 
-const socket = io(
-    "http://localhost",
-    { 
-        path: get_app_socket_route() + "/socket.io",
-        transports: ["websocket", "polling"],
-        query: { clientType: "react-editor" } 
-    }
-);
-socket.on("connect_error", err => console.error("connect_error:", err));
-socket.on("connect", () => console.log("connected", socket.id));
+// Only initialize socket in browser environment
+let socket = null;
 
-socket = io({ query: { clientType: "react-editor" } });
+if (typeof window !== 'undefined' && typeof io !== 'undefined') {
+     socket = io(
+        "http://localhost",
+        { 
+            path: get_app_socket_route() + "/socket.io",
+            transports: ["websocket", "polling"],
+            query: { clientType: "react-editor" } 
+        }
+    );
+    socket.on("connect_error", err => console.error("connect_error:", err));
+    socket.on("connect", () => console.log("connected", socket.id));
 
-socket.on('chat message', (msg) => {
-    console.log("message recieved: " + msg);
-});
+    //socket = io({ query: { clientType: "react-editor" } });
 
-socket.on('game_status', (msg) => {
-    if (msg === 'edit') {
-        console.log("game is in edit mode")
-        setSession(editSketch);
-    } else if (msg === 'play') {
-        setSession(undefined);
-        setSession(playSketch);
-        active_session.setServer(socket);
-    } 
-});
+    socket.on('chat message', (msg) => {
+        console.log("message recieved: " + msg);
+    });
 
-socket.on('set_scene', (msg) => {
-    active_session.setScene(msg);
-});
+    socket.on('game_status', (msg) => {
+        if (msg === 'edit') {
+            console.log("game is in edit mode")
+            setSession(editSketch);
+        } else if (msg === 'play') {
+            setSession(undefined);
+            setSession(playSketch);
+            active_session.setServer(socket);
+        } 
+    });
 
-// socket.on('set_sceneEdit', (msg) => {
-//     active_session.setScene(msg);
-// });
+    socket.on('set_scene', (msg) => {
+        active_session.setScene(msg);
+    });
 
-socket.on('update_scene', (msg) => {
-    active_session.updates.push(JSON.parse(msg));
-});
+    // socket.on('set_sceneEdit', (msg) => {
+    //     active_session.setScene(msg);
+    // });
 
-socket.on('update_sceneTest', (msg) => {
-    console.log("Received property update:", msg);
-});
+    socket.on('update_scene', (msg) => {
+        active_session.updates.push(JSON.parse(msg));
+    });
 
-socket.on('reload_scene', (sceneRoute) => {
-    console.log("Reloading scene from:", sceneRoute);
-    if (active_session && active_session.reloadScene) {
-        active_session.reloadScene(sceneRoute);
-    }
-});
+    socket.on('update_sceneTest', (msg) => {
+        console.log("Received property update:", msg);
+    });
 
-socket.on('object_property_update', (updateData) => {
-    console.log("Received object property update:", updateData);
-    if (active_session && active_session.updateObjectProperties) {
-        active_session.updateObjectProperties(updateData);
-    }
-});
+    socket.on('reload_scene', (sceneRoute) => {
+        console.log("Reloading scene from:", sceneRoute);
+        if (active_session && active_session.reloadScene) {
+            active_session.reloadScene(sceneRoute);
+        }
+    });
+
+    socket.on('object_property_update', (updateData) => {
+        console.log("Received object property update:", updateData);
+        if (active_session && active_session.updateObjectProperties) {
+            active_session.updateObjectProperties(updateData);
+        }
+    });
+}
 
 export function emitSelectedToServer(data) {
     if (socket && socket.connected) {
