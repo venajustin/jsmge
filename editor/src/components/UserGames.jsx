@@ -259,6 +259,9 @@ const UserGames = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+        if (response.status == 401) {
+           window.location.href ='/'; 
+        }
       if(response.text){
         const data = await response.json();
         setGames(data.games);

@@ -3,7 +3,7 @@
   "type": "module",
   "imports": {
     "#static/*.js": "./static/*.js",
-    "#files/*.js": "./testUsr/*.js"
+    "#files/*.js": "./usrcode/*.js"
   },
   "version": "1.0.0",
   "description": "",
