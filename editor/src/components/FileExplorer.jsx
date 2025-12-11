@@ -132,7 +132,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
 
         }
     );
-    socket.on("connect", () => console.log("connected", socket.id));
+    socket.on("connect", () => console.log("connected from file explorer", socket.id));
 
     // TODO: remove this, and call it on socket responce
     // Set up an interval to call fetchFiles every second

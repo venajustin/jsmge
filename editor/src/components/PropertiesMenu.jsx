@@ -13,6 +13,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
   const [sceneData, setSceneData] = useState(null);
   const [selectedObjectIndex, setSelectedObjectIndex] = useState(0);
   const [imageSources, setImageSources] = useState([]); // Changed from useRef to useState
+  let socket;
 
   useEffect(() => {
     // Fetch the hardcoded JSON file from public folder
@@ -67,7 +68,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
   }
   useEffect(() => {
 
-    sockRef.current = io(server_url_ref.current,
+    sockRef.current = io("http://localhost",
       {
         path: get_app_socket_route() + "/socket.io",
         query: {
@@ -76,8 +77,8 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
       }
     );
-    sockRef.current.on("connect", () => console.log("connected", socket.id));
-    const socket = sockRef.current;
+    socket = sockRef.current;
+    socket.on("connect", () => console.log("connected from properties menu", socket.id));
     const handleSelected = (obj) => {
       console.log("PropertiesMenu received edit:selected", obj);
       //handle the object that was sent and put it into the editor
@@ -122,58 +123,58 @@ const PropertiesMenu = ({ SERVER_URL }) => {
   }, []);
 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    sockRef.current = io(server_url_ref.current,
-      {
-        query: {
-          clientType: "react-editor"
-        }
+  //   sockRef.current = io(server_url_ref.current,
+  //     {
+  //       query: {
+  //         clientType: "react-editor"
+  //       }
 
-      }
-    );
-    const socket = sockRef.current;
-    const handleSelected = (obj) => {
-      console.log("PropertiesMenu received edit:selected", obj);
-      //handle the object that was sent and put it into the editor
-      //setSceneData(obj);
+  //     }
+  //   );
+  //   const socket = sockRef.current;
+  //   const handleSelected = (obj) => {
+  //     console.log("PropertiesMenu received edit:selected", obj);
+  //     //handle the object that was sent and put it into the editor
+  //     //setSceneData(obj);
 
-      const normalized = {
-        _objects: [
-          {
-            _id: obj?.id ?? obj?._id ?? 0,
-            _pos: obj?.pos ?? { x: 0, y: 0, z: 0 },
-            _rot: obj?.rot ?? { x: 0, y: 0, z: 0 },
-            _sca: obj?.sca ?? { x: 1, y: 1, z: 1 },
-            ess_cn: obj?.name ?? obj?.ess_cn ?? "Object",
-            // include any other simple props you want visible (velocity, etc.)
-          },
-        ],
-        ess_cn: "Scene"
-      };
+  //     const normalized = {
+  //       _objects: [
+  //         {
+  //           _id: obj?.id ?? obj?._id ?? 0,
+  //           _pos: obj?.pos ?? { x: 0, y: 0, z: 0 },
+  //           _rot: obj?.rot ?? { x: 0, y: 0, z: 0 },
+  //           _sca: obj?.sca ?? { x: 1, y: 1, z: 1 },
+  //           ess_cn: obj?.name ?? obj?.ess_cn ?? "Object",
+  //           // include any other simple props you want visible (velocity, etc.)
+  //         },
+  //       ],
+  //       ess_cn: "Scene"
+  //     };
 
-      setSceneData(normalized)
-      setSelectedObjectIndex(0);
-      // Emit update_sceneTest with the received data
-    const updateData = {
-      _id: obj?.id ?? obj?._id ?? 0,
-      _pos: obj?.pos ?? { x: 0, y: 0, z: 0 },
-      _rot: obj?.rot ?? { x: 0, y: 0, z: 0 },
-      _sca: obj?.sca ?? { x: 1, y: 1, z: 1 },
-      ess_cn: obj?.name ?? obj?.ess_cn ?? "Object",
-    };
+  //     setSceneData(normalized)
+  //     setSelectedObjectIndex(0);
+  //     // Emit update_sceneTest with the received data
+  //   const updateData = {
+  //     _id: obj?.id ?? obj?._id ?? 0,
+  //     _pos: obj?.pos ?? { x: 0, y: 0, z: 0 },
+  //     _rot: obj?.rot ?? { x: 0, y: 0, z: 0 },
+  //     _sca: obj?.sca ?? { x: 1, y: 1, z: 1 },
+  //     ess_cn: obj?.name ?? obj?.ess_cn ?? "Object",
+  //   };
     
-    console.log("Emitting update_sceneTest from edit:selected", updateData);
-    socket.emit('update_sceneTest', updateData);
+  //   console.log("Emitting update_sceneTest from edit:selected", updateData);
+  //   socket.emit('update_sceneTest', updateData);
 
-    };
-    socket.on("edit:selected", handleSelected);
+  //   };
+  //   socket.on("edit:selected", handleSelected);
 
-    return () => {
-      socket.off("edit:selected", handleSelected);
-      socket.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     socket.off("edit:selected", handleSelected);
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (!sceneData || !sceneData._objects || !containerRef.current) return;
@@ -310,6 +311,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
 
            const safe = buildSafeObject(currentObject);
           console.log(safe);
+          sockRef.current.emit('update_sceneTest', safe);
 
         }
       // TODO: Send PUT/POST request to backend here

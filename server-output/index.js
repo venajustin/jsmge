@@ -578,7 +578,7 @@ function scheduleSceneFileWrite() {
       }
       
       fs.writeFileSync(scenePath, JSON.stringify(sceneJson, null, 2), "utf8");
-      console.log(`✅ Scene file batch updated with ${pendingSceneUpdates.size} object(s)`);
+      console.log(`Scene file batch updated with ${pendingSceneUpdates.size} object(s)`);
       pendingSceneUpdates.clear();
     } catch (error) {
       console.error("Error writing scene file:", error);
