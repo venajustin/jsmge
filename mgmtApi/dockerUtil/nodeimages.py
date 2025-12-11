@@ -23,7 +23,7 @@ except:
 # define host computer and container locations for the user's js code, will be linked with read-only privilege
 host_server_js = os.getcwd() + '/applications/'
 base_app_start = os.getcwd() + '/usrcode/'
-container_server_js = '/usrcode/'
+container_server_js = '/app/usrcode/'
 
 
 def get_running_apps():

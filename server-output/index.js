@@ -6,11 +6,11 @@ import multer from "multer";
 // Change this to the directory loaded as usercode, set it to test-usercode for testing purposes
 let user_dir_name = "/usrcode";
 let user_code_dir = user_dir_name + "/" ;
-if (!process.env.IS_DOCKER_CONTAINER) {
-  user_dir_name = "./testUsr";
-  user_code_dir = path.resolve(user_dir_name);
-  console.log("this is the path resolve" + user_code_dir);
-}
+//  if (!process.env.IS_DOCKER_CONTAINER) {
+    user_dir_name = "./usrcode";
+    user_code_dir = path.resolve(user_dir_name);
+    console.log("this is the path resolve" + user_code_dir);
+//  }
 
 import { createServer } from "node:http";
 import { Server } from "socket.io";
@@ -43,7 +43,7 @@ import { getExportedClasses } from "./static/utility/class-list.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
-const code = "testUsr"; // temp will need to change this to /usrcode
+const code = "usrcode"; // temp will need to change this to /usrcode
 
 debug_set_env();
 
@@ -240,17 +240,17 @@ app.get("/files", (req, res) => {
   try {
     console.log("getting files from " + user_dir_name);
     const files = getFilesFlat(user_dir_name); // Get all files as a flat list
-    if (process.env.IS_DOCKER_CONTAINER) {
-        const removedchar1 = files.map((file) => {
-            return file.substring(1);
-        });
-        res.json(removedchar1); // Return the flat list of file paths
-        console.log(removedchar1);
-    } else {
+//     if (process.env.IS_DOCKER_CONTAINER) {
+//         const removedchar1 = files.map((file) => {
+//             return file.substring(1);
+//         });
+//         res.json(removedchar1); // Return the flat list of file paths
+//         console.log(removedchar1);
+//     } else {
 
         res.json(files); // Return the flat list of file paths
         console.log(files);
-    }
+  //   }
   } catch (error) {
     console.error("Error reading folder:", error);
     res.status(500).send("Error reading folder.");
@@ -328,23 +328,23 @@ app.post("/files/*", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  if (process.env.IS_DOCKER_CONTAINER !== "true") {
-      const filePath = path.join(user_code_dir, filename);
-      try {
-        fs.writeFileSync(filePath, content || "");
-        res.send(`File ${filename} created`);
-      } catch (error) {
-        console.error("Error creating file", error);
-      }
-  } else {
-      const filePath = path.join(user_code_dir, filename);
-      try {
-        fs.writeFileSync(filePath, content || "");
-        res.send(`File ${filename} created`);
-      } catch (error) {
-        console.error("Error creating file", error);
-      }
-  }
+//  if (process.env.IS_DOCKER_CONTAINER !== "true") {
+     const filePath = path.join(user_code_dir, filename);
+     try {
+       fs.writeFileSync(filePath, content || "");
+       res.send(`File ${filename} created`);
+     } catch (error) {
+       console.error("Error creating file", error);
+     }
+//  } else {
+//       const filePath = path.join(user_code_dir, filename);
+//       try {
+//         fs.writeFileSync(filePath, content || "");
+//         res.send(`File ${filename} created`);
+//       } catch (error) {
+//         console.error("Error creating file", error);
+//       }
+  // }
 
 });
 
@@ -356,9 +356,9 @@ app.delete("/files/*", (req, res) => {
     return res.status(400).send("Filename is required.");
   }
   let filePath = user_code_dir + filename;
-  if (process.env.IS_DOCKER_CONTAINER !== "true") {
+  // if (process.env.IS_DOCKER_CONTAINER !== "true") {
       filePath = path.join(code, filename);
-  }
+  // }
   try {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
@@ -380,10 +380,10 @@ app.get("/files/*", (req, res) => {
   }
   let filePath = path.join(user_code_dir, filename);
 
-  if (process.env.IS_DOCKER_CONTAINER) {
-    filePath = user_code_dir + filename;
-      console.log("filepath: " + filePath);
-  }
+//   if (process.env.IS_DOCKER_CONTAINER) {
+//     filePath = user_code_dir + filename;
+//       console.log("filepath: " + filePath);
+//   }
   console.log("filepath: " + filePath);
   try {
     if (!fs.existsSync(filePath)) {
@@ -410,12 +410,13 @@ app.post("/save", (req, res) => {
     return res.status(400).send("Filename is required.");
   }
   let filePath = path.join(user_code_dir, filename);
-  if (process.env.IS_DOCKER_CONTAINER !== "true") {
+//   if (process.env.IS_DOCKER_CONTAINER !== "true") {
       filePath = path.join(code, filename);
-  }
+  // }
   try {
     fs.writeFileSync(filePath, content || "");
     res.send(`File ${filename} saved`);
+      console.log(`Saved file ${filename} to ${filePath}`);
   } catch (error) {
     console.error("Error saving file", error);
     res.status(500).send("Error saving file.");
