@@ -409,6 +409,36 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     })
 
   }
+
+  const handleDefaultScene = () => {
+    if(!contextMenu.file.endsWith('.scene')){
+      alert("please select a .scene file")
+      return;
+    }
+    console.log("file sent:", contextMenu.file);
+    fetch(SERVER_URL+`/set-default-scene/${contextMenu.file}`,{
+      method: "POST"
+    })
+    .then((res) => {
+      if(res.ok){
+        return res.json();
+
+      }
+      else{
+        throw new Error("failed to set default scene")
+      }
+    })
+    .then((data)=> {
+      console.log("Scene default set successfully", data);
+    })
+    .catch((error)=>{
+      console.error("error settting default scene", error)
+    })
+    .finally(()=> {
+      setContextMenu({visible:false, x:0, y:0, file:null});
+    })
+
+  }
   const handleNewResource = () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -594,6 +624,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
         onNewScene={handleNewScene}
         onSetScene={handleSetScene}
         addScene={handleAddObj}
+        onDefaultScene={handleDefaultScene}
       />
     </div>
   );

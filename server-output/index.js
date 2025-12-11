@@ -92,6 +92,35 @@ const game = new Game(io);
 //app.use(cors({ origin: "http://localhost" }));
 //app.use(cors({ origin: "http://localhost" }));
 
+await setupDefault();
+
+async function setupDefault(){
+  const infoPath = path.join(user_code_dir, "game-info.json");
+
+  if(fs.existsSync(infoPath)){
+    console.log("found game-info.json now am trying to set default scene");
+
+    const infoContent = fs.readFileSync(infoPath, "utf8");
+    const gameInfo = JSON.parse(infoContent);
+
+    game.active_scene = gameInfo["default-scene"];
+
+    game.scene = await loadSceneFromGame(game)
+
+    if (game.scene) {
+        console.log(`Default scene ${game.active_scene} loaded successfully`);
+    }
+    const sceneRoute = `./files/scenes/${game.active_scene}`;
+
+    io.emit("set_scene", sceneRoute);
+    
+  }
+  else{
+    console.log("Could not find game-info.json for setting up default");
+  }
+
+}
+
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -592,7 +621,7 @@ function scheduleSceneFileWrite() {
 io.on("connection", (socket) => {
   const sessionId = socket.request.session.id;
   socket.join(sessionId);
-
+  setupDefault();
   console.log("session: " + sessionId);
 
   const clientType = socket.handshake.query.clientType;
@@ -837,6 +866,28 @@ app.post("/set-scene/*", async (req, res) => {
     res.status(500).json({ error: "Failed to set scene" });
   }
 });
+
+app.post("/set-default-scene/*", async (req, res) => {
+  let scene = req.params[0];
+  const infoPath = path.join(user_code_dir, "game-info.json");
+  if(fs.existsSync(infoPath)){
+    console.log("found game-info.json now am trying to set default scene");
+
+    const infoContent = fs.readFileSync(infoPath, "utf8");
+    const gameInfo = JSON.parse(infoContent);
+    const sceneFileName = path.basename(scene);
+
+    gameInfo["default-scene"] = sceneFileName;
+    fs.writeFileSync(infoPath, JSON.stringify(gameInfo, null, 4), "utf8");
+    setupDefault();
+  }
+  else{
+    console.log("Could not set up new default");
+  }
+
+    
+});
+
 
 app.get("/server-output-mode", async (req, res) => {
 
