@@ -409,7 +409,10 @@ app.post("/save", (req, res) => {
   if (!filename) {
     return res.status(400).send("Filename is required.");
   }
-  const filePath = path.join(code, filename);
+  let filePath = path.join(user_code_dir, filename);
+  if (process.env.IS_DOCKER_CONTAINER !== "true") {
+      filePath = path.join(code, filename);
+  }
   try {
     fs.writeFileSync(filePath, content || "");
     res.send(`File ${filename} saved`);

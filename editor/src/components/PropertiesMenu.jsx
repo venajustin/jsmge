@@ -15,17 +15,17 @@ const PropertiesMenu = ({ SERVER_URL }) => {
   const [imageSources, setImageSources] = useState([]); // Changed from useRef to useState
   let socket;
 
-  useEffect(() => {
-    // Fetch the hardcoded JSON file from public folder
-    fetch('/jsonTestObjects/output.json')
-      .then(response => response.json())
-      .then(data => {
-        setSceneData(data);
-      })
-      .catch(error => console.error('Error loading object data:', error));
-
-
-  }, []);
+//  useEffect(() => {
+//    // Fetch the hardcoded JSON file from public folder
+//    fetch('/jsonTestObjects/output.json')
+//      .then(response => response.json())
+//      .then(data => {
+//        setSceneData(data);
+//      })
+//      .catch(error => console.error('Error loading object data:', error));
+//
+//
+//  }, []);
 
   // useEffect(() => {
   //   // establish socket connection to server 
@@ -449,7 +449,11 @@ const handleDrop = (e) => {
   };
 
   if (!sceneData || !sceneData._objects) {
-    return <div ref={containerRef} className="properties-menu">Loading...</div>;
+    return <div ref={containerRef} className="properties-menu">
+        <div className="properties-waiting-message">
+          Click an Object in the Scene to edit properties
+          </div>
+          </div>;
   }
 
   return (
