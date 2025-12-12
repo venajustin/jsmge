@@ -71,8 +71,10 @@ class Scene {
     for (const col1 of colliders) {
       for (const col2 of colliders) {
         if (col1 !== col2) {
-          if (collide(col1.collider._shape, col2.collider._shape)) {
-            col1.collider._parent._collision(col2.collider._parent);
+          let hit = collide(col1.collider._shape, col2.collider._shape);
+          if (hit.state) {
+            hit.other = create_reference(col2.collider._parent);
+            col1.collider._parent._collision(hit);
             // console.log("collision");
           }
         }

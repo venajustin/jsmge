@@ -19,7 +19,7 @@ export class CollisionShape {
 
 export function collide(a, b) {
     if (a.get_type() === "none" || b.get_type() === "none") {
-        return false;
+        return { state: false, mtv: null };
     }
     if (a.get_type() === "polygon" && b.get_type() === "polygon") {
         // only supporting polygon / polygon collisions for now
@@ -28,23 +28,45 @@ export function collide(a, b) {
         axis.push(...a.get_axis());
         axis.push(...b.get_axis()); //TODO
 
+        let smallest = null;
+        let minOv = Infinity;
+
         for (const ax of axis) {
             const p1 = a.project(ax);
             const p2 = b.project(ax);
 
 
             if (!overlap(p1, p2)) {
-                return false;
+                return { state: false, mtv: null };
+            }
+            else{
+
+                let o = getOverlap(p1,p2);
+
+                if(o < minOv){
+                    minOv = o;
+                    smallest = ax;
+                }
             }
         }
-        return true;
+
+        const currMTV = [smallest[0] * overlap, smallest[1] * overlap];
+        return {state: true, mtv: currMTV};
 
     }
-    return false;
+    return { state: false, mtv: null };
 }
 
 export function overlap(p1, p2) {
     // p_[0]: min, p_[1]: max
     return p1[0] < p2[1] && p1[1] > p2[0];
 }
+
+
+export function getOverlap(p1, p2){
+
+    return Math.min(p1[1], p2[1]) - Math.max(p1[0], p2[0]);
+
+}
+
 

@@ -146,7 +146,7 @@ export class Frame {
         });
     }
     _collision(other) {
-        this.handle_collision(create_reference(other));
+        this.handle_collision(other);
 
     }
 
