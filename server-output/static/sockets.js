@@ -25,15 +25,24 @@ if (typeof window !== 'undefined' && typeof io !== 'undefined') {
         console.log("message recieved: " + msg);
     });
 
-    socket.on('game_status', (msg) => {
+    socket.on('game_status', async (msg) => {
         if (msg === 'edit') {
             console.log("game is in edit mode")
+            const response = await fetch(get_app_socket_route() + "/get-scene-route");
+            const route = await response.text();
             setSession(editSketch);
+            console.log(`route for the editsketch when switching back to it: ${route}`);
+            active_session.setScene(route);
         } else if (msg === 'play') {
             console.log("play message received");
+            const response = await fetch(get_app_socket_route() + "/get-scene-route");
+            const route = await response.text();
+            console.log(`this is the route before activating play sketch ${route}`);
             setSession(undefined);
             setSession(playSketch);
             active_session.setServer(socket);
+            active_session.setScene(route);
+            
         } 
     });
 

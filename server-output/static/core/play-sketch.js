@@ -24,7 +24,7 @@ const playSketch = (p) => {
 
 
         console.log("Play sketch setup method")
-        p.setScene("./files/scenes/testscene3.scene");
+        //p.setScene("./files/scenes/testscene3.scene");
         //p.started = false;
         p.mode = 'play'
         //p.started = false;

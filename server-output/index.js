@@ -973,6 +973,14 @@ app.post("/test-play", (req, res) => {
   res.send(`Edit mode set for ${count} players`);
 });
 
+app.get("/get-scene-route", async (req, res) => {
+    const sceneRoute = `./files/scenes/${game.active_scene}`;
+    console.log(`this is the scene route sending out: ${sceneRoute}`);
+    res.send(sceneRoute);
+
+
+});
+
 server.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
