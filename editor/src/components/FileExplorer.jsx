@@ -124,7 +124,7 @@ function MultiSelectDirectoryTreeView({setActiveFile, setEditorContent, SERVER_U
     fetchFiles();
 
     // establish socket connection to server 
-    const socket = io("http://localhost",
+    const socket = io("/",
         {
             path: get_app_socket_route() + "/socket.io",
             transports: ["websocket", "polling"],

@@ -1,7 +1,7 @@
 import { editSketch } from "./core/edit-sketch.js";
 import { playSketch } from "./core/play-sketch.js";
 import { setSession, active_session} from "./core/session.js";
-import { get_app_socket_route, get_app_socket_addr } from "#static/utility/get_app_id.js";
+import { get_app_socket_route } from "#static/utility/get_app_id.js";
 // import { Manager } from "socket.io-client";
 
 // Only initialize socket in browser environment
@@ -9,7 +9,7 @@ let socket = null;
 
 if (typeof window !== 'undefined' && typeof io !== 'undefined') {
      socket = io(
-        "http://localhost",
+        "/",
         { 
             path: get_app_socket_route() + "/socket.io",
             transports: ["websocket", "polling"],

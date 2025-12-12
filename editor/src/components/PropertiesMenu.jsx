@@ -68,7 +68,7 @@ const PropertiesMenu = ({ SERVER_URL }) => {
   }
   useEffect(() => {
 
-    sockRef.current = io("http://localhost",
+    sockRef.current = io("/",
       {
         path: get_app_socket_route() + "/socket.io",
         query: {
