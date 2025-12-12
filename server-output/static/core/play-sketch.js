@@ -14,7 +14,6 @@ const playSketch = (p) => {
     p.server = { connected: false, socket: undefined };
 
     p.playerid = undefined;
-
     p.setServer = (socket) => {
         p.server.socket = socket;
         p.server.connected = true;
@@ -24,8 +23,11 @@ const playSketch = (p) => {
         p.createCanvas(1600, 1200, p.P2D);
 
 
-        p.setScene("/files/scenes/testscene3.scene");
+        console.log("Play sketch setup method")
+        p.setScene("./files/scenes/testscene3.scene");
+        //p.started = false;
         p.mode = 'play'
+        //p.started = false;
         // const response = await fetch("./files/scenes/testscene2.scene", {method:'GET'});
         // const scene_json = await response.text();
         // p.scene = await loadScene(scene_json);

@@ -30,6 +30,7 @@ if (typeof window !== 'undefined' && typeof io !== 'undefined') {
             console.log("game is in edit mode")
             setSession(editSketch);
         } else if (msg === 'play') {
+            console.log("play message received");
             setSession(undefined);
             setSession(playSketch);
             active_session.setServer(socket);
@@ -37,6 +38,7 @@ if (typeof window !== 'undefined' && typeof io !== 'undefined') {
     });
 
     socket.on('set_scene', (msg) => {
+        console.log(`active session is being set as: ${msg}`);
         active_session.setScene(msg);
     });
 

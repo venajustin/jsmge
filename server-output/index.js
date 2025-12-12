@@ -104,7 +104,7 @@ async function setupDefault(){
     const gameInfo = JSON.parse(infoContent);
 
     game.active_scene = gameInfo["default-scene"];
-
+    
     game.scene = await loadSceneFromGame(game)
 
     if (game.scene) {
@@ -621,17 +621,24 @@ function scheduleSceneFileWrite() {
 io.on("connection", (socket) => {
   const sessionId = socket.request.session.id;
   socket.join(sessionId);
-  setupDefault();
+  //setupDefault();
   console.log("session: " + sessionId);
 
+  
+  if (game.active_scene) {
+    const sceneRoute = `./files/scenes/${game.active_scene}`;
+    socket.emit("set_scene", sceneRoute);
+  }
   const clientType = socket.handshake.query.clientType;
   if (clientType === "react-editor") {
     console.log("Editor connected: " + sessionId);
     editors.push(sessionId);
+    game.players.push(sessionId);
 
     socket.on("disconnect", () => {
       console.log("Editor disconnect: " + sessionId);
       editors.splice(editors.indexOf(sessionId), 1);
+      game.players.splice(game.players.indexOf(sessionId), 1);
     });
     socket.on("playButtonPress", () => {
       console.log("editor play button press");
@@ -706,50 +713,50 @@ io.on("connection", (socket) => {
     //   updateSceneFile(payload);
     // });
 
-    async function updateSceneFile(msg) {
-      try {
-        if (!game.scene || typeof game.scene === 'string') {
-          game.scene = await loadSceneFromGame(game);
+    // async function updateSceneFile(msg) {
+    //   try {
+    //     if (!game.scene || typeof game.scene === 'string') {
+    //       game.scene = await loadSceneFromGame(game);
           
-          if (game.scene && game.scene._setup) {
-            await game.scene._setup();
-            console.log("Scene setup completed");
-          }
-        }
+    //       if (game.scene && game.scene._setup) {
+    //         await game.scene._setup();
+    //         console.log("Scene setup completed");
+    //       }
+    //     }
         
-        if (!game.scene || !game.scene._update_from_editor) {
-          console.warn("Scene not loaded or invalid");
-          return;
-        }
+    //     if (!game.scene || !game.scene._update_from_editor) {
+    //       console.warn("Scene not loaded or invalid");
+    //       return;
+    //     }
         
-        // Convert edit:selected format to update format
-        const updateData = {
-          _id: msg.id,
-          _pos: msg.pos,
-          _rot: msg.rot,
-          _sca: msg.sca,
-          ess_cn: msg.name
-        };
+    //     // Convert edit:selected format to update format
+    //     const updateData = {
+    //       _id: msg.id,
+    //       _pos: msg.pos,
+    //       _rot: msg.rot,
+    //       _sca: msg.sca,
+    //       ess_cn: msg.name
+    //     };
         
-        const success = game.scene._update_from_editor(updateData);
+    //     const success = game.scene._update_from_editor(updateData);
         
-        if (!success) {
-          console.error("Failed to update object in scene");
-          return;
-        }
+    //     if (!success) {
+    //       console.error("Failed to update object in scene");
+    //       return;
+    //     }
 
-        console.log(`Object ${updateData._id} queued for file update`);
+    //     console.log(`Object ${updateData._id} queued for file update`);
         
-        // Store update in memory and schedule batched file write
-        pendingSceneUpdates.set(updateData._id, updateData);
-        scheduleSceneFileWrite();
+    //     // Store update in memory and schedule batched file write
+    //     pendingSceneUpdates.set(updateData._id, updateData);
+    //     scheduleSceneFileWrite();
         
-        // Immediately emit to all clients for real-time preview (no lag)
-        io.emit('object_property_update', updateData);
-      } catch (error) {
-        console.error("Error updating scene file from drag:", error);
-      }
-    }
+    //     // Immediately emit to all clients for real-time preview (no lag)
+    //     io.emit('object_property_update', updateData);
+    //   } catch (error) {
+    //     console.error("Error updating scene file from drag:", error);
+    //   }
+    // }
 
     return;
   }
@@ -880,9 +887,14 @@ app.post("/set-default-scene/*", async (req, res) => {
     gameInfo["default-scene"] = sceneFileName;
     fs.writeFileSync(infoPath, JSON.stringify(gameInfo, null, 4), "utf8");
     setupDefault();
+    res.status(200).json({
+      message: "Default Scene set successfully",
+      scene: game.active_scene,
+    });
   }
   else{
     console.log("Could not set up new default");
+    res.status(500).json({ error: "Failed to set scene" });
   }
 
     
@@ -944,15 +956,19 @@ function sendPlay() {
   for (const playerid of game.players) {
     io.to(playerid).emit("game_status", "play");
     count++;
+    console.log("playerid updated: ", playerid);
   }
   return count;
 }
 
 app.post("/test-edit", (req, res) => {
   const count = sendEdit();
+  console.log("pause pressed");
+  //setupDefault();
   res.send(`Edit mode set for ${count} players`);
 });
 app.post("/test-play", (req, res) => {
+  console.log("start of test-play endpoint trying to start for debugging");
   const count = sendPlay();
   res.send(`Edit mode set for ${count} players`);
 });

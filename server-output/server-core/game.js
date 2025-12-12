@@ -25,6 +25,7 @@ export class Game {
         lastTime = Date.now();
 
         scene = undefined;
+        active_scene = undefined;
 
         running = false;
         ready = false;
@@ -47,6 +48,7 @@ export class Game {
         }
         start() {
             console.log("starting game");
+            console.log("game in active scene when play pressed: ", this.active_scene)
             this.ready = false;
 //             this.stopGame();
 //             const instance = { running: true };
@@ -57,7 +59,7 @@ export class Game {
 
             // Loading scene every time
             //if (this.scene === undefined) {
-                loadScene("./testUsr/scenes/testscene3.scene").then((scene) => {
+                loadScene(`./usrcode/scenes/${this.active_scene}`).then((scene) => {
                     this.scene = scene;
                     this.ready = true;
                 });
@@ -66,10 +68,11 @@ export class Game {
             if (!this.running) {
                 this.running = true;
                 setImmediate(update_loop, this);
-                // process.nextTick(update_loop);
+                //process.nextTick(update_loop);
             }
 
         }
+
         setScene(scenepath) {
             this.ready = false;
             loadScene(scenepath).then((scene) => {
@@ -86,7 +89,6 @@ export class Game {
         }
 
 }
-
 function update_loop(game) {
     const currtime = Date.now();
     const dt = currtime - game.lastTime;
