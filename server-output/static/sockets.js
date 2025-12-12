@@ -13,7 +13,8 @@ if (typeof window !== 'undefined' && typeof io !== 'undefined') {
         { 
             path: get_app_socket_route() + "/socket.io",
             transports: ["websocket", "polling"],
-            query: { clientType: "react-editor" } 
+            //CHANGED CLIENT TYPE TO GET THE UPDATE TO ACTUALLY SHOW FROM react-editor TO game-client
+            query: { clientType: "game-client" } 
         }
     );
     socket.on("connect_error", err => console.error("connect_error:", err));
