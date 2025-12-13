@@ -85,6 +85,9 @@ docker compose build
 docker compose up -d
 ```
 
+The editor can be accessed from port 80 on the host pc. For example `http://localhost/` if you are connecting from a local browser.
+
+
 ### Stopping Server
 
 - Stop all games in user games manager
