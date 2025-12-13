@@ -38,7 +38,6 @@ export class Ball extends Frame {
 
     
 
-    //jeremy is bum 
     handle_input(inputs) {
 
     }
@@ -56,7 +55,7 @@ export class Ball extends Frame {
     handle_collision(other) {
         console.log(`checking if new collision works: ${other.state}, ${other.mtv}, ${other.other}`)
         console.log("Ball collision");
-        if (other.constructor.name === "Walls") {
+        if (other.mtv[1] > 0.01 || other.mtv[1] < -0.01) {
             this.bounce("y");
         } else {
             this.bounce("x");

@@ -38,7 +38,6 @@ export class Ball extends Frame {
 
     
 
-    //jeremy is bum 
     handle_input(inputs) {
 
     }
