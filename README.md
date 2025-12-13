@@ -36,13 +36,32 @@ pip install -r ./requirements.txt
 ```
 
 
-### Run Server 
+### Compilation
 
-Ensure that the docker daemon is running before running the server.
+Ensure that the docker daemon is running before running the following
 
+Creating server-output docker image
 ```bash
-python start_all.py
+cd mgmtApi
+python start_node_img.py
 ```
 
+Building Docker images for other server components
+```bash
+docker compose build
+```
 
+### Run Server 
 
+```bash
+docker compose up -d
+```
+
+### Stopping Server
+
+- Stop all games in user games manager
+- or stop containers manually with docker
+- Run the following to bring down other components
+```bash
+docker compose down
+```
