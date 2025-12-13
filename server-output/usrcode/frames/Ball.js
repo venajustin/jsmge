@@ -22,7 +22,7 @@ export class Ball extends Frame {
     }
 
     handle_collision(other) {
-        console.log(`checking if new collision works: ${other.state}`)
+        console.log(`checking if new collision works: ${other.state}, ${other.mtv}, ${other.other}`)
         console.log("Ball collision");
         if (other.constructor.name === "Walls") {
             this.bounce("y");

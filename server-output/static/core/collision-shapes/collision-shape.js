@@ -49,8 +49,9 @@ export function collide(a, b) {
                 }
             }
         }
-
-        const currMTV = [smallest[0] * overlap, smallest[1] * overlap];
+        
+        const currMTV = [smallest[0] * minOv, smallest[1] * minOv];
+        console.log(`this is the currMTV: ${currMTV}`);
         return {state: true, mtv: currMTV};
 
     }
