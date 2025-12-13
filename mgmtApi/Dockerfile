@@ -21,7 +21,7 @@ WORKDIR /home/app
 COPY ./database ./database
 COPY ./static ./static
 COPY ./templates ./templates
-COPY ./usrcode ./usrcode
+# COPY ./usrcode ./usrcode
 COPY ./dockerUtil ./dockerUtil
 COPY ./app.py ./app.py
 COPY ./util.py ./util.py
