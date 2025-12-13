@@ -1,5 +1,8 @@
 # JavaScript Multiplayer Game Engine
 
+Project Code:
+https://github.com/venajustin/jsmge
+
 ## Project Structure
 
 ### Components / Top-level directories
