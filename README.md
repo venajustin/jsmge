@@ -1,5 +1,30 @@
 # JavaScript Multiplayer Game Engine
 
+## Project Structure
+
+### Components / Top-level directories
+
+Each of the following folders is set up with a Dockerfile that defines the container image that will be built. `compose.yaml` defines settings so that the docker compose script can be used to build and deploy containers. The server-output image is not included in this script and must be built seperately, using a python script.
+
+- editor
+    - React application using the Vue framework
+    - Allows users to create and edit games in an interactive code editor, file management environment with a preview
+- nginx-config
+    - nginx routing server for directing requests to docker containers
+    - Folder contains nginx configuration file
+- postgres-config
+    - PostgreSQL relational database
+    - Folder contains configuration and startup sql scripts to populate the database on a new host computer.
+- server-output
+    - The engine server backend that hosts user games.
+    - This is built as a node container and is instantiated at runtime for each user game.
+    - This server acts both as the backend for the development environment, and as a host when playing games.
+- mgmtApi
+    - Flask web server that handles requests related to game management.
+    - This container has the ability to instantiate containers from the server-output image.
+
+
+
 ## Local Deployment
 
 ### Prerequisites
